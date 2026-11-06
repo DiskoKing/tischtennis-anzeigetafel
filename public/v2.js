@@ -1,6 +1,9 @@
 /* Shared UI for scoreboard 2.0 and its local configuration page. */
 (() => {
   let token;
+  let observedVersion;
+  let offeredUpdate;
+  let updateResultTime;
   let current;
   let formLoaded = false;
   let displaySignature;
@@ -32,6 +35,10 @@
   window.v2SaveSource = saveSource;
 
   function apply(config) {
+    if (observedVersion && config.version !== observedVersion) { location.reload(); return; }
+    observedVersion = config.version;
+    document.querySelectorAll('[data-app-version]').forEach(el => { el.textContent = config.version; });
+    document.title = 'Anzeigetafel ' + config.version + (settings ? ' · Einstellungen' : '');
     current = config;
     if (settings) return;
     applySponsors(config.sponsors);
@@ -180,7 +187,7 @@
     picker.hidden = false;
     if (typeof switchScene === 'function') switchScene('neutral');
     $('statusBadge').textContent = raw.message || 'Warte auf Daten';
-    $('v2-title').textContent = raw.status === 'selection_required' ? 'Welches Spiel soll angezeigt werden?' : 'Anzeigetafel 2.0';
+    $('v2-title').textContent = raw.status === 'selection_required' ? 'Welches Spiel soll angezeigt werden?' : 'Anzeigetafel ' + (current?.version || '');
     $('v2-message').textContent = raw.message || 'Daten werden geladen';
     const signature = JSON.stringify([raw.status, raw.candidates || []]);
     if (signature !== pickerSignature) {
@@ -280,6 +287,10 @@
       apply(config);
       if (settings) {
         if (!formLoaded) fillForm(config);
+        if (config.lastUpdate && config.lastUpdate.time !== updateResultTime) {
+          updateResultTime = config.lastUpdate.time;
+          $('update-status').textContent = config.lastUpdate.message;
+        }
         renderSponsorList(config.sponsors);
         $('reader-status').textContent = state.message || 'Warte auf Daten';
         $('reader-status').dataset.status = state.status;
@@ -298,6 +309,35 @@
 
   async function mount() {
     if (settings) {
+      $('update-check').addEventListener('click', async () => {
+        $('update-check').disabled = true;
+        $('update-install').hidden = true; $('update-download').hidden = true;
+        $('update-status').textContent = 'Veröffentlichte Version wird geprüft …';
+        try {
+          const release = await api('/api/update/check', {method:'POST', body:'{}'});
+          offeredUpdate = release.latest;
+          $('update-status').textContent = release.available ? 'Version ' + release.latest + ' ist verfügbar.' : 'Version ' + release.installed + ' ist aktuell.';
+          $('update-notes').textContent = release.notes; $('update-notes').hidden = !release.notes;
+          $('update-install').hidden = !release.available || !release.installSupported;
+          $('update-download').href = release.releaseUrl;
+          $('update-download').hidden = !release.available || release.installSupported;
+          if (release.available && !release.installSupported) $('update-status').textContent += ' Bitte das vollständige Paket herunterladen.';
+        } catch (error) { $('update-status').textContent = error.message; }
+        finally { $('update-check').disabled = false; }
+      });
+      $('update-install').addEventListener('click', async () => {
+        if (!window.confirm('Update installieren? Die Anzeigetafel wird kurz beendet und neu gestartet. Bitte vorher ungespeicherte Einstellungen speichern.')) return;
+        $('update-install').disabled = true; $('update-check').disabled = true;
+        $('update-status').textContent = 'Update wird heruntergeladen und geprüft. Bitte nicht beenden …';
+        try {
+          const result = await api('/api/update/install', {method:'POST', body:JSON.stringify({version:offeredUpdate})});
+          $('update-status').textContent = result.message;
+        } catch (error) {
+          $('update-status').textContent = error.message;
+          $('update-install').disabled = false; $('update-check').disabled = false;
+          $('update-download').hidden = false;
+        }
+      });
       const embedded = new URLSearchParams(location.search).get('embedded') === '1';
       if (embedded) {
         document.body.classList.add('is-embedded');
@@ -406,11 +446,11 @@
     } else {
       const controls = document.createElement('nav');
       controls.className = 'v2-settings-link';
-      const button = document.createElement('button'); button.type = 'button'; button.textContent = '⚙ Einstellungen · 2.0';
+      const button = document.createElement('button'); button.type = 'button'; button.append('⚙ Einstellungen · '); const version = document.createElement('span'); version.dataset.appVersion = ''; version.textContent = '…'; button.append(version);
       const dialog = document.createElement('dialog'); dialog.className = 'v2-settings-dialog';
       dialog.setAttribute('aria-label', 'Einstellungen der Anzeigetafel');
       const bar = document.createElement('div'); bar.className = 'v2-dialog-bar';
-      const title = document.createElement('strong'); title.textContent = 'Einstellungen · Anzeigetafel 2.0';
+      const title = document.createElement('strong'); title.append('Einstellungen · Anzeigetafel '); const dialogVersion = document.createElement('span'); dialogVersion.dataset.appVersion = ''; dialogVersion.textContent = '…'; title.append(dialogVersion);
       const close = document.createElement('button'); close.type = 'button'; close.textContent = 'Zur Anzeigetafel ✕';
       close.addEventListener('click', () => dialog.close());
       const frame = document.createElement('iframe'); frame.title = 'Konfiguration';

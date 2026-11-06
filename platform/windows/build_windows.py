@@ -13,7 +13,7 @@ import zipfile
 SOURCE = Path(__file__).resolve().parents[2]
 PYTHON_URL = 'https://www.python.org/ftp/python/3.13.15/python-3.13.15-embed-amd64.zip'
 PYTHON_SHA256 = 'd1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf'
-CORE = ['server.py', 'janova_reader.py', 'web4sport_client.py', 'test_v2.py',
+CORE = ['updater.py', 'server.py', 'janova_reader.py', 'web4sport_client.py', 'test_v2.py',
         'public', 'VERSION', 'RELEASE-NOTES.md', 'requirements.txt', 'requirements.lock']
 
 

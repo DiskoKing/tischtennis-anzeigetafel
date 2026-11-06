@@ -1,9 +1,17 @@
 # Ein gemeinsamer Updatekanal
 
-GitHub ist die gemeinsame Quelle. main ist der Entwicklungsstand. Eine bewusste Änderung der Datei VERSION auf main erzeugt nach erfolgreichen Tests ein Release mit passendem v-Tag. Andere Änderungen auf main erzeugen kein Release. Es gibt genau einen Updatekanal.
+GitHub ist die gemeinsame Quelle. Eine bewusste Änderung von VERSION auf main erzeugt nach erfolgreichen Tests ein Release mit passendem v-Tag. Andere Änderungen auf main veröffentlichen kein Release. Es gibt genau einen Updatekanal.
 
-Die Pakete für Linux und Windows werden aus demselben Commit gebaut und enthalten dieselbe Anzeigelogik. Plattformstarter und Laufzeitpakete unterscheiden sich. Zugangsdaten und eigene Uploads bleiben lokal außerhalb der austauschbaren Programmdateien.
+## Oberfläche ab 2.2.0
 
-Geplant für den Aktualisieren-Knopf: Release-Metadaten laden, passende Plattform auswählen, Herkunftssignatur und Hash prüfen, Release Notes zeigen, alte Version sichern, kontrolliert stoppen und umschalten. Bei fehlgeschlagenem Start zur vorherigen Version zurückkehren. Windows darf die gerade laufende Python-Laufzeit nicht überschreiben; dafür wird ein separater Updatehelfer benötigt.
+Einstellungen → Version & Updates → Nach Updates suchen. Die Anwendung zeigt installierte und verfügbare Version sowie Release Notes an. Jetzt aktualisieren verlangt eine ausdrückliche Bestätigung, prüft das gemeinsame Anwendungspaket, sichert Programm und Konfiguration und startet neu. Eine fehlgeschlagene Startprüfung stellt den vorherigen Code und die Konfiguration wieder her. Eigene Uploads unter private/ werden nicht ersetzt. Sicherungen liegen unter private/updates.
 
-Noch offen: Herausgeberschlüssel und Signaturprozess, Updatehelfer, Rückrollprüfung und Migration der vorhandenen Praxisinstallation. Der Aktualisieren-Knopf ist noch nicht enthalten. Prüfsummen allein ersetzen keinen Herkunftsnachweis. Ein Git-Push aktualisiert keine ausgerollte Instanz.
+Windows: unterstützt der portable Starter mit app/private. Linux: unterstützt die Benutzer-Dienste ttsv-scoreboard-v2.service und anzeigetafel.service, wenn sie genau den laufenden Serverprozess verwalten. Andere Startarten bekommen einen Link zum vollständigen Release. Einmalig muss eine ältere Installation manuell auf 2.2.0 umgestellt werden, da ihr der Updatehelfer fehlt.
+
+## Grenzen und Vertrauensmodell
+
+Downloads beginnen ausschließlich unter github.com/frankfehrmann-stack/tischtennis-anzeigetafel/releases/download. Release-Metadaten kommen von der GitHub-API über HTTPS. SHA-256 muss mit SHA256SUMS und, sofern vorhanden, dem GitHub-Asset-Digest übereinstimmen. Vertrauen besteht damit in das GitHub-Konto, dessen Berechtigungen und HTTPS. Eine zusätzliche unabhängige Herausgebersignatur ist noch nicht eingerichtet; Prüfsummen allein wären kein Herkunftsnachweis.
+
+Zip-Pfade, Dateibereiche, Symlinks und Größen werden geprüft. private/, runtime/ und Browserdaten gehören nicht zum Updatepaket. Änderungen an den installierten Python-Abhängigkeiten oder am Windows-Starter erfordern das vollständige neue Plattformpaket; der Updatehelfer lehnt solche Updates ab.
+
+Windows nutzt einen separaten, unsichtbaren Helfer. Linux startet den Helfer in einer eigenen systemd-Benutzerunit, damit er das Stoppen der App überlebt. Updatefunktion und Rückrollen wurden mit einem isolierten echten Linux-Dienst getestet; Windows besitzt zusätzlich Tests für Paketprüfung und Starterlogik. Ein Versionswechsel ist kein Hot-Update: die Anzeige wird kurz unterbrochen.

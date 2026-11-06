@@ -1,3 +1,13 @@
+# Version 2.2.0 – Versionsanzeige und Updates in der Oberfläche
+
+- Angezeigte Versionsnummer stammt aus der installierten VERSION-Datei.
+- Einstellungen: Nach Updates suchen, Release Notes und Jetzt aktualisieren.
+- Ein gemeinsames Anwendungspaket für Windows und NUC/Linux. Downloads ausschließlich aus diesem GitHub-Repository, mit SHA-256-Prüfung.
+- Programm- und Konfigurationssicherung vor Austausch; eigene Uploads bleiben unangetastet. Neustartprüfung mit Rücksicherung bei Fehlern.
+- Neue Laufzeit-Abhängigkeiten oder Änderungen am Windows-Starter erfordern weiterhin das vollständige Paket.
+
+Für bestehende Versionen 2.1.x ist einmalig ein manueller Wechsel auf 2.2.0 nötig. Erst diese Version enthält den Updatehelfer. Die Updatequelle wird über GitHub und HTTPS vertraut; eine zusätzliche unabhängige Herausgebersignatur ist noch nicht eingerichtet.
+
 # Version 2.1.1 – Windows-Fensterstart korrigiert
 
 - Starten öffnet genau die Anzeigetafel; Einstellungen werden bei Bedarf über Einstellungen.cmd oder das Overlay geöffnet.

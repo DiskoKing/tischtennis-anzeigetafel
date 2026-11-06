@@ -94,3 +94,6 @@
 .settings-page .club-library-item[aria-pressed="true"] { border-color:var(--settings-accent);background:#253244; }
 .club-library-item img { width:80px;height:80px;object-fit:contain;background:#fff;border-radius:6px;padding:5px; }
 .club-library-item span { font-size:12px;text-align:center;overflow-wrap:anywhere; }
+
+.update-notes { white-space:pre-wrap;overflow-wrap:anywhere;max-height:320px;overflow:auto;background:#0b1119;border:1px solid #354455;border-radius:8px;padding:16px;font:13px/1.5 Arial,sans-serif; }
+#update-install[hidden],#update-download[hidden],#update-notes[hidden] { display:none!important; }

@@ -8,6 +8,6 @@ Einstellungen.cmd öffnet die Konfiguration. Beenden.cmd beendet Server, Reader 
 
 Eigene Daten liegen in app/private und browser-data auf dem Stick. Browser und Betriebssystem können zusätzlich lokale temporäre Daten hinterlassen. Firmenrichtlinien können Programme vom Stick sperren; es werden keine Schutzfunktionen deaktiviert.
 
-Die Bildschirmwahl und Start-/Stop-Logik wurden getestet. Die tatsächliche Vollbildplatzierung muss auf dem Zielrechner überprüft werden. Der Aktualisieren-Knopf folgt später.
+Die Bildschirmwahl und Start-/Stop-Logik wurden getestet. Die tatsächliche Vollbildplatzierung muss auf dem Zielrechner überprüft werden. Ab 2.2.0 steht Version & Updates in den Einstellungen zur Verfügung. Bei Änderungen der Laufzeit oder des Starters wird weiterhin ein vollständiges Paket benötigt.
 
 Ab 2.1.1 wird je Sitzung ein neues Browserprofil verwendet und beim Beenden entfernt. Gespeicherte Vereinsdaten und Zugangsdaten liegen weiterhin dauerhaft in app/private.

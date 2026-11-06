@@ -19,6 +19,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, unquote, urlsplit
 
 import requests
+import updater
 from bs4 import BeautifulSoup
 import web4sport_client as web
 
@@ -257,6 +258,7 @@ class App:
         self.path.chmod(0o600)
         self.lock = threading.RLock()
         self.csrf = secrets.token_urlsafe(32)
+        self.update_lock = threading.Lock()
         self.stop = threading.Event()
         self.restart_requested = threading.Event()
         self.process = None
@@ -270,6 +272,8 @@ class App:
     def public_config(self):
         with self.lock:
             config = copy.deepcopy(self.config)
+            config['version'] = updater.version(self.root)
+            config['lastUpdate'] = updater.last_result(self.root)
             configured = bool(config['web4sport'].pop('password'))
             config['web4sport']['passwordSet'] = configured
             logo = self.private/'club-logo'
@@ -600,6 +604,19 @@ class Handler(BaseHTTPRequestHandler):
                 except JanovaLoginError as error:
                     return self.send(400, {'error': str(error)})
                 return self.send(200, {'refereeId': identity})
+            if path == '/api/update/check':
+                try:
+                    release = updater.latest(self.app.root)
+                    release.pop('payload', None)
+                    release.pop('checksums', None)
+                    return self.send(200, release)
+                except (requests.RequestException, ValueError, KeyError, OSError):
+                    return self.send(502, {'error': 'Updateprüfung fehlgeschlagen. Bitte Internetverbindung prüfen und später erneut versuchen.'})
+            if path == '/api/update/install':
+                try:
+                    return self.send(200, updater.begin(self.app, self.server.server_port, patch.get('version')))
+                except (ValueError, OSError, requests.RequestException, subprocess.SubprocessError) as error:
+                    return self.send(400, {'error': str(error)[:300]})
             if path == '/api/config':
                 return self.send(200, self.app.update(patch))
             if path == '/api/game':

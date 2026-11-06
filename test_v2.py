@@ -75,6 +75,25 @@ class ConfigAndApiTests(unittest.TestCase):
         with urllib.request.urlopen(request, timeout=3) as response:
             return response.status, response.read()
 
+    def test_installed_version_is_read_from_version_file(self):
+        (self.root/'VERSION').write_text('2.2.0', encoding='utf-8')
+        _,body=self.request('/api/config')
+        self.assertEqual(json.loads(body)['version'],'2.2.0')
+        self.assertEqual(self.app.config['version'],'2.0')
+
+    def test_update_check_requires_csrf_and_hides_download_internals(self):
+        from unittest.mock import patch
+        with self.assertRaises(urllib.error.HTTPError) as error:
+            self.request('/api/update/check',b'{}',token=False)
+        self.assertEqual(error.exception.code,403)
+        release={'installed':'2.2.0','latest':'2.3.0','available':True,'payload':{'internal':'asset'},'checksums':{'internal':'asset'}}
+        with patch('server.updater.latest',return_value=release):
+            _,body=self.request('/api/update/check',b'{}')
+        result=json.loads(body)
+        self.assertTrue(result['available'])
+        self.assertNotIn('payload',result)
+        self.assertNotIn('checksums',result)
+
     def test_password_never_returned_and_blank_preserves(self):
         _, body = self.request('/api/config')
         self.assertNotIn(b'TEST-ONLY', body)

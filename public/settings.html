@@ -2,13 +2,13 @@
 <html lang="de">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Anzeigetafel 2.0 · Einstellungen</title>
+  <title>Anzeigetafel · Einstellungen</title>
   <link rel="stylesheet" href="v2.css">
 </head>
 <body class="settings-page">
   <main class="settings-shell">
     <header class="settings-header">
-      <div><p class="eyebrow">TISCHTENNIS · VERSION 2.0</p><h1>Euer Verein.<br>Eure Anzeigetafel.</h1>
+      <div><p class="eyebrow">TISCHTENNIS · VERSION <span data-app-version>…</span></p><h1>Euer Verein.<br>Eure Anzeigetafel.</h1>
       <p class="intro">Design anpassen, Datenquelle verbinden und die richtige Begegnung auswählen.</p></div>
       <a class="button secondary" href="spiele.html" target="_blank" rel="noopener">Anzeigetafel öffnen ↗</a>
     </header>
@@ -87,9 +87,17 @@
           <div id="games" class="games-list"></div><p id="games-empty" class="help">Noch keine gestarteten Web4Sport-Spiele erkannt.</p>
           <div class="side-actions"><button type="button" class="secondary" id="automatic">Spielauswahl zurücksetzen</button><button type="button" class="secondary" id="reconnect">Reader neu verbinden</button></div>
         </section>
+        <section class="settings-card"><div class="card-heading"><span>06</span><h2>Version & Updates</h2></div>
+          <p>Installierte Version: <strong data-app-version>…</strong></p>
+          <p id="update-status" class="help" role="status" aria-live="polite">Updates kommen aus dem offiziellen GitHub-Projekt.</p>
+          <div class="side-actions"><button type="button" class="secondary" id="update-check">Nach Updates suchen</button><button type="button" id="update-install" hidden>Jetzt aktualisieren</button></div>
+          <a id="update-download" class="button secondary" hidden target="_blank" rel="noopener">Vollständiges Paket öffnen ↗</a>
+          <pre id="update-notes" class="update-notes" hidden></pre>
+          <p class="help">Vor der Installation werden die Programmdateien und die Konfiguration gesichert. Die Anzeige startet neu. Eigene Logos, Bilder und Zugangsdaten bleiben erhalten.</p>
+        </section>
       </aside>
     </div>
-    <footer class="settings-footer">Anzeigetafel 2.0 · Eigene Konfiguration und Daten · Zugriff lokal oder per SSH-Tunnel</footer>
+    <footer class="settings-footer">Anzeigetafel <span data-app-version>…</span> · Eigene Konfiguration und Daten · Zugriff lokal oder per SSH-Tunnel</footer>
   </main>
   <script src="v2.js"></script>
 </body>
