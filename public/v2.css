@@ -97,3 +97,30 @@
 
 .update-notes { white-space:pre-wrap;overflow-wrap:anywhere;max-height:320px;overflow:auto;background:#0b1119;border:1px solid #354455;border-radius:8px;padding:16px;font:13px/1.5 Arial,sans-serif; }
 #update-install[hidden],#update-download[hidden],#update-notes[hidden] { display:none!important; }
+
+/* Compact settings with native keyboard-accessible disclosure controls. */
+.settings-shell { padding-top:24px;padding-bottom:112px; }
+.settings-header { gap:18px;margin-bottom:20px; }
+.settings-header h1 { font-size:26px;line-height:1.2;letter-spacing:-.02em; }
+.settings-header .eyebrow { font-size:10px;margin-bottom:4px; }
+.settings-header .intro { font-size:13px;margin-top:6px; }
+.settings-page.is-embedded .settings-header { display:none; }
+.settings-card.settings-category { padding:0;margin-bottom:14px;border-radius:12px; }
+.settings-category>summary.card-heading { list-style:none;cursor:pointer;margin:0;padding:17px 20px;gap:12px;user-select:none; }
+.settings-category>summary::-webkit-details-marker { display:none; }
+.settings-category>summary:focus-visible { outline:2px solid #7fa7d6;outline-offset:3px;border-radius:10px; }
+.settings-category>summary::after { content:'›';font-size:26px;line-height:1;margin-left:auto;color:#aabbd0;transform:rotate(0deg); }
+.settings-category[open]>summary::after { transform:rotate(90deg); }
+.settings-category[open]>summary { border-bottom:1px solid #26303c; }
+.settings-category .category-content { padding:0 20px 20px; }
+.settings-category .card-heading h2 { font-size:17px; }
+.settings-category .design-preview { margin-top:18px;padding:16px;min-height:210px; }
+.settings-category .design-preview img { width:88px;height:88px;margin-bottom:10px; }
+.settings-category .preview-result { margin:12px auto; }
+.settings-category .preview-result b { font-size:38px;min-width:56px; }
+.settings-page .save-bar { position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;align-items:center;gap:16px;padding:12px max(16px,calc((100vw - 1164px)/2));background:#101923f5;border-top:1px solid #354455;box-shadow:0 -8px 24px #0004; }
+.settings-page .save-bar button { flex-shrink:0; }
+.settings-page #save-status { margin:0;min-height:0; }
+.v2-dialog-bar { padding:8px 14px; }
+.v2-dialog-bar button { padding:8px 12px; }
+@media(max-width:600px) { .settings-page .save-bar { flex-wrap:wrap;gap:6px; }.settings-page #save-status { font-size:12px; }.settings-category>summary.card-heading { padding:15px 16px; }.settings-category .category-content { padding:0 16px 16px; } }

@@ -309,6 +309,20 @@
 
   async function mount() {
     if (settings) {
+      const categories = [...document.querySelectorAll('.settings-category')];
+      try {
+        const saved = JSON.parse(sessionStorage.getItem('anzeigetafel-settings-sections') || '{}');
+        for (const category of categories) if (typeof saved[category.id] === 'boolean') category.open = saved[category.id];
+      } catch (_) {}
+      for (const category of categories) category.addEventListener('toggle', () => {
+        try { sessionStorage.setItem('anzeigetafel-settings-sections', JSON.stringify(Object.fromEntries(categories.map(item => [item.id, item.open])))); } catch (_) {}
+      });
+      document.addEventListener('invalid', event => {
+        if (event.target.form !== $('config-form')) return;
+        for (let parent = event.target.parentElement; parent; parent = parent.parentElement) {
+          if (parent.tagName === 'DETAILS') parent.open = true;
+        }
+      }, true);
       $('update-check').addEventListener('click', async () => {
         $('update-check').disabled = true;
         $('update-install').hidden = true; $('update-download').hidden = true;

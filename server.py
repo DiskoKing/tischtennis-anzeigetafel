@@ -559,7 +559,7 @@ class Handler(BaseHTTPRequestHandler):
         relative = path.lstrip('/') or 'spiele.html'
         public = (self.app.root/'public').resolve()
         target = (public/relative).resolve()
-        if not target.is_relative_to(public) or not target.is_file() or target.suffix.lower() not in ('.html', '.js', '.css', '.png', '.jpg', '.jpeg', '.webp'):
+        if not target.is_relative_to(public) or not target.is_file() or (target.suffix.lower() not in ('.html', '.js', '.css', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg') and relative != 'assets/club-logos/catalog.json'):
             return self.send(404, {'error': 'Nicht gefunden'})
         return self.send(200, target.read_bytes(), mimetypes.guess_type(target.name)[0] or 'application/octet-stream')
 

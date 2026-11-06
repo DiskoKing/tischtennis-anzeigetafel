@@ -1,3 +1,14 @@
+# Version 2.2.3 – kompakte, aufklappbare Einstellungen
+
+- Flacher Kopfbereich statt großer Werbeüberschrift; im Overlay entfällt die doppelte Überschrift.
+- Alle sieben Bereiche lassen sich mit Maus und Tastatur auf- und zuklappen. Verein & Design und Designvorschau sind zunächst geöffnet.
+- Geöffnete Bereiche bleiben innerhalb der Browsersitzung erhalten.
+- Einstellungen speichern bleibt am unteren Fensterrand erreichbar, auch bei geschlossenen Kategorien.
+- Bei ungültigen Pflichtfeldern öffnet sich der betreffende Bereich automatisch.
+- Die mitgelieferten SVG-Standardgrafiken und der Logo-Katalog werden jetzt korrekt vom lokalen Webserver ausgeliefert.
+
+Über Version & Updates installierbar. Laufzeit und Windows-Starter bleiben unverändert.
+
 # Version 2.2.2 – flackerndes Konsolenfenster bei Janova behoben
 
 - Der Janova-Reader startete für seine alte Konsolenanzeige einmal pro Sekunde eine Shell zum Ausführen von cls. Dieser Aufruf ist vollständig entfernt.

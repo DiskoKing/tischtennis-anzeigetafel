@@ -8,13 +8,13 @@
 <body class="settings-page">
   <main class="settings-shell">
     <header class="settings-header">
-      <div><p class="eyebrow">TISCHTENNIS · VERSION <span data-app-version>…</span></p><h1>Euer Verein.<br>Eure Anzeigetafel.</h1>
-      <p class="intro">Design anpassen, Datenquelle verbinden und die richtige Begegnung auswählen.</p></div>
+      <div><p class="eyebrow">TISCHTENNIS · VERSION <span data-app-version>…</span></p><h1>Einstellungen</h1>
+      <p class="intro">Design, Datenquelle und Anzeige verwalten.</p></div>
       <a class="button secondary" href="spiele.html" target="_blank" rel="noopener">Anzeigetafel öffnen ↗</a>
     </header>
     <div class="settings-layout">
       <form id="config-form" class="settings-form">
-        <section class="settings-card"><div class="card-heading"><span>01</span><h2>Verein & Design</h2></div>
+        <details class="settings-card settings-category" id="category-design" open><summary class="card-heading"><span>01</span><h2>Verein & Design</h2></summary><div class="category-content">
           <label>Vereinsname<input id="club-name" maxlength="80" placeholder="Mein Tischtennisverein"></label>
           <label>Vereinswebsite<input id="club-website" maxlength="160" placeholder="www.mein-verein.de"></label>
           <div class="two-columns">
@@ -38,13 +38,13 @@
             <p id="background-file-state" class="help">Noch kein eigenes Hintergrundbild gespeichert.</p>
             <p class="help">Maximal 10 MB. Querformat, idealerweise 16:9. Das Bild füllt die Fläche und wird bei Bedarf an den Rändern beschnitten. Mit „Einstellungen speichern“ übernehmen.</p>
           </fieldset>
-        </section>
-        <section class="settings-card"><div class="card-heading"><span>02</span><h2>Ansicht & Wechsel</h2></div>
+        </div></details>
+        <details class="settings-card settings-category" id="category-display"><summary class="card-heading"><span>02</span><h2>Ansicht & Wechsel</h2></summary><div class="category-content">
           <label>Anzeige<select id="display-mode"><option value="compact">Nur Kompaktansicht</option><option value="detail">Nur Detailansicht</option><option value="rotate" selected>Automatisch wechseln</option></select></label>
           <label>Wechsel nach (Sekunden)<input type="number" id="display-seconds" min="1" max="3600" step="1" value="30" required></label>
           <p class="help">Standard: alle 30 Sekunden wechseln. Kompakt zeigt den Mannschaftsstand, Detail die laufenden Paarungen. Der automatische Wechsel läuft bei aktiven Spielen.</p>
-        </section>
-        <section class="settings-card"><div class="card-heading"><span>03</span><h2>Datenquelle</h2></div>
+        </div></details>
+        <details class="settings-card settings-category" id="category-source"><summary class="card-heading"><span>03</span><h2>Datenquelle</h2></summary><div class="category-content">
           <label>Aktive Datenquelle<select id="data-source"><option value="janova">Janova-Zählgeräte</option><option value="web4sport">TischtennisLive / Web4Sport</option></select></label>
           <fieldset><legend>Janova</legend>
             <label>Janova-E-Mail<input id="janova-email" type="email" autocomplete="username" maxlength="320"></label>
@@ -61,16 +61,15 @@
             <label class="check"><input type="checkbox" id="clear-password">Gespeichertes Web4Sport-Passwort entfernen</label>
             <p class="help">Ein leeres Passwortfeld behält das gespeicherte Passwort bei. Die Zugangsdaten werden ausschließlich auf diesem NUC gespeichert.</p>
           </fieldset>
-        </section>
-        <div class="save-bar"><button id="save" type="submit">Einstellungen speichern</button><p id="save-status" role="status" aria-live="polite"></p></div>
+        </div></details>
       </form>
       <aside class="settings-side">
-        <section class="settings-card"><div class="card-heading"><span>↗</span><h2>Designvorschau</h2></div>
+        <details class="settings-card settings-category" id="category-preview" open><summary class="card-heading"><span>↗</span><h2>Designvorschau</h2></summary><div class="category-content">
           <div id="design-preview" class="design-preview"><img id="logo-preview" alt="Vereinslogo"><strong id="preview-name">Mein Verein</strong>
             <div class="preview-result"><b id="preview-score">3</b><span>:</span><b>2</b></div><small id="preview-website"></small></div>
           <p class="help">Beispielstand zur Vorschau. Die Anzeigetafel zeigt die Daten der gewählten Quelle.</p>
-        </section>
-        <section class="settings-card"><div class="card-heading"><span>04</span><h2>Sponsoren</h2></div>
+        </div></details>
+        <details class="settings-card settings-category" id="category-sponsors"><summary class="card-heading"><span>04</span><h2>Sponsoren</h2></summary><div class="category-content">
           <label class="check"><input type="checkbox" id="sponsors-enabled">Sponsorenlogos auf der Anzeigetafel anzeigen</label>
           <label>Einleitender Text<input type="text" id="sponsors-intro-text" maxlength="100" value="unterstützt von:" placeholder="unterstützt von:" form="config-form"></label>
           <p class="help">Steht vor dem Sponsorenlogo. Leer lassen, um nur das Logo zu zeigen.</p>
@@ -80,23 +79,24 @@
           <p class="help">PNG, JPEG, GIF oder WebP · maximal 10 MB je Logo · bis zu 20 Logos. Ausgewählte Logos, Ein/Aus und Wechselzeit mit „Einstellungen speichern“ übernehmen.</p>
           <p id="sponsor-status" class="help" role="status" aria-live="polite"></p>
           <div id="sponsor-logos"></div><p id="sponsors-empty" class="help">Noch keine Sponsorenlogos hinterlegt.</p>
-        </section>
-        <section class="settings-card"><div class="card-heading"><span>05</span><h2>Verbindung & Spielauswahl</h2></div>
+        </div></details>
+        <details class="settings-card settings-category" id="category-games"><summary class="card-heading"><span>05</span><h2>Verbindung & Spielauswahl</h2></summary><div class="category-content">
           <p id="reader-status" class="reader-status" role="status">Verbindung wird geprüft …</p>
           <p class="help">Bei mehreren gestarteten Begegnungen wählst du hier oder direkt auf der Anzeige das gewünschte Spiel. Heutige Spiele werden bevorzugt.</p>
           <div id="games" class="games-list"></div><p id="games-empty" class="help">Noch keine gestarteten Web4Sport-Spiele erkannt.</p>
           <div class="side-actions"><button type="button" class="secondary" id="automatic">Spielauswahl zurücksetzen</button><button type="button" class="secondary" id="reconnect">Reader neu verbinden</button></div>
-        </section>
-        <section class="settings-card"><div class="card-heading"><span>06</span><h2>Version & Updates</h2></div>
+        </div></details>
+        <details class="settings-card settings-category" id="category-updates"><summary class="card-heading"><span>06</span><h2>Version & Updates</h2></summary><div class="category-content">
           <p>Installierte Version: <strong data-app-version>…</strong></p>
           <p id="update-status" class="help" role="status" aria-live="polite">Updates kommen aus dem offiziellen GitHub-Projekt.</p>
           <div class="side-actions"><button type="button" class="secondary" id="update-check">Nach Updates suchen</button><button type="button" id="update-install" hidden>Jetzt aktualisieren</button></div>
           <a id="update-download" class="button secondary" hidden target="_blank" rel="noopener">Vollständiges Paket öffnen ↗</a>
           <pre id="update-notes" class="update-notes" hidden></pre>
           <p class="help">Vor der Installation werden die Programmdateien und die Konfiguration gesichert. Die Anzeige startet neu. Eigene Logos, Bilder und Zugangsdaten bleiben erhalten.</p>
-        </section>
+        </div></details>
       </aside>
     </div>
+        <div class="save-bar"><button id="save" type="submit" form="config-form">Einstellungen speichern</button><p id="save-status" role="status" aria-live="polite"></p></div>
     <footer class="settings-footer">Anzeigetafel <span data-app-version>…</span> · Eigene Konfiguration und Daten · Zugriff lokal oder per SSH-Tunnel</footer>
   </main>
   <script src="v2.js"></script>

@@ -94,6 +94,20 @@ class ConfigAndApiTests(unittest.TestCase):
         self.assertNotIn('payload',result)
         self.assertNotIn('checksums',result)
 
+    def test_public_svg_and_logo_catalog_are_served_but_other_json_is_not(self):
+        assets=self.root/'public/assets/club-logos'
+        assets.mkdir(parents=True)
+        (assets/'catalog.json').write_text('{"clubs":[]}',encoding='utf-8')
+        (self.root/'public/assets/default-logo.svg').write_text('<svg xmlns="http://www.w3.org/2000/svg"/>',encoding='utf-8')
+        (self.root/'public/other.json').write_text('{"not":"public api"}',encoding='utf-8')
+        _,svg=self.request('/assets/default-logo.svg')
+        self.assertIn(b'<svg',svg)
+        _,catalog=self.request('/assets/club-logos/catalog.json')
+        self.assertEqual(json.loads(catalog),{'clubs':[]})
+        with self.assertRaises(urllib.error.HTTPError) as error:
+            self.request('/other.json')
+        self.assertEqual(error.exception.code,404)
+
     def test_password_never_returned_and_blank_preserves(self):
         _, body = self.request('/api/config')
         self.assertNotIn(b'TEST-ONLY', body)
