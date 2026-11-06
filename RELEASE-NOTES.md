@@ -1,3 +1,13 @@
+# Version 2.1.1 – Windows-Fensterstart korrigiert
+
+- Starten öffnet genau die Anzeigetafel; Einstellungen werden bei Bedarf über Einstellungen.cmd oder das Overlay geöffnet.
+- Browser und Janova-Reader werden unter Windows ausdrücklich ohne Konsolenfenster gestartet.
+- Ein neues Browserprofil pro Sitzung verhindert die Wiederherstellung zusätzlicher alter Fenster. Die Vereinskonfiguration bleibt in app/private erhalten.
+- Bereits geöffnete Einstellungsfenster werden wieder in den Vordergrund geholt, statt weitere zu öffnen.
+- Tests für den ersten Fensterstart, unsichtbare Hintergrundprozesse und die Wiederverwendung des Einstellungsfensters ergänzt.
+
+Hinweis: Der integrierte Aktualisieren-Knopf ist weiterhin noch nicht enthalten. Vor einem manuellen Wechsel die bisherige Instanz mit Beenden.cmd schließen und app/private in das neue Paket übernehmen.
+
 # Version 2.1.0 – gemeinsamer öffentlicher Projektstand
 
 - Gemeinsamer Anwendungscode für Linux/NUC und Windows-USB.

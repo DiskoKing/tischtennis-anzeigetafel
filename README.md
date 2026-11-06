@@ -53,7 +53,7 @@ Die optionale Janova-Anmeldung liest die öffentliche Web-App-Konfiguration von 
 python -m unittest -v test_v2
 ```
 
-GitHub Actions führt diese Tests unter Windows und Linux aus. Versionen werden bewusst mit einem v-Tag veröffentlicht; main allein erzeugt kein Nutzer-Update. Der integrierte Aktualisieren-Knopf ist noch nicht implementiert. Das Updatekonzept steht in docs/UPDATES.md.
+GitHub Actions führt diese Tests unter Windows und Linux aus. Eine bewusste Änderung von VERSION auf main startet den getesteten Release-Build und veröffentlicht das passende v-Tag. Andere Änderungen auf main veröffentlichen kein Release. Der integrierte Aktualisieren-Knopf ist noch nicht implementiert. Das Updatekonzept steht in docs/UPDATES.md.
 
 ## Rechte
 

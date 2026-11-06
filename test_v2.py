@@ -372,5 +372,24 @@ class JanovaPublicConfigTests(unittest.TestCase):
             with self.assertRaises(server.JanovaLoginError):
                 server.janova_auth_key()
 
+
+
+class ReaderProcessTests(unittest.TestCase):
+    def test_reader_launch_disables_console_only_on_windows(self):
+        from unittest.mock import Mock, patch
+        with tempfile.TemporaryDirectory() as tmp:
+            app = server.App(Path(tmp))
+            app.config['janova']['refereeId'] = 'test-id'
+            process = Mock()
+            process.poll.return_value = None
+            def launch(*args, **kwargs):
+                app.stop.set()
+                return process
+            with patch('server.subprocess.Popen', side_effect=launch) as popen:
+                app.supervise()
+            self.assertEqual(popen.call_args.kwargs['creationflags'], server.subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+            self.assertEqual(popen.call_args.kwargs['stdout'], server.subprocess.DEVNULL)
+            process.terminate.assert_called_once()
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

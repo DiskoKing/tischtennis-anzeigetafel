@@ -419,7 +419,8 @@ class App:
                             for path in self.data.glob('scoreboard*.json'):
                                 path.unlink()
                             self.process = subprocess.Popen([sys.executable, '-X', 'utf8', '-u', str(self.root/'janova_reader.py')],
-                                                            cwd=self.data, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                                            cwd=self.data, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                                            creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
                             self.running_key = key
                             self.publish(key, 'starting', 'Janova-Daten werden geladen')
                         else:

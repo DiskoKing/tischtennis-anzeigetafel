@@ -5,11 +5,13 @@ from ctypes import wintypes
 import hashlib
 import json
 import logging
+import shutil
 import os
 from pathlib import Path
 import subprocess
 import sys
 import threading
+import uuid
 import time
 
 BASE = Path(__file__).resolve().parent
@@ -27,6 +29,8 @@ KERNEL.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
 KERNEL.CloseHandle.argtypes = [wintypes.HANDLE]
 INSTANCE = hashlib.sha256(str(BASE).lower().encode()).hexdigest()[:24]
 EVENT_NAME = 'Local\\TTSV-Stop-' + INSTANCE
+# Fresh browser profiles avoid restoring old app windows after an interrupted exit.
+PROFILE_ROOT = BASE / 'browser-data' / ('session-' + uuid.uuid4().hex)
 
 
 def message(text, error=False):
@@ -80,7 +84,7 @@ def browser_path():
 
 
 def browser_args(browser, url, monitor, settings=False):
-    profile = BASE / 'browser-data' / ('settings' if settings else 'display')
+    profile = PROFILE_ROOT / ('settings' if settings else 'display')
     args = [str(browser), '--user-data-dir=' + str(profile), '--no-first-run',
             '--no-default-browser-check',
             '--window-position=%s,%s' % (monitor['left']+20, monitor['top']+20)]
@@ -149,6 +153,33 @@ def open_settings():
         KERNEL.CloseHandle(event)
 
 
+def launch_browser(args):
+    return subprocess.Popen(args, creationflags=subprocess.CREATE_NO_WINDOW)
+
+
+def settings_window(process, browser, url, monitor):
+    if process is not None and process.poll() is None:
+        cbtype = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+        found = []
+        USER.GetWindowThreadProcessId.argtypes = [wintypes.HWND, ctypes.POINTER(wintypes.DWORD)]
+        USER.IsWindowVisible.argtypes = [wintypes.HWND]
+        USER.ShowWindow.argtypes = [wintypes.HWND, ctypes.c_int]
+        USER.SetForegroundWindow.argtypes = [wintypes.HWND]
+        def visit(hwnd, data):
+            pid = wintypes.DWORD()
+            USER.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+            if pid.value == process.pid and USER.IsWindowVisible(hwnd):
+                found.append(hwnd)
+            return True
+        callback = cbtype(visit)
+        USER.EnumWindows(callback, 0)
+        if found:
+            USER.ShowWindow(found[0], 9)
+            USER.SetForegroundWindow(found[0])
+            return process
+    return launch_browser(browser_args(browser, url, monitor, True))
+
+
 def run(no_browser=False, test_seconds=0):
     PRIVATE.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(filename=PRIVATE/'portable.log', level=logging.INFO,
@@ -168,11 +199,11 @@ def run(no_browser=False, test_seconds=0):
     http = app = None
     worker = None
     browsers = []
+    settings_process = None
     try:
         sys.path.insert(0, str(BASE/'app'))
         import server
         from http.server import ThreadingHTTPServer
-        first = not (PRIVATE/'config.json').exists()
         app = server.App(BASE/'app')
         http = ThreadingHTTPServer(('127.0.0.1', 0), server.Handler)
         http.app = app
@@ -185,18 +216,18 @@ def run(no_browser=False, test_seconds=0):
             screens = monitors()
             browser = browser_path()
             target = choose_monitor(screens)
-            process = subprocess.Popen(browser_args(browser, url+'/spiele.html', target))
+            process = launch_browser(browser_args(browser, url+'/spiele.html', target))
             browsers.append(process)
             place_window(process, target)
-            if first:
-                primary = next(m for m in screens if m['primary'])
-                browsers.append(subprocess.Popen(browser_args(browser, url+'/settings.html', primary, True)))
         logging.info('Anzeigetafel gestartet: %s', url)
         started = time.monotonic()
         while KERNEL.WaitForSingleObject(event, 250) == 258:
             if KERNEL.WaitForSingleObject(settings_event, 0) == 0 and not no_browser:
                 primary = next(m for m in monitors() if m['primary'])
-                browsers.append(subprocess.Popen(browser_args(browser_path(), url+'/settings.html', primary, True)))
+                previous = settings_process
+                settings_process = settings_window(settings_process, browser_path(), url+'/settings.html', primary)
+                if settings_process is not previous:
+                    browsers.append(settings_process)
             if test_seconds and time.monotonic()-started >= test_seconds:
                 break
     finally:
@@ -215,6 +246,10 @@ def run(no_browser=False, test_seconds=0):
                 subprocess.run(['taskkill.exe', '/PID', str(process.pid), '/T', '/F'],
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                                creationflags=subprocess.CREATE_NO_WINDOW, timeout=15)
+        # Only this run's generated browser cache may be removed.
+        cache = PROFILE_ROOT.resolve()
+        if cache.parent == (BASE/'browser-data').resolve() and cache.name.startswith('session-'):
+            shutil.rmtree(cache, ignore_errors=True)
         (PRIVATE/'portable-session.json').unlink(missing_ok=True)
         KERNEL.CloseHandle(settings_event)
         KERNEL.CloseHandle(event)

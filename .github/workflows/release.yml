@@ -2,6 +2,9 @@ name: Release
 on:
   release:
     types: [published]
+  push:
+    branches: [main]
+    paths: [VERSION]
 permissions:
   contents: read
 jobs:
@@ -16,7 +19,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: python -m pip install -r requirements.txt
-      - run: python -X utf8 -m unittest -v test_v2
+      - run: python -X utf8 -m unittest -v test_v2 test_windows_launcher
       - name: Build Linux
         if: runner.os == 'Linux'
         run: python tools/build_linux.py dist/anzeigetafel-linux.tar.gz
@@ -48,4 +51,10 @@ jobs:
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+        run: |
+          tag="v$(tr -d '[:space:]' < VERSION)"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" dist/* --clobber
+          else
+            gh release create "$tag" dist/* --target "$GITHUB_SHA" --title "Anzeigetafel $tag" --notes-file RELEASE-NOTES.md
+          fi

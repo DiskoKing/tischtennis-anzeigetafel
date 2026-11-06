@@ -1,6 +1,6 @@
 # Ein gemeinsamer Updatekanal
 
-GitHub ist die gemeinsame Quelle. main ist der Entwicklungsstand. Nur bewusst freigegebene v-Tags erzeugen Releases für die Praxis. Es gibt genau einen Updatekanal.
+GitHub ist die gemeinsame Quelle. main ist der Entwicklungsstand. Eine bewusste Änderung der Datei VERSION auf main erzeugt nach erfolgreichen Tests ein Release mit passendem v-Tag. Andere Änderungen auf main erzeugen kein Release. Es gibt genau einen Updatekanal.
 
 Die Pakete für Linux und Windows werden aus demselben Commit gebaut und enthalten dieselbe Anzeigelogik. Plattformstarter und Laufzeitpakete unterscheiden sich. Zugangsdaten und eigene Uploads bleiben lokal außerhalb der austauschbaren Programmdateien.
 
