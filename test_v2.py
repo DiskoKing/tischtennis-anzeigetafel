@@ -420,5 +420,46 @@ class ReaderProcessTests(unittest.TestCase):
             self.assertEqual(popen.call_args.kwargs['stdout'], server.subprocess.DEVNULL)
             process.terminate.assert_called_once()
 
+
+
+class ReaderConsoleTests(unittest.TestCase):
+    def status_function(self):
+        import ast, sys
+        from datetime import datetime
+        from unittest.mock import Mock
+        source=(Path(__file__).parent/'janova_reader.py').read_text(encoding='utf-8')
+        function=next(node for node in ast.parse(source).body if isinstance(node,ast.FunctionDef) and node.name=='print_status')
+        shell=Mock(side_effect=AssertionError('A status refresh must not launch a shell'))
+        context={'sys':sys,'os':Mock(system=shell),'datetime':datetime,'TEAM_SCORE_REFRESH_SECONDS':5}
+        exec(compile(ast.Module(body=[function],type_ignores=[]),'reader-status','exec'),context)
+        return context['print_status'],shell
+
+    def test_background_status_has_no_output_and_never_launches_shell(self):
+        import io
+        from contextlib import redirect_stdout
+        status,shell=self.status_function()
+        output=io.StringIO()
+        with redirect_stdout(output):
+            for _ in range(3): status([])
+        self.assertEqual(output.getvalue(),'')
+        shell.assert_not_called()
+
+    def test_pythonw_without_stdout_never_launches_shell(self):
+        from unittest.mock import patch
+        status,shell=self.status_function()
+        with patch('sys.stdout',None): status([])
+        shell.assert_not_called()
+
+    def test_interactive_status_uses_no_external_shell(self):
+        import io
+        from contextlib import redirect_stdout
+        class Terminal(io.StringIO):
+            def isatty(self): return True
+        status,shell=self.status_function()
+        output=Terminal()
+        with redirect_stdout(output): status([])
+        self.assertIn('TTSV LIVE READER',output.getvalue())
+        shell.assert_not_called()
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

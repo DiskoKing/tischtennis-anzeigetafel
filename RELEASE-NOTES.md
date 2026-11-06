@@ -1,3 +1,12 @@
+# Version 2.2.2 – flackerndes Konsolenfenster bei Janova behoben
+
+- Der Janova-Reader startete für seine alte Konsolenanzeige einmal pro Sekunde eine Shell zum Ausführen von cls. Dieser Aufruf ist vollständig entfernt.
+- Ohne interaktives Terminal wird keine Konsolen-Statusanzeige erzeugt; auch pythonw ohne stdout wird unterstützt.
+- Interaktive Statusausgabe nutzt Terminalsequenzen statt eines Shellprozesses.
+- Regressionstests decken Hintergrundbetrieb, pythonw und interaktiven Betrieb ab.
+
+Über Version & Updates aus 2.2.0 oder 2.2.1 installierbar. Windows-Starter und Laufzeit bleiben unverändert.
+
 # Version 2.2.1 – Original-Hintergrundbild offiziell enthalten
 
 - Das vom Ersteller generierte und zur Auslieferung freigegebene Originalbild aus Version 1 wird unverändert mitgeliefert.

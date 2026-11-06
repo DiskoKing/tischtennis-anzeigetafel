@@ -1,4 +1,5 @@
 import json
+import sys
 import os
 import time
 import urllib.request
@@ -1466,11 +1467,12 @@ def print_status(
     scoreboards
 ):
 
-    os.system(
-        "cls"
-        if os.name == "nt"
-        else "clear"
-    )
+    # A background reader has no interactive terminal. In particular, os.system
+    # would launch a new cmd.exe for every polling cycle on Windows.
+    if sys.stdout is None or not sys.stdout.isatty():
+        return
+    # Terminal escape sequences clear an interactive display without a child shell.
+    sys.stdout.write("\033[2J\033[H")
 
 
     print(
