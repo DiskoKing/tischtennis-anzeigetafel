@@ -1,0 +1,146 @@
+/* =========================================================
+   TTSV Scoreboard V2.9 – Modus "NUR GESAMTERGEBNIS"
+   Wird nur aktiv, wenn .arena die Klasse mode-total trägt.
+   ========================================================= */
+
+/* In diesem Modus gibt es ausschließlich die Summary-Scene. */
+.arena.mode-total .live-scene,
+.arena.mode-total .neutral-scene {
+  display: none !important;
+}
+
+.arena.mode-total .summary-scene {
+  display: grid !important;
+  position: absolute !important;
+  inset: 4vh 4vw !important;
+  z-index: 5 !important;
+  place-items: center !important;
+}
+
+/* Viel freie Fläche für das eigentliche Ergebnis. */
+.arena.mode-total .summary-content {
+  width: 96% !important;
+  height: 78vh !important;
+  display: grid !important;
+  grid-template-rows: auto auto 1fr !important;
+  justify-items: center !important;
+  align-items: center !important;
+  align-content: center !important;
+}
+
+.arena.mode-total .summary-logo-frame {
+  width: 8.2vw !important;
+  max-width: none !important;
+  margin: 0 0 1.2vh 0 !important;
+}
+
+.arena.mode-total .summary-competition {
+  margin: 0 0 2.5vh 0 !important;
+  font-size: 1.55vw !important;
+  letter-spacing: .32em !important;
+}
+
+/* Mannschaft | RIESENZAHL : RIESENZAHL | Mannschaft */
+.arena.mode-total .summary-scoreboard {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) 18vw 5vw 18vw minmax(0,1fr) !important;
+  gap: 1.1vw !important;
+  align-items: center !important;
+}
+
+.arena.mode-total .summary-team {
+  max-width: 24vw !important;
+  font-size: 4.4vw !important;
+  line-height: .90 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+.arena.mode-total .summary-team.home {
+  text-align: right !important;
+  justify-self: end !important;
+}
+.arena.mode-total .summary-team.away {
+  text-align: left !important;
+  justify-self: start !important;
+}
+
+.arena.mode-total .summary-score {
+  width: 18vw !important;
+  min-width: 18vw !important;
+  height: 34vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  border-radius: .75vw !important;
+  font-size: 21vw !important;
+  line-height: .72 !important;
+  color: #fff !important;
+}
+
+.arena.mode-total .summary-score.home-score {
+  background: linear-gradient(145deg,
+    color-mix(in srgb, var(--theme-score-tile) 88%, white 12%) 0%,
+    var(--theme-score-tile) 60%,
+    var(--theme-score-tile-dark) 100%) !important;
+  box-shadow: 0 0 1.5vw color-mix(in srgb, var(--theme-score-tile) 32%, transparent) !important;
+}
+
+.arena.mode-total .summary-score.away-score {
+  background: linear-gradient(145deg,#26313a 0%,#151c22 58%,#090d10 100%) !important;
+  box-shadow: 0 0 1.4vw rgba(255,255,255,.16) !important;
+}
+
+.arena.mode-total .summary-colon {
+  width: 5vw !important;
+  text-align: center !important;
+  font-size: 10vw !important;
+  line-height: 1 !important;
+}
+
+/* "Nur Gesamtergebnis" heißt wirklich nur Gesamtergebnis. */
+.arena.mode-total .point-call {
+  display: none !important;
+}
+.arena.mode-total.summary-scene.point-highlight,
+.arena.mode-total .summary-scene.point-highlight .summary-content {
+  animation: none !important;
+}
+.arena.mode-total .summary-scene.point-highlight::after {
+  display: none !important;
+}
+
+/* Zweiter kleiner Schalter unter dem Theme-Switcher. */
+.mode-switcher {
+  position: fixed;
+  top: 4.25vh;
+  right: .7vw;
+  z-index: 9999;
+  display: flex;
+  gap: .3vw;
+  padding: .28vw;
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: .45vw;
+  background: rgba(3,5,7,.72);
+  backdrop-filter: blur(6px);
+  opacity: .42;
+  transition: opacity .2s ease;
+  font-family: Arial,sans-serif;
+}
+.mode-switcher:hover { opacity: 1; }
+.mode-switcher button {
+  border: 0;
+  border-radius: .28vw;
+  padding: .34vw .58vw;
+  background: rgba(255,255,255,.09);
+  color: #fff;
+  font-size: .72vw;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mode-switcher button.active {
+  background: var(--theme-primary);
+}

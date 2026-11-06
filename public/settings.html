@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Anzeigetafel 2.0 · Einstellungen</title>
+  <link rel="stylesheet" href="v2.css">
+</head>
+<body class="settings-page">
+  <main class="settings-shell">
+    <header class="settings-header">
+      <div><p class="eyebrow">TISCHTENNIS · VERSION 2.0</p><h1>Euer Verein.<br>Eure Anzeigetafel.</h1>
+      <p class="intro">Design anpassen, Datenquelle verbinden und die richtige Begegnung auswählen.</p></div>
+      <a class="button secondary" href="spiele.html" target="_blank" rel="noopener">Anzeigetafel öffnen ↗</a>
+    </header>
+    <div class="settings-layout">
+      <form id="config-form" class="settings-form">
+        <section class="settings-card"><div class="card-heading"><span>01</span><h2>Verein & Design</h2></div>
+          <label>Vereinsname<input id="club-name" maxlength="80" placeholder="Mein Tischtennisverein"></label>
+          <label>Vereinswebsite<input id="club-website" maxlength="160" placeholder="www.mein-verein.de"></label>
+          <div class="two-columns">
+            <label>Akzentfarbe<input type="color" id="primary" value="#f10d1d"></label>
+            <label>Hintergrundfarbe<input type="color" id="background" value="#080b10"></label>
+          </div>
+          <details class="club-library"><summary>Vereinslogo aus Bibliothek wählen</summary>
+            <label>Verein suchen<input type="search" id="club-library-search" placeholder="z. B. Chemnitz" autocomplete="off"></label>
+            <p id="club-library-count" class="help" role="status">Bibliothek wird geladen …</p>
+            <div id="club-library-list" class="club-library-list"></div>
+            <p class="help">Logo auswählen und „Einstellungen speichern“ drücken. Es wird eine eigene Kopie gespeichert; Vereinsname und Farben bleiben unverändert. Der Katalog enthält euren internen Logo-Bestand.</p>
+          </details>
+          <label>Vereinslogo ersetzen<input type="file" id="club-logo" accept="image/png,image/jpeg,image/gif,image/webp"></label>
+          <p id="club-logo-state" class="help" role="status">Das gespeicherte Vereinslogo erscheint rechts in der Vorschau.</p>
+          <p class="help">PNG, JPEG, GIF oder WebP · maximal 10 MB. Ohne neue Datei bleibt das vorhandene Logo erhalten.</p>
+          <fieldset><legend>Hintergrund</legend>
+            <label>Darstellung<select id="background-mode"><option value="css">Farbe / CSS-Design</option><option value="original">Mitgelieferter Hintergrund</option><option value="custom">Eigenes Hintergrundbild</option></select></label>
+            <label id="background-dim-label" for="background-dim">Abdunklung: 58 %</label>
+            <input type="range" id="background-dim" min="0" max="100" step="1" value="58">
+            <label>Eigenes Hintergrundbild auswählen<input type="file" id="background-file" accept="image/png,image/jpeg,image/gif,image/webp"></label>
+            <p id="background-file-state" class="help">Noch kein eigenes Hintergrundbild gespeichert.</p>
+            <p class="help">Maximal 10 MB. Querformat, idealerweise 16:9. Das Bild füllt die Fläche und wird bei Bedarf an den Rändern beschnitten. Mit „Einstellungen speichern“ übernehmen.</p>
+          </fieldset>
+        </section>
+        <section class="settings-card"><div class="card-heading"><span>02</span><h2>Ansicht & Wechsel</h2></div>
+          <label>Anzeige<select id="display-mode"><option value="compact">Nur Kompaktansicht</option><option value="detail">Nur Detailansicht</option><option value="rotate" selected>Automatisch wechseln</option></select></label>
+          <label>Wechsel nach (Sekunden)<input type="number" id="display-seconds" min="1" max="3600" step="1" value="30" required></label>
+          <p class="help">Standard: alle 30 Sekunden wechseln. Kompakt zeigt den Mannschaftsstand, Detail die laufenden Paarungen. Der automatische Wechsel läuft bei aktiven Spielen.</p>
+        </section>
+        <section class="settings-card"><div class="card-heading"><span>03</span><h2>Datenquelle</h2></div>
+          <label>Aktive Datenquelle<select id="data-source"><option value="janova">Janova-Zählgeräte</option><option value="web4sport">TischtennisLive / Web4Sport</option></select></label>
+          <fieldset><legend>Janova</legend>
+            <label>Janova-E-Mail<input id="janova-email" type="email" autocomplete="username" maxlength="320"></label>
+            <label>Janova-Passwort<input id="janova-password" type="password" autocomplete="current-password" maxlength="4096"></label>
+            <button type="button" id="janova-login" class="secondary">Anmelden und ID übernehmen</button>
+            <p id="janova-login-status" class="help" role="status" aria-live="polite"></p>
+            <p class="help">Die Anmeldung ermittelt eure Konto-ID. Passwort und Sitzung werden nicht gespeichert. Anschließend „Einstellungen speichern“ wählen.</p>
+            <label>Referee-ID oder Janova-Live-Link<input id="janova-id" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="ID oder https://janova.app/live/stream?id=…"></label>
+            <p class="help">Auf janova.app/live/urls einen Live-Link kopieren und hier einfügen. Beim Speichern wird die ID aus „id=“ übernommen; zusätzliche Link-Parameter werden nicht gespeichert. Eine vorhandene Referee-ID funktioniert weiterhin.</p>
+          </fieldset>
+          <fieldset><legend>Web4Sport</legend>
+            <label>Benutzername<input id="web-username" maxlength="256" autocomplete="username"></label>
+            <label>Passwort<input type="password" id="web-password" maxlength="256" autocomplete="new-password"></label>
+            <label class="check"><input type="checkbox" id="clear-password">Gespeichertes Web4Sport-Passwort entfernen</label>
+            <p class="help">Ein leeres Passwortfeld behält das gespeicherte Passwort bei. Die Zugangsdaten werden ausschließlich auf diesem NUC gespeichert.</p>
+          </fieldset>
+        </section>
+        <div class="save-bar"><button id="save" type="submit">Einstellungen speichern</button><p id="save-status" role="status" aria-live="polite"></p></div>
+      </form>
+      <aside class="settings-side">
+        <section class="settings-card"><div class="card-heading"><span>↗</span><h2>Designvorschau</h2></div>
+          <div id="design-preview" class="design-preview"><img id="logo-preview" alt="Vereinslogo"><strong id="preview-name">Mein Verein</strong>
+            <div class="preview-result"><b id="preview-score">3</b><span>:</span><b>2</b></div><small id="preview-website"></small></div>
+          <p class="help">Beispielstand zur Vorschau. Die Anzeigetafel zeigt die Daten der gewählten Quelle.</p>
+        </section>
+        <section class="settings-card"><div class="card-heading"><span>04</span><h2>Sponsoren</h2></div>
+          <label class="check"><input type="checkbox" id="sponsors-enabled">Sponsorenlogos auf der Anzeigetafel anzeigen</label>
+          <label>Einleitender Text<input type="text" id="sponsors-intro-text" maxlength="100" value="unterstützt von:" placeholder="unterstützt von:" form="config-form"></label>
+          <p class="help">Steht vor dem Sponsorenlogo. Leer lassen, um nur das Logo zu zeigen.</p>
+          <label>Logo wechseln nach (Sekunden)<input type="number" id="sponsors-seconds" min="1" max="3600" step="1" value="10" form="config-form" required></label>
+          <p class="help">Mehrere Logos wechseln automatisch. Ein einzelnes Logo bleibt stehen. Nur Bilder, keine Links.</p>
+          <label>Logos hinzufügen<input type="file" id="sponsors-files" accept="image/png,image/jpeg,image/gif,image/webp" multiple></label>
+          <p class="help">PNG, JPEG, GIF oder WebP · maximal 10 MB je Logo · bis zu 20 Logos. Ausgewählte Logos, Ein/Aus und Wechselzeit mit „Einstellungen speichern“ übernehmen.</p>
+          <p id="sponsor-status" class="help" role="status" aria-live="polite"></p>
+          <div id="sponsor-logos"></div><p id="sponsors-empty" class="help">Noch keine Sponsorenlogos hinterlegt.</p>
+        </section>
+        <section class="settings-card"><div class="card-heading"><span>05</span><h2>Verbindung & Spielauswahl</h2></div>
+          <p id="reader-status" class="reader-status" role="status">Verbindung wird geprüft …</p>
+          <p class="help">Bei mehreren gestarteten Begegnungen wählst du hier oder direkt auf der Anzeige das gewünschte Spiel. Heutige Spiele werden bevorzugt.</p>
+          <div id="games" class="games-list"></div><p id="games-empty" class="help">Noch keine gestarteten Web4Sport-Spiele erkannt.</p>
+          <div class="side-actions"><button type="button" class="secondary" id="automatic">Spielauswahl zurücksetzen</button><button type="button" class="secondary" id="reconnect">Reader neu verbinden</button></div>
+        </section>
+      </aside>
+    </div>
+    <footer class="settings-footer">Anzeigetafel 2.0 · Eigene Konfiguration und Daten · Zugriff lokal oder per SSH-Tunnel</footer>
+  </main>
+  <script src="v2.js"></script>
+</body>
+</html>

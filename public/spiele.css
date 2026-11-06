@@ -1,0 +1,2177 @@
+:root {
+  --red: #f10d1d;
+  --red2: #850008;
+  --white: #fafafa;
+  --silver: #dbe3e9;
+  --panel: rgba(10,12,14,.91);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: white;
+  font-family: "Arial Narrow", "Roboto Condensed", "Segoe UI", Arial, sans-serif;
+}
+
+.arena {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  padding: 4vh 4vw;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 35%, color-mix(in srgb, color-mix(in srgb, var(--theme-primary) 91%, black) 16%, transparent), transparent 26%),
+    radial-gradient(circle at 80% 70%, rgba(210,225,235,.06), transparent 28%),
+    linear-gradient(116deg, #080001 0%, #030405 48%, #080a0c 100%);
+}
+
+.arena::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .22;
+  background: radial-gradient(circle at center, rgba(255,255,255,.05) 0 1px, transparent 1.2px);
+  background-size: 6px 6px;
+}
+
+.frame-glow {
+  position: absolute;
+  inset: .7vh .35vw;
+  border: clamp(2px,.22vw,5px) solid var(--red);
+  border-radius: 1.7vw;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.7), 0 0 15px color-mix(in srgb, var(--theme-primary) 38%, transparent);
+  z-index: 30;
+  pointer-events: none;
+}
+
+.red-slashes, .silver-slashes {
+  position: absolute;
+  transform: skewX(-35deg);
+  pointer-events: none;
+}
+.red-slashes {
+  left: -15vw; top: -18vh; width: 40vw; height: 75vh; opacity: .55;
+  background: repeating-linear-gradient(90deg, color-mix(in srgb, color-mix(in srgb, var(--theme-primary) 54%, black) 12%, transparent) 0 1.5vw, color-mix(in srgb, var(--theme-primary) 70%, transparent) 1.55vw 1.7vw, transparent 1.75vw 2.8vw);
+}
+.silver-slashes {
+  right: -18vw; bottom: -8vh; width: 42vw; height: 70vh; opacity: .32;
+  background: repeating-linear-gradient(90deg, rgba(150,165,175,.1) 0 1.2vw, rgba(225,235,242,.5) 1.25vw 1.4vw, transparent 1.45vw 2.5vw);
+}
+
+.topbar {
+  position: relative;
+  z-index: 5;
+  height: 24vh;
+  display: grid;
+  grid-template-columns: 13vw 1fr;
+  gap: 2.2vw;
+  align-items: center;
+}
+
+.logo-frame {
+  width: 12vw;
+  height: 12vw;
+  max-height: 20vh;
+  max-width: 20vh;
+  padding: .35vw;
+  border: 2px solid rgba(255,255,255,.88);
+  border-radius: .8vw;
+  background: rgba(4,4,5,.84);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-primary) 90%, transparent), 0 0 18px color-mix(in srgb, var(--theme-primary) 42%, transparent);
+  overflow: hidden;
+}
+
+.logo-frame img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: .5vw;
+}
+
+.match-head {
+  min-width: 0;
+}
+
+.competition {
+  margin-bottom: 1.3vh;
+  font-size: clamp(14px,1.35vw,28px);
+  font-weight: 800;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: #d8dee3;
+}
+
+.teamline {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto auto auto minmax(0,1fr);
+  align-items: center;
+  gap: 1.2vw;
+}
+
+.team {
+  min-width: 0;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(30px,3.4vw,72px);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+.team.home { text-align: right; }
+.team.away { text-align: left; }
+
+.total {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(60px,7.2vw,145px);
+  line-height: .8;
+  font-variant-numeric: tabular-nums;
+}
+.home-total {
+  color: white;
+  text-shadow:
+    0 0 5px rgba(255,255,255,.95),
+    0 0 18px rgba(255,255,255,.55),
+    0 0 42px color-mix(in srgb, var(--theme-primary) 28%, transparent);
+}
+
+.away-total {
+  color: white;
+  text-shadow:
+    0 0 5px rgba(255,255,255,.9),
+    0 0 18px rgba(255,255,255,.38),
+    0 0 42px rgba(255,255,255,.16);
+}
+.total-colon {
+  font-family: Impact, sans-serif;
+  font-size: clamp(42px,4.8vw,96px);
+}
+
+.games {
+  position: relative;
+  z-index: 5;
+  height: 65vh;
+  display: grid;
+  gap: 2vw;
+  align-items: stretch;
+}
+
+.games.count-1 { grid-template-columns: minmax(0, 1fr); padding: 0 18vw; }
+.games.count-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.games.count-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.game-card {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto 1fr;
+  overflow: hidden;
+  border: 2px solid rgba(219,227,233,.45);
+  border-radius: 1.2vw;
+  background: linear-gradient(150deg, rgba(20,23,26,.96), rgba(4,5,6,.96));
+  box-shadow: 0 0 22px rgba(0,0,0,.6), inset 0 0 25px rgba(255,255,255,.025);
+}
+
+.game-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, color-mix(in srgb, var(--theme-primary) 7%, transparent), transparent 35%, transparent 72%, rgba(220,230,238,.035));
+}
+
+.card-head {
+  position: relative;
+  z-index: 2;
+  min-height: 7vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1vh 1.5vw;
+  border-bottom: 1px solid rgba(255,255,255,.13);
+  background: linear-gradient(90deg, color-mix(in srgb, color-mix(in srgb, var(--theme-primary) 50%, black) 65%, transparent), rgba(20,20,22,.5));
+}
+
+.table-label {
+  font-weight: 900;
+  font-size: clamp(16px,1.6vw,31px);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.type-label {
+  font-size: clamp(12px,1vw,20px);
+  font-weight: 800;
+  letter-spacing: .18em;
+  color: #d6dde2;
+  text-transform: uppercase;
+}
+
+.side {
+  position: relative;
+  z-index: 2;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+  gap: 2vw;
+  padding: 1.45vh 1.6vw;
+}
+
+.side::after {
+  content: "";
+  position: absolute;
+  left: 1.5vw;
+  right: 1.5vw;
+  bottom: 0;
+  height: 1px;
+  opacity: .45;
+  background: linear-gradient(90deg, var(--red), rgba(255,255,255,.35), transparent 88%);
+}
+
+.side.away-side::after {
+  display: none;
+}
+
+.side.home-side {
+  border-left: 3px solid color-mix(in srgb, var(--theme-primary) 72%, transparent);
+  background: linear-gradient(90deg, color-mix(in srgb, color-mix(in srgb, var(--theme-primary) 44%, black) 18%, transparent), transparent);
+}
+
+.side.away-side {
+  border-right: 3px solid rgba(220,230,238,.25);
+  background: linear-gradient(90deg, transparent, rgba(220,230,238,.035));
+}
+
+.player-block { min-width: 0; }
+
+.player-name {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(27px,2.55vw,54px);
+  line-height: 1.04;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.players-double .player-name {
+  font-size: clamp(22px,2.05vw,43px);
+}
+
+.serve {
+  display: inline-flex;
+  align-items: center;
+  gap: .55em;
+  margin-top: 1vh;
+  font-size: clamp(12px,1vw,20px);
+  font-weight: 800;
+  letter-spacing: .12em;
+  color: #cbd3d9;
+  text-transform: uppercase;
+}
+.serve-dot {
+  width: .75em;
+  height: .75em;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 0 9px white;
+}
+.serve.hidden { visibility: hidden; }
+
+.numbers {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  width: min(18vw, 300px);
+  min-width: 220px;
+  gap: 0;
+  padding: .4vh 0 .8vh;
+}
+
+.numbers::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  bottom: 10%;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(220,227,233,.46) 22%,
+    rgba(220,227,233,.46) 78%,
+    transparent
+  );
+}
+
+.metric {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  align-items: center;
+  padding: 0 .7vw;
+}
+
+.metric-label {
+  display: block;
+  margin-bottom: .4vh;
+  font-size: clamp(11px,.88vw,18px);
+  font-weight: 800;
+  letter-spacing: .14em;
+  color: #aeb9c0;
+  text-transform: uppercase;
+}
+
+.sets,
+.points {
+  display: flex;
+  width: 100%;
+  min-height: 10vh;
+  align-items: center;
+  justify-content: center;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(78px,7.7vw,158px);
+  font-variant-numeric: tabular-nums;
+  line-height: .78;
+  letter-spacing: -.025em;
+}
+
+.sets {
+  color: #e4eaee;
+  text-shadow:
+    0 0 8px rgba(255,255,255,.10);
+}
+
+.home-side .points {
+  color: white;
+  text-shadow:
+    0 0 7px rgba(255,255,255,.16);
+}
+
+.away-side .points {
+  color: white;
+  text-shadow:
+    0 0 7px rgba(255,255,255,.16);
+}
+
+/* Orientierung ohne Kästen:
+   kurze Akzentlinie direkt unter jeder Zahlengruppe */
+.metric::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: -.3vh;
+  height: 2px;
+  opacity: .55;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(220,227,233,.42),
+    transparent
+  );
+}
+
+.home-side .metric:last-child::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.48),
+    transparent
+  );
+}
+
+.away-side .metric:last-child::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.48),
+    transparent
+  );
+}
+
+.vs-line {
+  position: relative;
+  z-index: 3;
+  height: 2px;
+  margin: 0 1.4vw;
+  background:
+    linear-gradient(
+      90deg,
+      var(--red) 0%,
+      color-mix(in srgb, var(--theme-primary) 55%, transparent) 35%,
+      rgba(255,255,255,.70) 50%,
+      rgba(220,227,233,.22) 72%,
+      transparent 100%
+    );
+  box-shadow: 0 0 6px color-mix(in srgb, var(--theme-primary) 12%, transparent);
+}
+
+.vs-line::after {
+  content: "VS";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: .16em .55em;
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 999px;
+  background: #08090a;
+  color: #aeb8bf;
+  font-size: clamp(9px,.65vw,13px);
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.status-badge {
+  position: absolute;
+  right: 1.6vw;
+  bottom: 1.7vh;
+  z-index: 40;
+  padding: .42rem .68rem;
+  border-radius: .4rem;
+  font-size: 12px;
+  color: #c7ced5;
+  background: rgba(0,0,0,.58);
+  opacity: .72;
+}
+.status-badge.ok {
+  opacity: 0;
+  transition: opacity 1.2s ease 1.2s;
+}
+
+.points.changed,
+.sets.changed,
+.home-total.changed,
+.away-total.changed,
+.summary-score.changed {
+  animation: value-change .65s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes value-change {
+  0%   { transform: scale(1); color: white; filter: brightness(1); }
+  32%  { transform: scale(1.12); color: var(--red); filter: brightness(1.55); }
+  70%  { transform: scale(1.045); color: var(--red); filter: brightness(1.2); }
+  100% { transform: scale(1); color: white; filter: brightness(1); }
+}
+
+
+/* ---------- Satzball / Matchball ---------- */
+.game-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.ball-call {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 12;
+  display: grid;
+  min-width: 52%;
+  max-width: 82%;
+  justify-items: center;
+  gap: .25em;
+  padding: 1.05vh 1.7vw 1.2vh;
+  border: 1px solid rgba(255,255,255,.52);
+  border-left: 5px solid var(--red);
+  border-radius: .55vw;
+  background: rgba(5,6,7,.94);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--theme-primary) 22%, transparent), 0 0 24px color-mix(in srgb, var(--theme-primary) 18%, transparent);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.96);
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 180ms ease, transform 220ms ease, visibility 0s linear 220ms;
+}
+
+.ball-call.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  visibility: visible;
+  transition: opacity 180ms ease, transform 220ms ease, visibility 0s linear 0s;
+}
+
+.ball-kind {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(30px,3.1vw,64px);
+  line-height: .95;
+  letter-spacing: .09em;
+  color: white;
+  text-transform: uppercase;
+}
+
+.ball-team {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: clamp(12px,1.1vw,22px);
+  font-weight: 900;
+  letter-spacing: .15em;
+  color: #e2e7ea;
+  text-transform: uppercase;
+}
+
+.ball-call.matchball {
+  border-left-width: 7px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--theme-primary) 35%, transparent), 0 0 30px color-mix(in srgb, var(--theme-primary) 25%, transparent);
+}
+
+.ball-call.ball-enter {
+  animation: ball-call-enter 1.05s cubic-bezier(.18,.82,.24,1);
+}
+
+.ball-call.ball-enter::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  animation: ball-call-glow 1.05s ease-out;
+}
+
+@keyframes ball-call-enter {
+  0%   { transform: translate(-50%, -50%) scale(.90); filter: brightness(.82); }
+  38%  { transform: translate(-50%, -50%) scale(1.045); filter: brightness(1.35); }
+  100% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
+}
+
+@keyframes ball-call-glow {
+  0%   { box-shadow: inset 0 0 40px color-mix(in srgb, var(--theme-primary) 48%, transparent), 0 0 38px color-mix(in srgb, var(--theme-primary) 42%, transparent); opacity: 1; }
+  100% { box-shadow: inset 0 0 8px color-mix(in srgb, var(--theme-primary) 0%, transparent), 0 0 8px color-mix(in srgb, var(--theme-primary) 0%, transparent); opacity: 0; }
+}
+
+
+/* ---------- Szenen-Regie ---------- */
+.scene {
+  position: absolute;
+  inset: 4vh 4vw;
+  z-index: 5;
+  opacity: 0;
+  transform: scale(.992);
+  filter: brightness(.72);
+  pointer-events: none;
+  visibility: hidden;
+  transition:
+    opacity 420ms ease,
+    transform 420ms cubic-bezier(.22,.75,.22,1),
+    filter 420ms ease,
+    visibility 0s linear 420ms;
+}
+
+.scene.is-visible {
+  opacity: 1;
+  transform: scale(1);
+  filter: brightness(1);
+  pointer-events: auto;
+  visibility: visible;
+  transition:
+    opacity 420ms ease,
+    transform 420ms cubic-bezier(.22,.75,.22,1),
+    filter 420ms ease,
+    visibility 0s linear 0s;
+}
+
+/* Zustand 1: bewusst ruhig, keine Namen, keine Nullen, kein Text */
+.neutral-scene {
+  display: grid;
+  place-items: center;
+}
+
+.neutral-logo-frame {
+  width: min(18vw, 260px);
+  aspect-ratio: 1;
+  padding: .5vw;
+  border: 2px solid rgba(255,255,255,.82);
+  border-radius: 1.2vw;
+  background: rgba(4,4,5,.78);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--theme-primary) 82%, transparent),
+    0 0 34px color-mix(in srgb, var(--theme-primary) 26%, transparent);
+  overflow: hidden;
+}
+
+.neutral-logo-frame img,
+.summary-logo-frame img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: .7vw;
+}
+
+/* Zustand 2 und 4: großer Mannschaftsstand */
+.summary-scene {
+  display: grid;
+  place-items: center;
+}
+
+.summary-content {
+  width: 92%;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+}
+
+.summary-logo-frame {
+  width: min(10vw, 165px);
+  aspect-ratio: 1;
+  margin-bottom: 2.2vh;
+  padding: .35vw;
+  border: 2px solid rgba(255,255,255,.84);
+  border-radius: .9vw;
+  background: rgba(4,4,5,.82);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme-primary) 86%, transparent), 0 0 20px color-mix(in srgb, var(--theme-primary) 32%, transparent);
+  overflow: hidden;
+}
+
+.summary-competition {
+  margin-bottom: 4vh;
+  font-size: clamp(15px,1.45vw,30px);
+  font-weight: 800;
+  letter-spacing: .34em;
+  color: #d8dee3;
+  text-transform: uppercase;
+}
+
+.summary-scoreboard {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto auto auto minmax(0,1fr);
+  align-items: center;
+  gap: 1.6vw;
+}
+
+.summary-team {
+  min-width: 0;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(42px,4.8vw,100px);
+  line-height: .95;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+.summary-team.home { text-align: right; }
+.summary-team.away { text-align: left; }
+
+.summary-score {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(120px,15vw,310px);
+  line-height: .72;
+  font-variant-numeric: tabular-nums;
+}
+.summary-score.home-score {
+  color: white;
+  text-shadow: 0 0 8px rgba(255,255,255,.85), 0 0 38px rgba(255,255,255,.22);
+}
+.summary-score.away-score {
+  color: white;
+  text-shadow: 0 0 8px rgba(255,255,255,.85), 0 0 38px rgba(255,255,255,.22);
+}
+.summary-colon {
+  font-family: Impact, sans-serif;
+  font-size: clamp(80px,8vw,170px);
+  opacity: .9;
+}
+
+.point-call {
+  height: 0;
+  margin-top: 0;
+  opacity: 0;
+  overflow: hidden;
+  font-size: clamp(18px,2vw,40px);
+  font-weight: 900;
+  letter-spacing: .3em;
+  color: #edf1f4;
+  text-transform: uppercase;
+  transition: opacity 220ms ease, height 220ms ease, margin 220ms ease;
+}
+.point-call.show {
+  height: 1.3em;
+  margin-top: 4vh;
+  opacity: .9;
+}
+
+.summary-scene.point-highlight .summary-content {
+  animation: team-score-punch 780ms cubic-bezier(.16,.82,.24,1);
+}
+.summary-scene.point-highlight::after {
+  content: "";
+  position: absolute;
+  inset: 5%;
+  border-radius: 2vw;
+  pointer-events: none;
+  animation: score-glow 1.2s ease-out;
+}
+
+@keyframes team-score-punch {
+  0%   { transform: scale(.94); filter: brightness(.78); }
+  45%  { transform: scale(1.035); filter: brightness(1.42); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+@keyframes score-glow {
+  0%   { box-shadow: inset 0 0 100px color-mix(in srgb, var(--theme-primary) 55%, transparent), 0 0 70px color-mix(in srgb, var(--theme-primary) 28%, transparent); opacity: 1; }
+  100% { box-shadow: inset 0 0 20px color-mix(in srgb, var(--theme-primary) 0%, transparent), 0 0 20px color-mix(in srgb, var(--theme-primary) 0%, transparent); opacity: 0; }
+}
+
+/* Zustand 3: bestehende Live-Anzeige */
+.live-scene {
+  display: grid;
+  grid-template-rows: 24vh 65vh;
+}
+.live-scene .topbar,
+.live-scene .games {
+  height: auto;
+}
+
+.game-card {
+  transition: opacity 260ms ease, transform 460ms cubic-bezier(.22,.75,.22,1);
+}
+.game-card.card-enter {
+  opacity: 0;
+  transform: scale(.94);
+}
+.game-card.card-leave {
+  opacity: 0;
+  transform: scale(.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene,
+  .scene.is-visible,
+  .game-card,
+  .point-call {
+    transition-duration: 1ms !important;
+  }
+  .summary-scene.point-highlight .summary-content,
+  .summary-scene.point-highlight::after,
+  .ball-call.ball-enter,
+  .ball-call.ball-enter::after,
+  .points.changed,
+  .sets.changed,
+  .home-total.changed,
+  .away-total.changed,
+  .summary-score.changed {
+    animation-duration: 1ms !important;
+  }
+}
+
+/* ==========================================================
+   TTSV Sportziffern FIX 2026-08-11
+   Basis: letzter funktionierender Autofit/Satzball-Stand.
+   SÄTZE und PUNKTE bewusst identisch groß.
+   ========================================================== */
+
+/* Live-Karten: gleiche Größe, gleiche Stärke, kein Größen-Hickhack */
+.sets,
+.points,
+.home-side .points,
+.away-side .points {
+  font-family: Impact, "Arial Black", Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: clamp(78px, 7.7vw, 158px);
+  font-weight: 900;
+  font-stretch: condensed;
+  font-variant-numeric: tabular-nums;
+  line-height: .78;
+  letter-spacing: -.025em;
+  color: var(--white);
+  text-shadow: 0 0 5px rgba(255,255,255,.16);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Mannschaftsstand oben: kräftig, aber innerhalb des vorhandenen Layouts */
+.total,
+.total-colon {
+  font-family: Impact, "Arial Black", Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-weight: 900;
+  font-stretch: condensed;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Großer Gesamtstand ebenfalls kräftig, bestehende Größen bleiben erhalten */
+.summary-score,
+.summary-colon {
+  font-family: Impact, "Arial Black", Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-weight: 900;
+  font-stretch: condensed;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Rot bleibt ausschließlich Ereignisfarbe. */
+.sets.changed,
+.points.changed,
+.home-total.changed,
+.away-total.changed,
+.summary-score.changed {
+  color: var(--red) !important;
+}
+
+/* ==========================================================
+   V2.2 CLEAN TV LAYOUT
+   Fokus: weniger Linien, mehr Nutzfläche, größere Spielstände.
+   ========================================================== */
+
+/* Mehr echte Nutzfläche im Live-Modus */
+.live-scene {
+  grid-template-rows: 22vh 68vh;
+}
+
+.topbar {
+  height: auto;
+  grid-template-columns: 11vw 1fr;
+  gap: 2vw;
+}
+
+.logo-frame {
+  width: 10vw;
+  height: 10vw;
+  max-width: 17vh;
+  max-height: 17vh;
+}
+
+.competition {
+  margin-bottom: .7vh;
+}
+
+/* Karten ruhiger und großzügiger */
+.games {
+  gap: 1.5vw;
+}
+
+.game-card {
+  grid-template-rows: 7vh 1fr 1px 1fr;
+  border: 1px solid rgba(219,227,233,.34);
+  border-radius: 1vw;
+  box-shadow: 0 10px 28px rgba(0,0,0,.38);
+}
+
+.card-head {
+  min-height: 7vh;
+  padding: .8vh 1.35vw;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  background: linear-gradient(90deg, color-mix(in srgb, color-mix(in srgb, var(--theme-primary) 60%, black) 76%, transparent), rgba(34,13,16,.72) 52%, rgba(15,16,18,.45));
+}
+
+.table-label {
+  font-size: clamp(24px,2.15vw,44px);
+  letter-spacing: .055em;
+}
+
+.type-label {
+  font-size: clamp(12px,.95vw,19px);
+}
+
+/* Spielerzeilen: mehr Luft für Namen und Zahlen */
+.side {
+  grid-template-columns: minmax(0,1fr) minmax(230px, 19vw);
+  gap: 1.1vw;
+  padding: 1.15vh 1.35vw;
+}
+
+.side.home-side,
+.side.away-side {
+  border-left: 0;
+  border-right: 0;
+}
+
+.side.home-side {
+  background: linear-gradient(90deg, color-mix(in srgb, color-mix(in srgb, var(--theme-primary) 44%, black) 14%, transparent), transparent 65%);
+}
+
+.side.away-side {
+  background: transparent;
+}
+
+/* Die zusätzliche Verlaufslinie pro Spielerzeile entfällt. */
+.side::after {
+  display: none;
+}
+
+.player-name {
+  font-size: clamp(32px,2.85vw,58px);
+  line-height: 1.02;
+}
+
+.players-double .player-name {
+  font-size: clamp(27px,2.35vw,48px);
+}
+
+.serve {
+  margin-top: .75vh;
+  font-size: clamp(12px,1vw,20px);
+}
+
+/* Keine viermal wiederholten Beschriftungen. Die visuelle Hierarchie
+   macht links=Sätze und rechts=Punkte deutlich: Sätze kompakter,
+   aktuelle Punkte dominant. */
+.metric-label {
+  display: none;
+}
+
+.numbers {
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: .72fr 1fr;
+  padding: 0;
+}
+
+/* Nur eine sehr dezente Trennung zwischen Satz- und Punktzahl. */
+.numbers::before {
+  top: 16%;
+  bottom: 16%;
+  left: 42%;
+  opacity: .38;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 .25vw;
+}
+
+/* Unterstreichungen unter jeder Zahl verschwinden. */
+.metric::after {
+  display: none;
+}
+
+.sets,
+.points,
+.home-side .points,
+.away-side .points {
+  min-height: 0;
+  line-height: .78;
+}
+
+.sets {
+  font-size: clamp(88px,7.1vw,146px);
+  color: #d8dde1;
+  opacity: .94;
+}
+
+.points,
+.home-side .points,
+.away-side .points {
+  font-size: clamp(112px,9.4vw,190px);
+  color: var(--white);
+}
+
+/* Zwischen den Spielern nur noch eine feine VS-Trennung. */
+.vs-line {
+  height: 1px;
+  margin: 0 1.35vw;
+  opacity: .62;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--theme-primary) 72%, transparent) 18%, rgba(255,255,255,.28) 50%, transparent 82%);
+  box-shadow: none;
+}
+
+.vs-line::after {
+  padding: .1em .48em;
+  border-color: rgba(255,255,255,.16);
+  font-size: clamp(8px,.58vw,12px);
+  opacity: .75;
+}
+
+/* Zwei Tische: bewusst TV-groß. */
+.games.count-2 .side {
+  grid-template-columns: minmax(0,1fr) minmax(245px, 20vw);
+}
+.games.count-2 .player-name {
+  font-size: clamp(34px,2.9vw,60px);
+}
+.games.count-2 .players-double .player-name {
+  font-size: clamp(28px,2.4vw,49px);
+}
+.games.count-2 .sets {
+  font-size: clamp(92px,7.2vw,148px);
+}
+.games.count-2 .points {
+  font-size: clamp(120px,9.6vw,196px);
+}
+
+/* Ein Tisch darf richtig eskalieren. */
+.games.count-1 {
+  padding: 0 12vw;
+}
+.games.count-1 .side {
+  grid-template-columns: minmax(0,1fr) minmax(330px, 25vw);
+}
+.games.count-1 .player-name {
+  font-size: clamp(44px,4vw,82px);
+}
+.games.count-1 .players-double .player-name {
+  font-size: clamp(36px,3.3vw,68px);
+}
+.games.count-1 .sets {
+  font-size: clamp(120px,10vw,205px);
+}
+.games.count-1 .points {
+  font-size: clamp(150px,12vw,245px);
+}
+
+/* Drei Tische bleiben kompakter, aber weiterhin lesbar. */
+.games.count-3 {
+  gap: 1vw;
+}
+.games.count-3 .card-head {
+  padding-left: 1vw;
+  padding-right: 1vw;
+}
+.games.count-3 .table-label {
+  font-size: clamp(19px,1.55vw,31px);
+}
+.games.count-3 .side {
+  grid-template-columns: minmax(0,1fr) minmax(155px, 13vw);
+  gap: .5vw;
+  padding-left: .9vw;
+  padding-right: .9vw;
+}
+.games.count-3 .player-name {
+  font-size: clamp(24px,1.9vw,38px);
+}
+.games.count-3 .players-double .player-name {
+  font-size: clamp(20px,1.55vw,31px);
+}
+.games.count-3 .sets {
+  font-size: clamp(68px,5.1vw,104px);
+}
+.games.count-3 .points {
+  font-size: clamp(84px,6.3vw,128px);
+}
+
+
+/* =========================================================
+   V2.3 – HALLENMODUS / EXTREME READABILITY
+   16:9 viewport-basiert: skaliert proportional von Full HD
+   über 4K bis Beamer/LED-Wand. Keine px-Maxima für Kerndaten.
+   ========================================================= */
+
+.arena {
+  padding: 2.8vh 3.5vw;
+}
+
+.topbar {
+  height: 21.5vh;
+  grid-template-columns: 10.5vw minmax(0, 1fr);
+  gap: 1.6vw;
+}
+
+.logo-frame {
+  width: 9.2vw;
+  height: 9.2vw;
+  max-width: none;
+  max-height: none;
+}
+
+.competition {
+  font-size: 1.28vw;
+  margin-bottom: .55vh;
+}
+
+.team {
+  font-size: 3.25vw;
+}
+
+.total {
+  font-size: 7.4vw;
+}
+
+.total-colon {
+  font-size: 4.8vw;
+}
+
+.games {
+  height: 70vh;
+  gap: 1.15vw;
+}
+
+.game-card {
+  grid-template-rows: 7.2vh 1fr 1px 1fr;
+  border-radius: .8vw;
+}
+
+.card-head {
+  min-height: 7.2vh;
+  padding: .7vh 1.25vw;
+}
+
+.table-label {
+  font-size: 2.25vw;
+}
+
+.type-label {
+  font-size: 1vw;
+}
+
+.side {
+  padding: .8vh 1.2vw;
+  gap: .7vw;
+}
+
+.player-name {
+  font-size: 3.15vw;
+}
+
+.players-double .player-name {
+  font-size: 2.55vw;
+}
+
+.serve {
+  margin-top: .55vh;
+  font-size: 1.08vw;
+}
+
+.serve-dot {
+  width: .82em;
+  height: .82em;
+}
+
+/* VS-Badge verschwindet. Nur eine hauchdünne Mitteltrennung bleibt. */
+.vs-line {
+  margin: 0 1.2vw;
+  opacity: .34;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--theme-primary) 55%, transparent) 16%, rgba(255,255,255,.20) 50%, transparent 84%);
+}
+.vs-line::after {
+  display: none;
+}
+
+/* Zahlen bekommen fast die halbe Kartenbreite. */
+.numbers {
+  grid-template-columns: .72fr 1fr;
+}
+
+.numbers::before {
+  left: 42%;
+  top: 13%;
+  bottom: 13%;
+  opacity: .25;
+}
+
+/* Mini-Legende nur EINMAL pro Tisch, über der oberen Zahlenzeile. */
+.home-side .metric {
+  position: relative;
+}
+.home-side .metric::before {
+  position: absolute;
+  top: -1.8vh;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(220,227,233,.62);
+  font-family: "Arial Narrow", "Roboto Condensed", "Segoe UI", Arial, sans-serif;
+  font-size: .72vw;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+.home-side .metric:first-child::before { content: "S"; }
+.home-side .metric:last-child::before  { content: "P"; }
+
+/* ---------- 2 TISCHE: Hauptansicht ---------- */
+.games.count-2 .side {
+  grid-template-columns: minmax(0, 1fr) 21.5vw;
+  padding-left: 1.35vw;
+  padding-right: 1.05vw;
+}
+
+.games.count-2 .player-name {
+  font-size: 3.25vw;
+}
+
+.games.count-2 .players-double .player-name {
+  font-size: 2.62vw;
+}
+
+.games.count-2 .sets {
+  font-size: 7.8vw;
+}
+
+.games.count-2 .points {
+  font-size: 11.1vw;
+}
+
+/* ---------- 1 TISCH: maximal ---------- */
+.games.count-1 {
+  padding: 0 9vw;
+}
+
+.games.count-1 .side {
+  grid-template-columns: minmax(0, 1fr) 29vw;
+  padding-left: 2vw;
+  padding-right: 1.6vw;
+}
+
+.games.count-1 .player-name {
+  font-size: 4.6vw;
+}
+
+.games.count-1 .players-double .player-name {
+  font-size: 3.75vw;
+}
+
+.games.count-1 .sets {
+  font-size: 10.2vw;
+}
+
+.games.count-1 .points {
+  font-size: 14.2vw;
+}
+
+.games.count-1 .table-label {
+  font-size: 2.55vw;
+}
+
+/* ---------- 3 TISCHE: kompakt, aber weiterhin Hallen-lesbar ---------- */
+.games.count-3 {
+  gap: .72vw;
+}
+
+.games.count-3 .side {
+  grid-template-columns: minmax(0, 1fr) 14.5vw;
+  gap: .35vw;
+  padding-left: .72vw;
+  padding-right: .62vw;
+}
+
+.games.count-3 .table-label {
+  font-size: 1.65vw;
+}
+
+.games.count-3 .type-label {
+  font-size: .78vw;
+}
+
+.games.count-3 .player-name {
+  font-size: 2.02vw;
+}
+
+.games.count-3 .players-double .player-name {
+  font-size: 1.63vw;
+}
+
+.games.count-3 .serve {
+  font-size: .78vw;
+}
+
+.games.count-3 .sets {
+  font-size: 5.15vw;
+}
+
+.games.count-3 .points {
+  font-size: 6.75vw;
+}
+
+.games.count-3 .home-side .metric::before {
+  font-size: .58vw;
+}
+
+/* Für ungewöhnlich schmale Browserfenster nicht auseinanderbrechen. */
+@media (max-aspect-ratio: 4/3) {
+  .team { font-size: 2.8vw; }
+  .games.count-2 .player-name { font-size: 2.8vw; }
+  .games.count-2 .players-double .player-name { font-size: 2.25vw; }
+}
+
+
+/* =========================================================
+   V2.4 – SCORE COLOR + SPONSOR FOOTER
+   ========================================================= */
+
+:root {
+  --accent: var(--theme-primary);
+  --accent-dark: var(--theme-primary-dark);
+  --footer-h: 8.5vh;
+}
+
+/* Raum für die neue Werbe-/Uhrzeitleiste schaffen */
+.games {
+  height: 61.5vh;
+}
+
+/* obere Tischleiste kräftiger, wie im Mockup */
+.card-head {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--theme-primary) 94%, transparent) 0%, color-mix(in srgb, color-mix(in srgb, var(--theme-primary) 50%, black) 92%, transparent) 42%, rgba(19,18,21,.94) 100%);
+  border-bottom: 1px solid rgba(255,255,255,.16);
+}
+
+.table-label {
+  text-shadow: 0 .08em .25em rgba(0,0,0,.28);
+}
+
+/* Satzstand als Akzentfarbe */
+.sets {
+  color: var(--accent) !important;
+  text-shadow: 0 0 .16em color-mix(in srgb, var(--theme-primary) 18%, transparent);
+}
+
+/* Heimpunkte: rotes Score-Tile statt nur roter Ziffer */
+.home-side .metric:last-child {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--theme-primary) 88%, white 12%) 0%, var(--theme-primary) 62%, var(--theme-primary-dark) 100%);
+  border-radius: .55vw;
+  min-width: 6.2vw;
+  padding: .15vh .48vw .25vh;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    0 .4vh 1.2vh rgba(0,0,0,.24);
+}
+
+.home-side .points {
+  color: #fff !important;
+  text-shadow: 0 .035em .08em rgba(0,0,0,.28);
+}
+
+/* P-Label auf dem roten Feld weiß */
+.home-side .metric:last-child::before {
+  color: rgba(255,255,255,.82);
+}
+
+/* Footer wird per JS eingefügt */
+.score-footer {
+  position: absolute;
+  left: 3.5vw;
+  right: 3.5vw;
+  bottom: 2.0vh;
+  height: var(--footer-h);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 2vw;
+  z-index: 20;
+  border-top: 1px solid rgba(255,255,255,.16);
+  background: linear-gradient(90deg, rgba(5,8,11,.12), rgba(5,8,11,.58) 55%, rgba(5,8,11,.78));
+}
+
+.sponsor-strip {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 2.0vw;
+  min-width: 0;
+}
+
+.sponsor-tagline {
+  font-family: "Arial Narrow", "Roboto Condensed", "Segoe UI", Arial, sans-serif;
+  font-size: 1.25vw;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(255,255,255,.90);
+}
+
+.sponsor-sep {
+  width: 1px;
+  height: 3.8vh;
+  background: rgba(255,255,255,.28);
+}
+
+.sponsor-placeholder {
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 1.05vw;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.62);
+  white-space: nowrap;
+}
+
+/* Uhrzeit bewusst groß, Datum nur sekundär */
+.score-clock {
+  min-width: 8.8vw;
+  text-align: right;
+  line-height: 1;
+  padding-left: 1.5vw;
+  border-left: 1px solid rgba(255,255,255,.25);
+}
+
+.score-clock-time {
+  font-family: "Arial Narrow", "Roboto Condensed", "Segoe UI", Arial, sans-serif;
+  font-size: 2.35vw;
+  font-weight: 900;
+  letter-spacing: .02em;
+  color: #fff;
+}
+
+.score-clock-date {
+  margin-top: .55vh;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: .72vw;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.62);
+}
+
+/* 1 Tisch darf trotz Footer weiter groß bleiben */
+.games.count-1 {
+  height: 61.5vh;
+}
+
+/* Bei 3 Tischen etwas weniger Footer-Luxus */
+.games.count-3 {
+  height: 61.5vh;
+}
+
+@media (max-aspect-ratio: 4/3) {
+  .sponsor-tagline { font-size: 1.5vw; }
+  .score-clock-time { font-size: 2.7vw; }
+}
+
+
+/* =========================================================
+   V2.4.1 – Feedback-Korrektur
+   ========================================================= */
+
+/* Kein roter Hintergrund mehr beim individuellen Heimpunktestand */
+.home-side .metric:last-child {
+  background: transparent !important;
+  border-radius: 0 !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.home-side .points {
+  color: #fff !important;
+  text-shadow: 0 0 .12em rgba(255,255,255,.14);
+}
+
+.home-side .metric:last-child::before {
+  color: rgba(220,227,233,.62) !important;
+}
+
+/* Gesamtstand oben: Heimseite als rotes Score-Tile */
+.total-score {
+  display: inline-flex;
+  align-items: center;
+  gap: .35vw;
+}
+
+.total-score .home-total,
+.total-score > :first-child:not(.total-colon) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.2vw;
+  padding: .05em .22em .09em;
+  border-radius: .38vw;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--theme-primary) 88%, white 12%) 0%, var(--theme-primary) 62%, var(--theme-primary-dark) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 .3vh 1vh rgba(0,0,0,.24);
+  color: #fff;
+}
+
+/* Fallback für die bestehende Header-Struktur:
+   JS markiert die erste Gesamtstand-Ziffer explizit. */
+.total.total-home-highlight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.2vw;
+  padding: .01em .16em .07em;
+  border-radius: .38vw;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--theme-primary) 88%, white 12%) 0%, var(--theme-primary) 62%, var(--theme-primary-dark) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 .3vh 1vh rgba(0,0,0,.24);
+}
+
+/* Homepage im Footer */
+.sponsor-tagline {
+  text-transform: none;
+  letter-spacing: .06em;
+  font-size: 1.18vw;
+}
+
+
+/* =========================================================
+   V2.5 – Gesamtstand dominant / keine S-P-Legende
+   ========================================================= */
+
+/* S/P komplett entfernen */
+.home-side .metric::before,
+.away-side .metric::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Gesamtstand ist die visuelle Hauptinformation im Kopf */
+.total {
+  font-size: 9.6vw !important;
+  line-height: .82 !important;
+  min-width: 0;
+}
+
+/* Heim-Gesamtstand als rotes Score-Tile */
+.total.total-home-highlight {
+  min-width: 7.2vw !important;
+  min-height: 12.2vh;
+  padding: .02em .16em .08em !important;
+  border-radius: .5vw !important;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--theme-primary) 88%, white 12%) 0%, var(--theme-primary) 62%, var(--theme-primary-dark) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    0 .45vh 1.4vh rgba(0,0,0,.30) !important;
+  color: #fff !important;
+  text-shadow: 0 .035em .08em rgba(0,0,0,.26) !important;
+}
+
+/* Gast-Gesamtstand erhält dunkles Tile als Gegenstück */
+.total.total-away-highlight {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 7.2vw;
+  min-height: 12.2vh;
+  padding: .02em .16em .08em;
+  border-radius: .5vw;
+  background: linear-gradient(145deg, #202832 0%, #111820 65%, #090d11 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 .45vh 1.4vh rgba(0,0,0,.28);
+  color: #fff;
+}
+
+/* Doppelpunkt passend mitwachsen, aber nicht mit den Zahlen konkurrieren */
+.total-colon {
+  font-size: 6.2vw !important;
+  line-height: 1;
+  margin: 0 .25vw;
+}
+
+/* Der Header bekommt genug Luft für die großen Matchscore-Tiles */
+.topbar {
+  height: 22.5vh;
+}
+
+/* Spielkarten minimal nach unten/kleiner, Footer bleibt unverändert */
+.games,
+.games.count-1,
+.games.count-3 {
+  height: 60.5vh;
+}
+
+/* Footer-Homepage etwas präsenter */
+.sponsor-tagline {
+  font-size: 1.35vw !important;
+  font-weight: 900;
+}
+
+/* 4K / Videowand skaliert weiterhin viewport-basiert */
+
+
+/* =========================================================
+   V2.5.4 – Header-Achse final
+   - Score exakt über Kartenfuge
+   - keine Überlappung mit Kartenkopf
+   - Teamnamen klar außerhalb des Scoreblocks
+   - Gesamtstand bleibt groß
+   ========================================================= */
+
+.topbar {
+  position: relative !important;
+}
+
+/*
+  Die teamline wird über die KOMPLETTE Breite der topbar gelegt.
+  Damit ist Spalte 3 und damit der ":" exakt die geometrische Mitte.
+*/
+.teamline {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 5.7vh !important;
+  width: 100% !important;
+
+  display: grid !important;
+  grid-template-columns:
+    minmax(0, 1fr)
+    7.2vw
+    3.0vw
+    7.2vw
+    minmax(0, 1fr) !important;
+
+  align-items: center !important;
+  column-gap: .65vw !important;
+}
+
+/* Namen bewusst AUSSERHALB des zentralen Scoreblocks */
+.team.home {
+  grid-column: 1 !important;
+  justify-self: end !important;
+  text-align: right !important;
+  padding-right: 1.35vw !important;
+}
+
+.team.away {
+  grid-column: 5 !important;
+  justify-self: start !important;
+  text-align: left !important;
+  padding-left: 1.35vw !important;
+}
+
+.team {
+  max-width: 25vw !important;
+  font-size: 3.05vw !important;
+}
+
+/* Großer Gesamtstand wie gewünscht */
+.total {
+  font-size: 9.6vw !important;
+  line-height: .80 !important;
+}
+
+.home-total {
+  grid-column: 2 !important;
+  justify-self: stretch !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center !important;
+  min-width: 7.2vw !important;
+  height: 12.2vh !important;
+  padding: 0 !important;
+  border-radius: .48vw !important;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--theme-primary) 88%, white 12%) 0%, var(--theme-primary) 62%, var(--theme-primary-dark) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    0 .45vh 1.4vh rgba(0,0,0,.30) !important;
+  color: #fff !important;
+}
+
+.total-colon {
+  grid-column: 3 !important;
+  justify-self: center !important;
+  width: 3vw !important;
+  margin: 0 !important;
+  text-align: center !important;
+  font-size: 6.15vw !important;
+  line-height: 1 !important;
+}
+
+.away-total {
+  grid-column: 4 !important;
+  justify-self: stretch !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center !important;
+  min-width: 7.2vw !important;
+  height: 12.2vh !important;
+  padding: 0 !important;
+  border-radius: .48vw !important;
+  background: linear-gradient(145deg, #202832 0%, #111820 65%, #090d11 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    0 .45vh 1.4vh rgba(0,0,0,.28) !important;
+  color: #fff !important;
+}
+
+/* Wettbewerb bleibt links beim Logo, aber überlappt nicht den Score */
+.competition {
+  position: absolute !important;
+  left: 13.2vw !important;
+  top: 1.0vh !important;
+  margin: 0 !important;
+  z-index: 3;
+}
+
+/* Kein Score darf mehr in die Kartenleiste hineinragen */
+.match-head {
+  min-width: 0;
+}
+
+
+/* =========================================================
+   V2.5.5 – Gesamtstand-Karten größer als die Ziffern
+   Nur Tile-Dimensionen geändert.
+   ========================================================= */
+
+/* Die beiden Score-Spalten bekommen mehr Breite. Der Doppelpunkt bleibt
+   weiterhin exakt in der mittleren Grid-Spalte auf 50%. */
+.teamline {
+  grid-template-columns:
+    minmax(0, 1fr)
+    8.8vw
+    3.0vw
+    8.8vw
+    minmax(0, 1fr) !important;
+}
+
+/* Ziffern bleiben unverändert groß, nur die Karten wachsen um sie herum. */
+.home-total,
+.away-total {
+  min-width: 8.8vw !important;
+  width: 8.8vw !important;
+  height: 14.4vh !important;
+  min-height: 14.4vh !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+/* Etwas mehr optische Luft zwischen Teamname und größerem Score-Tile. */
+.team.home {
+  padding-right: 1.55vw !important;
+}
+
+.team.away {
+  padding-left: 1.55vw !important;
+}
+
+
+/* =========================================================
+   V2.6 – CONFIG / THEMING
+   Werte werden aus scoreboard-config.json gesetzt.
+   ========================================================= */
+
+:root {
+  --theme-primary: var(--red);
+  --theme-secondary: var(--red2);
+  --theme-dark: #0a0c0e;
+  --bg-image: none;
+  --bg-overlay: .58;
+}
+
+/* Bestehende Akzentfarben an die Config koppeln */
+:root {
+  --accent: var(--theme-primary);
+}
+
+.background-image-mode.arena {
+  background:
+    linear-gradient(rgba(0,0,0,var(--bg-overlay)), rgba(0,0,0,var(--bg-overlay))),
+    var(--bg-image) center center / cover no-repeat !important;
+}
+
+/* Bei Bildmodus die CSS-Deko zurücknehmen: Bild soll wirken, UI bleibt darüber. */
+.background-image-mode .red-slashes,
+.background-image-mode .silver-slashes {
+  opacity: .22;
+}
+
+.background-css-mode.arena {
+  /* absichtlich leer: der bisherige CSS-Hintergrund bleibt vollständig erhalten */
+}
+
+/* Theme-Farbe auf die wichtigsten roten UI-Flächen anwenden */
+.card-head {
+  background: linear-gradient(90deg,
+    var(--theme-primary) 0%,
+    var(--theme-secondary) 42%,
+    rgba(19,18,21,.94) 100%) !important;
+}
+
+.sets {
+  color: var(--theme-primary) !important;
+}
+
+.home-total {
+  background: linear-gradient(145deg,
+    color-mix(in srgb, var(--theme-primary) 88%, white 12%) 0%,
+    var(--theme-primary) 62%,
+    var(--theme-secondary) 100%) !important;
+}
+
+.frame-glow {
+  border-color: var(--theme-primary) !important;
+}
+
+/* =========================================================
+   V2.6.2 – halbtransparente Tischkarten
+   Nur die Kartenfläche wird transparent; Text/Ziffern bleiben 100%.
+   ========================================================= */
+.game-card {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(16, 17, 20, 0.86) 0%,
+      rgba(7, 9, 12, 0.76) 55%,
+      rgba(4, 6, 9, 0.82) 100%
+    ) !important;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+
+/* =========================================================
+   V2.7 – Theme Engine + Test-Switcher
+   ========================================================= */
+:root {
+  --theme-primary: #f10d1d;
+  --theme-primary-dark: #850008;
+  --theme-accent: #f10d1d;
+  --theme-card-rgb: 9,11,14;
+  --theme-text: #fff;
+  --theme-border: #f10d1d;
+  --card-opacity: .80;
+}
+
+.game-card {
+  color: var(--theme-text) !important;
+  border-color: color-mix(in srgb, var(--theme-border) 68%, #87929b 32%) !important;
+  background:
+    linear-gradient(145deg,
+      rgba(var(--theme-card-rgb), calc(var(--card-opacity) + .06)) 0%,
+      rgba(var(--theme-card-rgb), calc(var(--card-opacity) - .04)) 55%,
+      rgba(var(--theme-card-rgb), calc(var(--card-opacity) + .02)) 100%) !important;
+}
+
+.card-head {
+  background: linear-gradient(90deg,
+    var(--theme-primary) 0%,
+    var(--theme-primary-dark) 46%,
+    rgba(var(--theme-card-rgb), .94) 100%) !important;
+}
+
+.sets { color: var(--theme-primary) !important; }
+.home-total {
+  background: linear-gradient(145deg,
+    color-mix(in srgb, var(--theme-primary) 88%, white 12%) 0%,
+    var(--theme-primary) 62%,
+    var(--theme-primary-dark) 100%) !important;
+}
+.arena { border-color: var(--theme-border) !important; }
+
+.theme-tanne-thalheim.background-image-mode.arena::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background:rgba(0,82,52,.17);
+}
+.theme-tanne-thalheim .live-scene,
+.theme-tanne-thalheim .neutral-scene,
+.theme-tanne-thalheim .summary-scene { position:relative; z-index:1; }
+
+.theme-switcher {
+  position: fixed;
+  top: .65vh;
+  right: .7vw;
+  z-index: 9999;
+  display:flex;
+  gap:.3vw;
+  padding:.28vw;
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:.45vw;
+  background:rgba(3,5,7,.72);
+  backdrop-filter:blur(6px);
+  opacity:.42;
+  transition:opacity .2s ease;
+  font-family:Arial,sans-serif;
+}
+.theme-switcher:hover { opacity:1; }
+.theme-switcher button {
+  border:0;
+  border-radius:.28vw;
+  padding:.34vw .58vw;
+  background:rgba(255,255,255,.09);
+  color:#fff;
+  font-size:.72vw;
+  font-weight:700;
+  cursor:pointer;
+}
+.theme-switcher button.active {
+  background:var(--theme-primary);
+}
+
+
+/* =========================================================
+   V2.7.1 – Tanne Layout-Fix
+   TTSV bleibt unverändert. Tanne übernimmt wieder die
+   ursprüngliche Scene-Geometrie.
+   ========================================================= */
+.theme-tanne-thalheim .live-scene,
+.theme-tanne-thalheim .neutral-scene,
+.theme-tanne-thalheim .summary-scene {
+  position: absolute !important;
+}
+
+/* Logo-Rahmen ebenfalls aus dem aktiven Theme beziehen */
+.theme-tanne-thalheim .logo-frame,
+.theme-tanne-thalheim .neutral-logo-frame,
+.theme-tanne-thalheim .summary-logo-frame {
+  border-color: var(--theme-border) !important;
+}
+
+
+/* =========================================================
+   V2.7.3 – Theme-Geometrie + lange Mannschaftsnamen
+   ========================================================= */
+
+/* Lange Teamnamen dürfen auf zwei Zeilen umbrechen statt abgeschnitten zu werden. */
+.team {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: .88 !important;
+  max-width: 25vw !important;
+  overflow-wrap: normal !important;
+}
+
+.team.home {
+  justify-self: end !important;
+  text-align: right !important;
+}
+
+.team.away {
+  justify-self: start !important;
+  text-align: left !important;
+}
+
+/*
+  Tanne: komplette Scene-Geometrie explizit auf den funktionierenden
+  Standard zurücksetzen. Insbesondere wird der versehentlich gesetzte
+  z-index:1 aus V2.7 überschrieben.
+*/
+.theme-tanne-thalheim .scene {
+  position: absolute !important;
+  inset: 4vh 4vw !important;
+  z-index: 5 !important;
+}
+
+.theme-tanne-thalheim .live-scene {
+  display: grid !important;
+  grid-template-rows: 22vh 68vh !important;
+}
+
+/* Die zusätzliche Tanne-Pseudoebene war für die Geometrie unnötig.
+   Theme-Farben bleiben vollständig aktiv; Hintergrund bleibt unverändert. */
+.theme-tanne-thalheim.background-image-mode.arena::before {
+  z-index: auto !important;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,.05) 0 1px, transparent 1.2px) !important;
+  background-size: 6px 6px !important;
+  opacity: .22 !important;
+}
+
+/* Logo-Rahmen und Glow folgen dem Theme statt festem TTSV-Rot. */
+.logo-frame,
+.neutral-logo-frame,
+.summary-logo-frame {
+  border-color: rgba(255,255,255,.88) !important;
+  box-shadow:
+    0 0 0 3px var(--theme-border),
+    0 0 18px color-mix(in srgb, var(--theme-border) 42%, transparent) !important;
+}
+
+
+/* =========================================================
+   V2.8 – vollständige Theme-Farbebene
+   Keine TTSV-Rotwerte mehr für zentrale UI-Akzente nötig.
+   ========================================================= */
+:root {
+  --theme-score-tile: var(--theme-primary);
+  --theme-score-tile-dark: var(--theme-primary-dark);
+  --theme-header-start: var(--theme-primary);
+  --theme-header-end: var(--theme-primary-dark);
+  --theme-serve: #fff;
+  --theme-footer: #fff;
+  --theme-bg-tint-rgb: 0,0,0;
+}
+
+/* Gesamtspielstand Heim folgt Theme */
+.home-total {
+  background:
+    linear-gradient(145deg,
+      color-mix(in srgb, var(--theme-score-tile) 88%, white 12%) 0%,
+      var(--theme-score-tile) 62%,
+      var(--theme-score-tile-dark) 100%) !important;
+  box-shadow:
+    0 0 1.2vw color-mix(in srgb, var(--theme-score-tile) 28%, transparent),
+    inset 0 0 .8vw rgba(255,255,255,.08) !important;
+}
+
+/* Tisch-Kopfleisten komplett themenfähig */
+.card-head {
+  background:
+    linear-gradient(90deg,
+      var(--theme-header-start) 0%,
+      var(--theme-primary-dark) 42%,
+      var(--theme-header-end) 100%) !important;
+  border-bottom-color:
+    color-mix(in srgb, var(--theme-primary) 65%, white 35%) !important;
+}
+
+/* Sätze und weitere rote Akzente */
+.sets,
+.set-score,
+.game-sets {
+  color: var(--theme-primary) !important;
+}
+
+/* Aufschlagpunkt bleibt bewusst hell und neutral */
+.serve-dot,
+.serving-dot {
+  background: var(--theme-serve) !important;
+  color: var(--theme-serve) !important;
+  box-shadow: 0 0 .75vw color-mix(in srgb, var(--theme-serve) 70%, transparent) !important;
+}
+
+/* Außenrahmen / Kartenkanten */
+.arena {
+  border-color: var(--theme-border) !important;
+  box-shadow:
+    inset 0 0 0 .12vw color-mix(in srgb, var(--theme-border) 30%, transparent),
+    0 0 1vw color-mix(in srgb, var(--theme-border) 16%, transparent) !important;
+}
+
+.game-card {
+  border-color: color-mix(in srgb, var(--theme-border) 58%, #7d8992 42%) !important;
+}
+
+/* Footer bleibt gut lesbar, kann aber pro Theme geändert werden */
+.scoreboard-footer,
+.sponsor-tagline,
+#clubWebsite,
+.footer-clock {
+  color: var(--theme-footer) !important;
+}
+
+/* Tanne: das rote Hintergrundbild bleibt als Motiv erhalten,
+   bekommt aber einen subtilen grünen Vereins-Tint. */
+.theme-tanne-thalheim.background-image-mode.arena {
+  background:
+    linear-gradient(
+      rgba(var(--theme-bg-tint-rgb), .18),
+      rgba(var(--theme-bg-tint-rgb), .18)
+    ),
+    linear-gradient(
+      rgba(0,0,0,var(--bg-overlay)),
+      rgba(0,0,0,var(--bg-overlay))
+    ),
+    var(--bg-image) center center / cover no-repeat !important;
+}
+
+/* TTSV: Bild unverändert wie bisher */
+.theme-ttsv.background-image-mode.arena {
+  background:
+    linear-gradient(
+      rgba(0,0,0,var(--bg-overlay)),
+      rgba(0,0,0,var(--bg-overlay))
+    ),
+    var(--bg-image) center center / cover no-repeat !important;
+}
+
+/* Alte dekorative Rot-Layer im Tanne-Theme deutlich zurücknehmen. */
+.theme-tanne-thalheim .red-slashes {
+  opacity: .05 !important;
+  filter: hue-rotate(115deg) saturate(.85) !important;
+}
+
+
+/* =========================================================
+   V2.8.1 – Tanne Logo + letzter Rot-Agent
+   ========================================================= */
+
+/* TTSV bleibt explizit rot. */
+.theme-ttsv .home-total {
+  background: linear-gradient(145deg,
+    color-mix(in srgb, var(--theme-primary) 88%, white 12%) 0%,
+    var(--theme-primary) 62%,
+    var(--theme-primary-dark) 100%) !important;
+}
+
+/* Tanne-Gesamtstand: bewusst theme-spezifisch und ganz am Ende,
+   damit keine ältere .home-total-Regel mehr gewinnen kann. */
+.theme-tanne-thalheim .home-total {
+  background: linear-gradient(145deg,
+    #16a66c 0%,
+    #008451 58%,
+    #004d34 100%) !important;
+  border-color: rgba(65, 220, 157, .55) !important;
+  box-shadow:
+    0 0 1.15vw rgba(0,132,81,.34),
+    inset 0 0 .8vw rgba(255,255,255,.09) !important;
+}
+
+/* Logo selbst ohne künstliche schwarze Fläche. */
+.theme-tanne-thalheim .logo-frame img,
+.theme-tanne-thalheim .neutral-logo-frame img,
+.theme-tanne-thalheim .summary-logo-frame img {
+  object-fit: contain !important;
+  background: transparent !important;
+}
+
+
+/* =========================================================
+   V2.9 TEST ONLY - Tischkarten 60% Deckkraft
+   V2.9 selbst bleibt unveraendert/gefroren.
+   ========================================================= */
+:root {
+  --card-opacity: .60 !important;
+}
+
+
+/* V2.8 Test: TTSV YouTube footer, only TTSV theme. Other themes retain sponsor placeholder. */
+.youtube-footer { display:none; }
+.theme-ttsv .sponsor-default { display:none; }
+.theme-ttsv .youtube-footer {
+  display:flex; align-items:center; gap:1.1vw; height:100%; min-width:0;
+}
+.youtube-qr {
+  height:min(7.2vh, 7vw); width:min(7.2vh, 7vw);
+  object-fit:contain; background:#fff; padding:.22vw; border-radius:.3vw;
+  box-sizing:border-box; flex-shrink:0;
+}
+.youtube-copy { min-width:0; white-space:nowrap; }
+.youtube-label { color:var(--theme-primary, #f10d1d); font-size:.9vw; font-weight:900; letter-spacing:.06em; }
+.youtube-url { color:var(--theme-footer, #fff); font-size:1.5vw; font-weight:900; }
+.youtube-hint { color:rgba(255,255,255,.72); font-size:.7vw; font-weight:700; letter-spacing:.08em; }
+.youtube-livecounts { width:12vw; height:6.7vh; overflow:hidden; border-radius:.25vw; background:#fff; flex-shrink:0; }
+.youtube-livecounts iframe { display:block; width:320px; height:110px; border:0; transform:scale(.62); transform-origin:top left; }
+@media (max-width:1100px) {
+  .youtube-livecounts { display:none; }
+  .youtube-url { font-size:1.7vw; }
+}
+/* TTSV Livecounts experiment: crop the embedded page to its number area.
+   Adjust --lc-x and --lc-y after viewing on the hall TV. */
+.theme-ttsv .youtube-livecounts {
+  --lc-x: 0px;
+  --lc-y: -54px;
+  width: 12vw;
+  height: 6.7vh;
+  overflow: hidden;
+  background: #fff;
+  border-radius: .25vw;
+  position: relative;
+}
+.theme-ttsv .youtube-livecounts iframe {
+  display: block;
+  width: 320px;
+  height: 240px;
+  border: 0;
+  transform: translate(var(--lc-x), var(--lc-y)) scale(.62);
+  transform-origin: top left;
+}
+
+
+/* Web4Sport: Quellenwahl und Darstellung ohne Live-Ballpunkte */
+.source-switcher {
+  position:fixed; top:.65vh; left:.7vw; z-index:10000;
+  display:flex; gap:5px; padding:5px;
+  border:1px solid rgba(255,255,255,.3); border-radius:7px;
+  background:rgba(3,5,7,.82); font-family:Arial,sans-serif;
+  opacity:.7;
+}
+.source-switcher:hover {opacity:1}
+.source-switcher button {
+  border:0; border-radius:5px; padding:7px 11px;
+  background:rgba(255,255,255,.12); color:white;
+  font-size:12px; font-weight:800; cursor:pointer;
+}
+.source-switcher button.active {background:var(--theme-primary,#f10d1d)}
+.source-web4sport .game-card .metric:last-child {display:none}
+.source-web4sport .game-card .numbers {grid-template-columns:1fr; width:min(10vw,170px); min-width:110px}
+.source-web4sport .game-card .numbers::before {display:none}
+.source-web4sport .game-card .ball-call {display:none}

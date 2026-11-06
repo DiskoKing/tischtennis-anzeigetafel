@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Anzeigetafel 2.0</title>
+  <link rel="stylesheet" href="spiele.css">
+  <link rel="stylesheet" href="mode-total.css">
+  <link rel="stylesheet" href="v2.css">
+</head>
+<body>
+  <main class="arena">
+    <div class="frame-glow"></div>
+    <div class="red-slashes"></div>
+    <div class="silver-slashes"></div>
+
+    <!-- Zustand 1: noch keine Mannschaftspartie erkannt -->
+    <section class="scene neutral-scene is-visible" id="neutralScene" aria-hidden="false">
+      <div class="neutral-logo-frame">
+        <img src="assets/default-logo.svg" alt="Vereinslogo">
+      </div>
+    </section>
+
+    <!-- Zustand 2 + 4: Gesamtstand / Mannschaftspunkt-Highlight -->
+    <section class="scene summary-scene" id="summaryScene" aria-hidden="true">
+      <div class="summary-content" id="summaryContent">
+        <div class="summary-logo-frame">
+          <img src="assets/default-logo.svg" alt="Vereinslogo">
+        </div>
+
+        <div class="summary-competition" id="summaryCompetition">TISCHTENNIS</div>
+
+        <div class="summary-scoreboard">
+          <div class="summary-team home" id="summaryHomeTeam">HEIM</div>
+          <div class="summary-score home-score" id="summaryHomeTotal">00</div>
+          <div class="summary-colon">:</div>
+          <div class="summary-score away-score" id="summaryAwayTotal">00</div>
+          <div class="summary-team away" id="summaryAwayTeam">GAST</div>
+        </div>
+
+        <div class="point-call" id="pointCall">MANNSCHAFTSPUNKT</div>
+      </div>
+    </section>
+
+    <!-- Zustand 3: 1–3 laufende Spiele -->
+    <section class="scene live-scene" id="liveScene" aria-hidden="true">
+      <header class="topbar">
+        <div class="logo-frame">
+          <img src="assets/default-logo.svg" alt="Vereinslogo">
+        </div>
+
+        <div class="match-head">
+          <div class="competition" id="competitionLabel">TISCHTENNIS</div>
+          <div class="teamline">
+            <span class="team home" id="homeTeam">HEIM</span>
+            <span class="total home-total" id="homeTotal">00</span>
+            <span class="total-colon">:</span>
+            <span class="total away-total" id="awayTotal">00</span>
+            <span class="team away" id="awayTeam">GAST</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="games" id="games"></section>
+    </section>
+
+    <div class="status-badge" id="statusBadge">Warte auf Spieldaten</div>
+  </main>
+
+  <script src="spiele.js"></script>
+  <script src="v2.js"></script>
+</body>
+</html>

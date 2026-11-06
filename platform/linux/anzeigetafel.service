@@ -1,0 +1,14 @@
+[Unit]
+Description=Tischtennis-Anzeigetafel
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/tischtennis-anzeigetafel
+ExecStart=%h/tischtennis-anzeigetafel/.venv/bin/python -u server.py --port 8081
+Restart=on-failure
+RestartSec=5
+UMask=0077
+
+[Install]
+WantedBy=default.target
