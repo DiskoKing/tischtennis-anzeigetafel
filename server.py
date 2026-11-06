@@ -172,7 +172,7 @@ def validate_update(previous, patch):
         value = patch['background']
         if not isinstance(value, dict) or set(value) != {'mode', 'overlayPercent'}:
             raise ValueError('Hintergrund ungültig')
-        if value['mode'] not in ('css', 'original', 'custom') or type(value['overlayPercent']) is not int or not 0 <= value['overlayPercent'] <= 100:
+        if value['mode'] not in ('css', 'original', 'classic', 'custom') or type(value['overlayPercent']) is not int or not 0 <= value['overlayPercent'] <= 100:
             raise ValueError('Hintergrund ungültig')
         result['background'] = copy.deepcopy(value)
     if 'sponsors' in patch:
@@ -282,7 +282,7 @@ class App:
             config['background']['customSet'] = custom.exists()
             config['background']['customImage'] = '/api/background?v=' + str(custom.stat().st_mtime_ns) if custom.exists() else ''
             mode = config['background']['mode']
-            config['background']['image'] = 'assets/default-background.svg' if mode == 'original' else config['background']['customImage'] if mode == 'custom' else ''
+            config['background']['image'] = 'assets/v1-background.jpg' if mode == 'classic' else 'assets/default-background.svg' if mode == 'original' else config['background']['customImage'] if mode == 'custom' else ''
             return config
 
     def update(self, patch):

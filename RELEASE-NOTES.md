@@ -1,3 +1,12 @@
+# Version 2.2.1 – Original-Hintergrundbild offiziell enthalten
+
+- Das vom Ersteller generierte und zur Auslieferung freigegebene Originalbild aus Version 1 wird unverändert mitgeliefert.
+- Einstellungen → Hintergrund → Originalbild aus Version 1. Abdunklung bleibt einstellbar.
+- CSS-Design, neutraler Hintergrund und eigene Uploads bleiben als Optionen erhalten. Bestehende Einstellungen werden nicht umgestellt.
+- Herkunft und Dateiprüfsumme sind unter public/assets/CREDITS.md dokumentiert.
+
+Dieses Update ist über Version & Updates aus 2.2.0 installierbar; Laufzeit und Windows-Starter bleiben unverändert.
+
 # Version 2.2.0 – Versionsanzeige und Updates in der Oberfläche
 
 - Angezeigte Versionsnummer stammt aus der installierten VERSION-Datei.

@@ -274,6 +274,16 @@ class ConfigAndApiTests(unittest.TestCase):
             response.read()
             connection.close()
 
+    def test_classic_background_is_selectable_without_restarting_reader(self):
+        self.app.restart_requested.clear()
+        self.request('/api/config',b'{"background":{"mode":"classic","overlayPercent":40}}')
+        public=self.app.public_config()['background']
+        self.assertEqual(public['mode'],'classic')
+        self.assertEqual(public['image'],'assets/v1-background.jpg')
+        self.assertEqual(public['overlayPercent'],40)
+        self.assertFalse(self.app.restart_requested.is_set())
+        self.assertEqual(server.App(self.root).config['background']['mode'],'classic')
+
     def test_background_modes_upload_privacy_and_persistence(self):
         self.assertEqual(self.app.config['background'], {'mode': 'css', 'overlayPercent': 58})
         epoch = self.app.epoch

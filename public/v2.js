@@ -265,7 +265,7 @@
     $('design-preview').style.backgroundColor = $('background').value;
     const mode = $('background-mode').value;
     const dim = Number($('background-dim').value) / 100;
-    const image = mode === 'original' ? 'assets/default-background.svg' : mode === 'custom' ? pendingBackgroundPreview || current?.background?.customImage : '';
+    const image = mode === 'classic' ? 'assets/v1-background.jpg' : mode === 'original' ? 'assets/default-background.svg' : mode === 'custom' ? pendingBackgroundPreview || current?.background?.customImage : '';
     $('background-dim-label').textContent = `Abdunklung: ${$('background-dim').value} %`;
     $('background-dim').disabled = mode === 'css';
     $('design-preview').style.backgroundImage = image ? `linear-gradient(rgba(0,0,0,${dim}),rgba(0,0,0,${dim})),url("${image}")` : 'none';

@@ -43,7 +43,7 @@ Das Paket enthält eine offizielle Python-Laufzeit und benötigt am Zielrechner 
 
 Zugangsdaten, Vereinslogo und Uploads liegen unter private/ und werden nicht versioniert. Auf Windows-USB liegt dieser Ordner unter app/private; zusätzlich gibt es browser-data. Ein verlorener Stick kann daher Zugangsdaten enthalten.
 
-Diese öffentliche Fassung enthält ausschließlich neutrale, im Quelltext enthaltene SVG-Standardgrafiken. Vereinslogos und das frühere Hintergrundfoto werden nicht mitgeliefert. Bestehende Praxisinstallationen werden durch einen Git-Upload nicht verändert.
+Diese öffentliche Fassung enthält neutrale SVG-Standardgrafiken und das vom Ersteller freigegebene Original-Hintergrundbild aus Version 1. Es ist unter Hintergrund → Originalbild aus Version 1 auswählbar. Vereinslogos bleiben außerhalb des öffentlichen Standardkatalogs. Bestehende Praxisinstallationen werden durch einen Git-Upload nicht verändert.
 
 Die optionale Janova-Anmeldung liest die öffentliche Web-App-Konfiguration von Janova. Sie speichert nur die ermittelte Konto-ID; Passwort und Sitzung werden nicht dauerhaft gespeichert. Änderungen an Janovas Web-App können die Erkennung beeinträchtigen; die direkte ID-Eingabe bleibt verfügbar.
 
