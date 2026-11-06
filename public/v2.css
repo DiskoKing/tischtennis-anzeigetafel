@@ -124,3 +124,5 @@
 .v2-dialog-bar { padding:8px 14px; }
 .v2-dialog-bar button { padding:8px 12px; }
 @media(max-width:600px) { .settings-page .save-bar { flex-wrap:wrap;gap:6px; }.settings-page #save-status { font-size:12px; }.settings-category>summary.card-heading { padding:15px 16px; }.settings-category .category-content { padding:0 16px 16px; } }
+
+.source-settings[hidden] { display:none!important; }

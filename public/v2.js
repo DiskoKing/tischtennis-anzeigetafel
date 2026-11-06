@@ -243,6 +243,7 @@
     $('background-dim').value = config.background.overlayPercent;
     $('background-file-state').textContent = config.background.customSet ? 'Ein eigenes Hintergrundbild ist gespeichert.' : 'Noch kein eigenes Hintergrundbild gespeichert.';
     $('data-source').value = config.dataSource;
+    updateDataSourceFields();
     $('display-mode').value = config.display.mode;
     $('display-seconds').value = config.display.intervalSeconds;
     $('sponsors-enabled').checked = config.sponsors.enabled;
@@ -274,6 +275,15 @@
     $('preview-name').textContent = $('club-name').value || 'Mein Verein';
     $('preview-website').textContent = $('club-website').value;
     $('preview-score').style.background = $('primary').value;
+  }
+
+  function updateDataSourceFields() {
+    const source = $('data-source').value;
+    for (const [name, id] of [['janova', 'janova-settings'], ['web4sport', 'web4sport-settings']]) {
+      const group = $(id);
+      group.hidden = name !== source;
+      group.disabled = name !== source;
+    }
   }
 
   function updateDisplayFields() {
@@ -323,6 +333,7 @@
           if (parent.tagName === 'DETAILS') parent.open = true;
         }
       }, true);
+      $('data-source').addEventListener('change', updateDataSourceFields);
       $('update-check').addEventListener('click', async () => {
         $('update-check').disabled = true;
         $('update-install').hidden = true; $('update-download').hidden = true;

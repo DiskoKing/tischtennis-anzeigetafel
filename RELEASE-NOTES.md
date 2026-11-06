@@ -1,3 +1,11 @@
+# Version 2.2.4 – Loginbereich passend zur Datenquelle
+
+- Die Einstellungen zeigen nur Janova oder TischtennisLive/Web4Sport entsprechend der gewählten Datenquelle.
+- Beim Umschalten bleiben eingegebene und gespeicherte Werte erhalten.
+- Inaktive Loginfelder werden ausgeblendet und von der Browservalidierung ausgenommen. Die Auswahl wird wie bisher mit Einstellungen speichern übernommen.
+
+Über Version & Updates installierbar. Laufzeit und Windows-Starter bleiben unverändert.
+
 # Version 2.2.3 – kompakte, aufklappbare Einstellungen
 
 - Flacher Kopfbereich statt großer Werbeüberschrift; im Overlay entfällt die doppelte Überschrift.

@@ -46,7 +46,7 @@
         </div></details>
         <details class="settings-card settings-category" id="category-source"><summary class="card-heading"><span>03</span><h2>Datenquelle</h2></summary><div class="category-content">
           <label>Aktive Datenquelle<select id="data-source"><option value="janova">Janova-Zählgeräte</option><option value="web4sport">TischtennisLive / Web4Sport</option></select></label>
-          <fieldset><legend>Janova</legend>
+          <fieldset id="janova-settings" class="source-settings"><legend>Janova</legend>
             <label>Janova-E-Mail<input id="janova-email" type="email" autocomplete="username" maxlength="320"></label>
             <label>Janova-Passwort<input id="janova-password" type="password" autocomplete="current-password" maxlength="4096"></label>
             <button type="button" id="janova-login" class="secondary">Anmelden und ID übernehmen</button>
@@ -55,7 +55,7 @@
             <label>Referee-ID oder Janova-Live-Link<input id="janova-id" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="ID oder https://janova.app/live/stream?id=…"></label>
             <p class="help">Auf janova.app/live/urls einen Live-Link kopieren und hier einfügen. Beim Speichern wird die ID aus „id=“ übernommen; zusätzliche Link-Parameter werden nicht gespeichert. Eine vorhandene Referee-ID funktioniert weiterhin.</p>
           </fieldset>
-          <fieldset><legend>Web4Sport</legend>
+          <fieldset id="web4sport-settings" class="source-settings" hidden disabled><legend>TischtennisLive / Web4Sport</legend>
             <label>Benutzername<input id="web-username" maxlength="256" autocomplete="username"></label>
             <label>Passwort<input type="password" id="web-password" maxlength="256" autocomplete="new-password"></label>
             <label class="check"><input type="checkbox" id="clear-password">Gespeichertes Web4Sport-Passwort entfernen</label>
