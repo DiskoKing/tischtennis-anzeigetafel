@@ -462,7 +462,7 @@ class App:
                     if selected is None:
                         selected = current
                     if selected is None:
-                        self.publish(key, 'waiting', 'Noch kein gestartetes Web4Sport-Spiel gefunden.', pool)
+                        self.publish(key, 'waiting', 'Noch kein gestartetes Spiel über die gewählte Datenquelle (TischtennisLive/Web4Sport) gefunden.', pool)
                         continue
                     matches, teams = web.read(session, selected['said'], selected['sid'])
                     score = {side: sum(m['finished'] and m['sets_won'][side] > m['sets_won']['away' if side == 'home' else 'home'] for m in matches)

@@ -1,3 +1,10 @@
+# Version 2.2.8 – einheitlicher Wartehinweis
+
+- Ohne gestartetes Spiel nennt der Hinweis die gewählte Datenquelle: Janova oder TischtennisLive/Web4Sport.
+- Bei Janova bleibt der Hinweis ohne Spiel ebenfalls sichtbar.
+
+Über Version & Updates installierbar.
+
 # Version 2.2.7 – aufgeräumte Oberfläche
 
 - Auf der Anzeigetafel öffnet ein einzelnes Zahnrad die Einstellungen; die Version steht weiterhin in den Einstellungen.

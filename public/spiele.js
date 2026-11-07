@@ -476,8 +476,8 @@ function render(data) {
 
   const badge = document.getElementById("statusBadge");
   if (!contextBoard) {
-    badge.textContent = `BEREIT · ${new Date().toLocaleTimeString("de-DE")}`;
-    badge.classList.add("ok");
+    badge.textContent = `Noch kein gestartetes Spiel über die gewählte Datenquelle (${dataSource === "janova" ? "Janova" : "TischtennisLive/Web4Sport"}) gefunden.`;
+    badge.classList.remove("ok");
   } else {
     badge.textContent = `LIVE · ${new Date().toLocaleTimeString("de-DE")} · ${active.length} SPIEL${active.length === 1 ? "" : "E"}`;
     badge.classList.add("ok");
