@@ -261,6 +261,12 @@
   async function mount() {
     if (settings) {
       const categories = [...document.querySelectorAll('.settings-category')];
+      $('expand-sections').addEventListener('click', () => {
+        for (const category of categories) category.open = true;
+      });
+      $('collapse-sections').addEventListener('click', () => {
+        for (const category of categories) category.open = false;
+      });
       try {
         const saved = JSON.parse(sessionStorage.getItem('anzeigetafel-settings-sections') || '{}');
         for (const category of categories) if (typeof saved[category.id] === 'boolean') category.open = saved[category.id];

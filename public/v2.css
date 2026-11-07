@@ -114,3 +114,8 @@
 @media(max-width:600px) { .settings-page .save-bar { flex-wrap:wrap;gap:6px; }.settings-page #save-status { font-size:12px; }.settings-category>summary.card-heading { padding:15px 16px; }.settings-category .category-content { padding:0 16px 16px; } }
 
 .source-settings[hidden] { display:none!important; }
+
+.settings-page .section-actions { display:flex;flex-wrap:wrap;gap:8px; }
+.settings-page .section-actions button { background:#1c2936;border:1px solid #465970;color:#e5edf6;padding:10px 12px;font-size:13px; }
+.settings-page .save-bar { flex-wrap:wrap; }
+@media(max-width:600px) { .settings-page { padding-bottom:190px; }.settings-page .section-actions { width:100%; } }

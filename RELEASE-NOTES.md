@@ -1,3 +1,10 @@
+# Version 2.2.9 – alle Einstellungsbereiche gemeinsam schalten
+
+- Neben Einstellungen speichern können alle Bereiche gemeinsam auf- oder zugeklappt werden.
+- Einzelne Bereiche bleiben wie gewohnt separat bedienbar; der Zustand bleibt während der Sitzung erhalten.
+
+Über Version & Updates installierbar.
+
 # Version 2.2.8 – einheitlicher Wartehinweis
 
 - Ohne gestartetes Spiel nennt der Hinweis die gewählte Datenquelle: Janova oder TischtennisLive/Web4Sport.
