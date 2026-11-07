@@ -163,37 +163,16 @@
     }
   }
 
-  let picker;
-  let pickerSignature;
   window.v2DataState = raw => {
-    if (!picker) {
-      picker = document.createElement('section');
-      picker.className = 'v2-picker';
-      const title = document.createElement('h1'); title.id = 'v2-title';
-      const message = document.createElement('p'); message.id = 'v2-message';
-      const choices = document.createElement('div'); choices.id = 'v2-choices';
-      const link = document.createElement('a'); link.href = 'settings.html'; link.textContent = 'Einstellungen öffnen';
-      link.addEventListener('click', event => {
-        if (window.v2OpenSettings) { event.preventDefault(); window.v2OpenSettings(); }
-      });
-      picker.append(title, message, choices, link);
-      document.getElementById('neutralScene').appendChild(picker);
-    }
     document.getElementById('neutralScene').classList.toggle('v2-waiting', raw.status !== 'ready');
-    if (raw.status === 'ready') {
-      picker.hidden = true;
-      return false;
-    }
-    picker.hidden = false;
+    if (raw.status === 'ready') return false;
     if (typeof switchScene === 'function') switchScene('neutral');
-    $('statusBadge').textContent = raw.message || 'Warte auf Daten';
-    $('v2-title').textContent = raw.status === 'selection_required' ? 'Welches Spiel soll angezeigt werden?' : 'Anzeigetafel ' + (current?.version || '');
-    $('v2-message').textContent = raw.message || 'Daten werden geladen';
-    const signature = JSON.stringify([raw.status, raw.candidates || []]);
-    if (signature !== pickerSignature) {
-      gameButtons($('v2-choices'), raw.status === 'selection_required' ? raw.candidates : []);
-      pickerSignature = signature;
+    const badge = $('statusBadge');
+    badge.textContent = raw.message || 'Warte auf Daten';
+    if (raw.status === 'selection_required') {
+      badge.textContent += ' Bitte Spiel in den Einstellungen auswählen.';
     }
+    badge.classList.remove('ok');
     return true;
   };
 

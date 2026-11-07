@@ -435,15 +435,24 @@ html, body {
 
 .status-badge {
   position: absolute;
-  right: 1.6vw;
-  bottom: 1.7vh;
+  left: 50%;
+  bottom: calc(var(--footer-h, 8.5vh) + 3.5vh);
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90%;
+  box-sizing: border-box;
   z-index: 40;
-  padding: .42rem .68rem;
-  border-radius: .4rem;
-  font-size: 12px;
-  color: #c7ced5;
-  background: rgba(0,0,0,.58);
-  opacity: .72;
+  padding: .65em 1em;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: .5rem;
+  font-size: clamp(16px, 1.15vw, 24px);
+  line-height: 1.4;
+  text-align: center;
+  overflow-wrap: anywhere;
+  color: #f4f6f8;
+  background: rgba(10,15,20,.94);
+  opacity: 1;
+  pointer-events: none;
 }
 .status-badge.ok {
   opacity: 0;

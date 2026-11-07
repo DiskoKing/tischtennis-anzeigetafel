@@ -26,11 +26,6 @@
 .v2-settings-dialog iframe { flex:1;min-height:0;width:100%;border:0;background:#0b0f15; }
 .settings-page.is-embedded .settings-header>.button { display:none; }
 .settings-page.is-embedded .settings-shell { padding-top:24px; }
-.v2-picker { position:fixed;z-index:10000;left:50%;top:50%;transform:translate(-50%,-50%);width:min(820px,85vw);max-height:85vh;overflow:auto;border:1px solid #ffffff35;border-radius:18px;background:#10151bf5;padding:32px;box-shadow:0 24px 100px #000b;font:16px/1.5 Arial,sans-serif; }
-.v2-picker[hidden] { display:none; }
-.v2-picker h1 { font-size:28px;margin:0 0 12px; }
-.v2-picker p { color:#bac4d0; }
-.v2-picker a { color:#d6eaff;display:inline-block;margin-top:16px; }
 .game-choice { display:flex;flex-direction:column;gap:6px;width:100%;text-align:left;padding:16px;margin:10px 0;border:1px solid #ffffff29;border-radius:10px;background:#18222c;color:#fff;cursor:pointer;font:inherit; }
 .game-choice:hover { border-color:#a9c9ed;background:#213344; }
 .game-choice span { color:#aebecd;font-size:13px; }
@@ -82,10 +77,9 @@
 #homeTotal.two-digit-total, #awayTotal.two-digit-total { font-size: 6.5vw !important; }
 #summaryHomeTotal.two-digit-total, #summaryAwayTotal.two-digit-total { font-size: 14vw !important; }
 
-/* Waiting message belongs below the club logo, including in kiosk mode. */
-.arena .neutral-scene.v2-waiting { display:flex !important;flex-direction:column;justify-content:center;align-items:center;gap:3vh;padding:3vh 2vw;box-sizing:border-box; }
+/* Keep the club logo visible while waiting, including in total-only mode. */
+.arena .neutral-scene.v2-waiting { display:flex !important;flex-direction:column;justify-content:center;align-items:center;padding:3vh 2vw;box-sizing:border-box; }
 .neutral-scene.v2-waiting .neutral-logo-frame { flex-shrink:0;width:min(18vw,24vh,260px); }
-.neutral-scene .v2-picker { position:relative;left:auto;top:auto;transform:none;width:min(820px,85vw);max-height:38vh;flex-shrink:1;min-height:0;box-sizing:border-box;padding:clamp(16px,2vw,32px); }
 
 .club-library { border:1px solid #354455;border-radius:8px;padding:14px;margin:18px 0; }
 .club-library summary { cursor:pointer;font-weight:700;color:#dce6f3; }

@@ -1,3 +1,12 @@
+# Version 2.2.6 – dezente, lesbare Statusmeldung
+
+- Die große Meldungsbox in der Mitte entfällt. Das Vereinslogo bleibt frei sichtbar.
+- Warte- und Fehlermeldungen erscheinen gut lesbar oberhalb der Fußzeile, ohne Uhr oder Sponsoren zu überlagern.
+- Bei mehreren Begegnungen verweist der Hinweis auf die Spielauswahl in den Einstellungen.
+- Statusmeldungen werden auch nach einer zuvor erfolgreichen Verbindung wieder sichtbar.
+
+Über Version & Updates installierbar. Laufzeit und Windows-Starter bleiben unverändert.
+
 # Version 2.2.5 – transparente Sponsorenlogos
 
 - Die feste weiße Hintergrundfläche hinter Sponsorenlogos entfällt auf der Anzeigetafel und in der Logoübersicht der Einstellungen.
