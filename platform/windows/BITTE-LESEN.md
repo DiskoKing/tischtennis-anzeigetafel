@@ -4,6 +4,8 @@ Voraussetzungen: Windows 10/11 x64, Edge oder Chrome, beschreibbarer Ordner bzw.
 
 Den kompletten gebauten Ordner entpacken. Nicht direkt aus der ZIP starten. Bildschirm anschließen und Windows mit Win+P auf Erweitern stellen. Starten.cmd doppelklicken. Der erste zusätzliche Bildschirm wird nach seiner Desktopposition gewählt; ohne zusätzlichen Bildschirm wird der Hauptbildschirm genutzt. Beim Start öffnet sich ausschließlich die Anzeigetafel. Die Konfiguration bei Bedarf mit Einstellungen.cmd oder über das Einstellungen-Overlay öffnen.
 
+Wenn Windows beim ersten Start „Der Herausgeber konnte nicht verifiziert werden“ meldet, ist das eine Herkunftswarnung für das unsignierte Startskript. Bei eurem bewusst aus diesem Projekt geladenen Paket könnt ihr „Ausführen“ wählen. Für diese Datei lässt sich die Meldung über Rechtsklick auf Starten.cmd > Eigenschaften > Allgemein > Zulassen (falls angezeigt) einmalig freigeben. Windows-Schutzfunktionen bleiben eingeschaltet.
+
 Einstellungen.cmd öffnet die Konfiguration. Beenden.cmd beendet Server, Reader und die zur Instanz gehörenden Browser. Vor dem Abziehen beenden und Windows Sicher entfernen verwenden. Alt+F4 allein schließt nur das Fenster.
 
 Eigene Daten liegen in app/private und browser-data auf dem Stick. Browser und Betriebssystem können zusätzlich lokale temporäre Daten hinterlassen. Firmenrichtlinien können Programme vom Stick sperren; es werden keine Schutzfunktionen deaktiviert.

@@ -16,7 +16,7 @@ import zipfile
 
 import requests
 
-REPOSITORY = 'frankfehrmann-stack/tischtennis-anzeigetafel'
+REPOSITORY = 'DiskoKing/tischtennis-anzeigetafel'
 API = 'https://api.github.com/repos/' + REPOSITORY + '/releases/latest'
 PREFIX = 'https://github.com/' + REPOSITORY + '/releases/download/'
 MAX_DOWNLOAD = 24 * 1024 * 1024

@@ -1,3 +1,9 @@
+# Version 2.2.13 – neue GitHub-Adresse
+
+- Projekt und Update-Kanal verwenden jetzt DiskoKing/tischtennis-anzeigetafel.
+- Vorhandene Versionen bis 2.2.12 benötigen einmalig die Umstellung der Update-Adresse, weil der bisherige Updater Downloads auf den alten Repository-Pfad beschränkt.
+- Konfiguration, Zugangsdaten und Uploads bleiben unverändert.
+
 # Version 2.2.12 – Anzahl der Web4Sport-Partien wählen
 
 - Unter Ansicht & Wechsel lassen sich für die Web4Sport-Detailansicht 1, 2 oder 3 Partien wählen. Standard: 2.
