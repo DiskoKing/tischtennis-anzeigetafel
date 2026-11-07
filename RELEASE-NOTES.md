@@ -1,3 +1,10 @@
+# Version 2.2.7 – aufgeräumte Oberfläche
+
+- Auf der Anzeigetafel öffnet ein einzelnes Zahnrad die Einstellungen; die Version steht weiterhin in den Einstellungen.
+- Die Vereinsbibliothek entfällt aus den Einstellungen. Eigene Logos können weiterhin hochgeladen werden; gespeicherte Logos bleiben erhalten.
+
+Über Version & Updates installierbar. Laufzeit und Windows-Starter bleiben unverändert.
+
 # Version 2.2.6 – dezente, lesbare Statusmeldung
 
 - Die große Meldungsbox in der Mitte entfällt. Das Vereinslogo bleibt frei sichtbar.

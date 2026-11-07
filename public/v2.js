@@ -12,8 +12,6 @@
   let sponsorListSignature;
   let pendingSponsorFiles = [];
   let pendingBackgroundPreview = '';
-  let pendingLibraryLogo = null;
-  let clubCatalog = [];
   const settings = document.body.classList.contains('settings-page');
   const $ = id => document.getElementById(id);
 
@@ -176,42 +174,6 @@
     return true;
   };
 
-  function renderClubCatalog() {
-    const query = $('club-library-search').value.trim().toLocaleLowerCase('de');
-    const box = $('club-library-list');
-    box.replaceChildren();
-    const matches = clubCatalog.filter(club => club.name.toLocaleLowerCase('de').includes(query));
-    $('club-library-count').textContent = matches.length + ' Vereinslogo(s)';
-    for (const club of matches) {
-      const button = document.createElement('button');
-      button.type = 'button'; button.className = 'club-library-item';
-      button.setAttribute('aria-pressed', String(pendingLibraryLogo?.id === club.id));
-      const image = document.createElement('img'); image.src = club.url; image.alt = ''; image.loading = 'lazy';
-      const name = document.createElement('span'); name.textContent = club.name;
-      button.append(image, name);
-      button.addEventListener('click', () => {
-        pendingLibraryLogo = club;
-        $('club-logo').value = '';
-        $('logo-preview').src = club.url;
-        $('club-logo-state').textContent = club.name + ' aus der Bibliothek ausgewählt – noch nicht gespeichert.';
-        renderClubCatalog();
-      });
-      box.appendChild(button);
-    }
-  }
-
-  async function loadClubCatalog() {
-    try {
-      const response = await fetch('assets/club-logos/catalog.json', {cache: 'no-store'});
-      if (!response.ok) throw new Error('Katalog nicht erreichbar.');
-      const catalog = await response.json();
-      clubCatalog = catalog.clubs.filter(club => typeof club.name === 'string' &&
-        typeof club.id === 'string' && /^[A-Za-z0-9_.-]+$/.test(club.file) && !club.file.includes('..'))
-        .map(club => ({...club, url: 'assets/club-logos/' + encodeURIComponent(club.file)}));
-      renderClubCatalog();
-    } catch (error) { $('club-library-count').textContent = 'Bibliothek nicht verfügbar. Eigene Uploads sind weiterhin möglich.'; }
-  }
-
   function fillForm(config) {
     current = config;
     $('club-name').value = config.club.name;
@@ -362,8 +324,6 @@
         } catch (error) { $('janova-login-status').textContent = error.message; }
         finally { $('janova-password').value = ''; button.disabled = false; }
       });
-      $('club-library-search').addEventListener('input', renderClubCatalog);
-      loadClubCatalog();
       $('sponsors-files').addEventListener('change', () => {
         pendingSponsorFiles = [...$('sponsors-files').files];
         $('sponsor-status').textContent = pendingSponsorFiles.length ?
@@ -383,7 +343,6 @@
       $('club-logo').addEventListener('change', () => {
         const file = $('club-logo').files[0];
         if (file) {
-          pendingLibraryLogo = null; renderClubCatalog();
           $('logo-preview').src = URL.createObjectURL(file);
           $('club-logo-state').textContent = 'Neues Logo ausgewählt – noch nicht gespeichert.';
         }
@@ -402,11 +361,6 @@
             await api('/api/background', {method: 'POST', headers: {'Content-Type': backgroundFile.type}, body: backgroundFile});
           }
           let file = $('club-logo').files[0];
-          if (!file && pendingLibraryLogo) {
-            const response = await fetch(pendingLibraryLogo.url, {cache: 'no-store'});
-            if (!response.ok) throw new Error('Das gewählte Vereinslogo konnte nicht geladen werden.');
-            file = await response.blob();
-          }
           if (file) {
             if (file.size > 10 * 1024 * 1024) throw new Error('Logo darf höchstens 10 MB groß sein.');
             await api('/api/logo', {method: 'POST', headers: {'Content-Type': file.type}, body: file});
@@ -426,7 +380,6 @@
           $('background-file').value = '';
           if (pendingBackgroundPreview) URL.revokeObjectURL(pendingBackgroundPreview);
           pendingBackgroundPreview = '';
-          pendingLibraryLogo = null; renderClubCatalog();
           fillForm(config);
           $('save-status').textContent = 'Gespeichert. Geöffnete V2-Anzeigen übernehmen das Design automatisch.';
           if (embedded) window.parent.postMessage({type: 'v2-config-saved'}, location.origin);
@@ -450,7 +403,7 @@
     } else {
       const controls = document.createElement('nav');
       controls.className = 'v2-settings-link';
-      const button = document.createElement('button'); button.type = 'button'; button.append('⚙ Einstellungen · '); const version = document.createElement('span'); version.dataset.appVersion = ''; version.textContent = '…'; button.append(version);
+      const button = document.createElement('button'); button.type = 'button'; button.textContent = '⚙'; button.setAttribute('aria-label', 'Einstellungen öffnen'); button.title = 'Einstellungen öffnen';
       const dialog = document.createElement('dialog'); dialog.className = 'v2-settings-dialog';
       dialog.setAttribute('aria-label', 'Einstellungen der Anzeigetafel');
       const bar = document.createElement('div'); bar.className = 'v2-dialog-bar';

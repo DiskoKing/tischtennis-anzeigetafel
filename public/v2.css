@@ -17,6 +17,7 @@
 .arena.background-image-mode::before { opacity:0 !important; }
 .v2-settings-link { position:fixed;top:.6vh;right:.7vw;z-index:9999;font:700 12px Arial,sans-serif; }
 .v2-settings-link a,.v2-settings-link button { display:block;padding:8px 12px;color:#f4f5f7;text-decoration:none;border:1px solid #ffffff38;border-radius:6px;background:#11151deb;opacity:.65;font:inherit;cursor:pointer; }
+.v2-settings-link button { width:40px;height:40px;padding:0;font-size:22px;line-height:1; }
 .v2-settings-link a:hover,.v2-settings-link button:hover { opacity:1; }
 .v2-settings-dialog { width:min(1280px,96vw);height:94vh;max-width:96vw;max-height:94vh;padding:0;border:1px solid #415162;border-radius:14px;background:#0b0f15;color:#fff;overflow:hidden; }
 .v2-settings-dialog[open] { display:flex;flex-direction:column; }
@@ -81,13 +82,6 @@
 .arena .neutral-scene.v2-waiting { display:flex !important;flex-direction:column;justify-content:center;align-items:center;padding:3vh 2vw;box-sizing:border-box; }
 .neutral-scene.v2-waiting .neutral-logo-frame { flex-shrink:0;width:min(18vw,24vh,260px); }
 
-.club-library { border:1px solid #354455;border-radius:8px;padding:14px;margin:18px 0; }
-.club-library summary { cursor:pointer;font-weight:700;color:#dce6f3; }
-.club-library-list { display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;max-height:360px;overflow:auto;padding:4px; }
-.settings-page .club-library-item { display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:140px;padding:12px;background:#18232f;border:2px solid #354455;border-radius:8px;color:#f3f6fa;cursor:pointer;font:inherit; }
-.settings-page .club-library-item[aria-pressed="true"] { border-color:var(--settings-accent);background:#253244; }
-.club-library-item img { width:80px;height:80px;object-fit:contain;background:#fff;border-radius:6px;padding:5px; }
-.club-library-item span { font-size:12px;text-align:center;overflow-wrap:anywhere; }
 
 .update-notes { white-space:pre-wrap;overflow-wrap:anywhere;max-height:320px;overflow:auto;background:#0b1119;border:1px solid #354455;border-radius:8px;padding:16px;font:13px/1.5 Arial,sans-serif; }
 #update-install[hidden],#update-download[hidden],#update-notes[hidden] { display:none!important; }
