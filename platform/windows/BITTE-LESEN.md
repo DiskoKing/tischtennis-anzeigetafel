@@ -1,5 +1,7 @@
 # Windows-USB
 
+Die ausführliche Anleitung über ANLEITUNG.html im Paketordner öffnen. Eine PDF liegt unter app/docs/TT-Anzeigetafel-Anleitung.pdf. Sie beschreibt Start, Einstellungen, Updates und typische Probleme.
+
 Voraussetzungen: Windows 10/11 x64, Edge oder Chrome, beschreibbarer Ordner bzw. USB-Stick. Internet für Live-Daten.
 
 Den kompletten gebauten Ordner entpacken. Nicht direkt aus der ZIP starten. Bildschirm anschließen und Windows mit Win+P auf Erweitern stellen. Starten.cmd doppelklicken. Der erste zusätzliche Bildschirm wird nach seiner Desktopposition gewählt; ohne zusätzlichen Bildschirm wird der Hauptbildschirm genutzt. Beim Start öffnet sich ausschließlich die Anzeigetafel. Die Konfiguration bei Bedarf mit Einstellungen.cmd oder über das Einstellungen-Overlay öffnen.

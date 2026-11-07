@@ -1,6 +1,12 @@
-# Tischtennis-Anzeigetafel
+# TT-Anzeigetafel
 
 Konfigurierbare Anzeigetafel für Janova-Zählgeräte und TischtennisLive/Web4Sport. Eine gemeinsame Python-/Browser-Codebasis für Linux/NUC und Windows-USB; ein Veröffentlichungskanal.
+
+## Anleitung für den praktischen Betrieb
+
+[PDF-Anleitung](docs/TT-Anzeigetafel-Anleitung.pdf) · [HTML zum Öffnen und Drucken](docs/ANLEITUNG.html) · [Anleitung direkt auf GitHub lesen](docs/ANLEITUNG.md)
+
+Die Anleitung beschreibt Windows-USB sowie die Neueinrichtung auf Raspi/NUC mit Linux, gemeinsame Konfiguration, Spieltag, Updates und Fehlerhilfe. Sie liegt den Paketen unter docs (Linux) bzw. app/docs (Windows) bei. Unter Windows öffnet ANLEITUNG.html im Paketordner die mitgelieferte Fassung. Die PDF ist außerdem ein eigener Release-Download.
 
 ## Funktionen
 
@@ -11,7 +17,8 @@ Konfigurierbare Anzeigetafel für Janova-Zählgeräte und TischtennisLive/Web4Sp
 - Eigene Hintergründe mit einstellbarer Abdunklung.
 - Sponsorenlogos mit Einleitung und Rotation.
 - Einstellungen als Overlay für die Bedienung im Kioskmodus.
-- Durchsuchbarer Logo-Katalog; in der öffentlichen Ausgabe zunächst leer.
+- Web4Sport: 1, 2 oder 3 Partien in der Detailansicht; Janova bleibt dynamisch.
+- Einstellbare Höhe der Fußleiste; Homepage, Uhr und Sponsorenlogos skalieren mit.
 
 ## Linux / lokale Entwicklung
 

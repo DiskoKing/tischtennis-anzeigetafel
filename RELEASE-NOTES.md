@@ -1,3 +1,12 @@
+# Version 2.2.14 – Anleitung für Windows und Linux-Hallenbetrieb
+
+- Achtseitige Anleitung für Windows-USB und Raspi/NUC mit Linux: Einrichtung, Kioskstart, Vereinsdesign, Datenquellen, Spieltag, Updates und Fehlerhilfe.
+- Als PDF, lokal lesbare HTML-Datei und Markdown im Projekt und in den Paketen enthalten. Die PDF ist zusätzlich separat im Release verfügbar.
+- Windows-Pakete enthalten ANLEITUNG.html als direkten Einstieg. Vorhandene Installationen erhalten die Anleitung per normalem Update im Ordner app/docs bzw. docs.
+- README an aktuelle Funktionen angepasst; entfernte Vereinsbibliothek nicht mehr beworben.
+
+Laufzeit und Windows-Starter bleiben unverändert.
+
 # Version 2.2.13 – neue GitHub-Adresse
 
 - Projekt und Update-Kanal verwenden jetzt DiskoKing/tischtennis-anzeigetafel.

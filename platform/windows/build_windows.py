@@ -14,7 +14,7 @@ SOURCE = Path(__file__).resolve().parents[2]
 PYTHON_URL = 'https://www.python.org/ftp/python/3.13.15/python-3.13.15-embed-amd64.zip'
 PYTHON_SHA256 = 'd1f04d990aee1253d8569e8e5104e30fa9f5fa830899f14843448872d936a2cf'
 CORE = ['updater.py', 'server.py', 'janova_reader.py', 'web4sport_client.py', 'test_v2.py',
-        'public', 'VERSION', 'RELEASE-NOTES.md', 'requirements.txt', 'requirements.lock']
+        'public', 'docs', 'VERSION', 'RELEASE-NOTES.md', 'requirements.txt', 'requirements.lock']
 
 
 def build(target, runtime_zip=None):
@@ -51,6 +51,13 @@ def build(target, runtime_zip=None):
             encoding='ascii')
     shutil.copy2(SOURCE/'platform/windows/BITTE-LESEN.md', target/'BITTE-LESEN.md')
     shutil.copy2(SOURCE/'docs/UPDATES.md', target/'UPDATES.md')
+    (target/'ANLEITUNG.html').write_text(
+        '<!doctype html><html lang="de"><meta charset="utf-8">'
+        '<meta http-equiv="refresh" content="0;url=app/docs/ANLEITUNG.html">'
+        '<title>TT-Anzeigetafel - Anleitung</title>'
+        '<a href="app/docs/ANLEITUNG.html">Anleitung öffnen</a>'
+        '<p><a href="app/docs/TT-Anzeigetafel-Anleitung.pdf">PDF öffnen</a></p></html>',
+        encoding='utf-8')
     manifest = {'version': (SOURCE/'VERSION').read_text().strip(), 'platform': 'windows-x64',
                 'pythonUrl': PYTHON_URL, 'pythonSha256': PYTHON_SHA256,
                 'files': {p.relative_to(target).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
