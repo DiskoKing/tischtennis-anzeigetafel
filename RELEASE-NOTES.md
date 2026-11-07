@@ -1,3 +1,10 @@
+# Version 2.2.11 – Vereinslogo beim Quellenwechsel erhalten
+
+- Die Kompaktansicht blendet die neutrale Logoansicht nicht mehr aus.
+- Nach einem Wechsel der Datenquelle bleibt das Vereinslogo auch bei verbundener Quelle ohne gestartetes Spiel sichtbar.
+
+Über Version & Updates installierbar.
+
 # Version 2.2.10 – konfigurierbare Fußleiste
 
 - Unter Ansicht & Wechsel lässt sich die Höhe der Fußleiste von 5 bis 15 % der Bildschirmhöhe einstellen. Standard: 8,5 %.

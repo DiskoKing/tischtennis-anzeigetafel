@@ -3,9 +3,8 @@
    Wird nur aktiv, wenn .arena die Klasse mode-total trägt.
    ========================================================= */
 
-/* In diesem Modus gibt es ausschließlich die Summary-Scene. */
-.arena.mode-total .live-scene,
-.arena.mode-total .neutral-scene {
+/* Hide table details in compact mode; keep the neutral club logo available. */
+.arena.mode-total .live-scene {
   display: none !important;
 }
 
