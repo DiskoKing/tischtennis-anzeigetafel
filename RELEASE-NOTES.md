@@ -1,3 +1,10 @@
+# Version 2.2.5 – transparente Sponsorenlogos
+
+- Die feste weiße Hintergrundfläche hinter Sponsorenlogos entfällt auf der Anzeigetafel und in der Logoübersicht der Einstellungen.
+- Transparente PNG-, GIF- und WebP-Bereiche zeigen den jeweiligen Hintergrund. Die hochgeladenen Originaldateien bleiben unverändert; ein erneuter Upload ist nicht nötig.
+
+Über Version & Updates installierbar. Laufzeit und Windows-Starter bleiben unverändert.
+
 # Version 2.2.4 – Loginbereich passend zur Datenquelle
 
 - Die Einstellungen zeigen nur Janova oder TischtennisLive/Web4Sport entsprechend der gewählten Datenquelle.

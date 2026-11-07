@@ -4,11 +4,11 @@
 .sponsors-intro { color:#d4dce5;font:600 clamp(11px,1.05vw,22px)/1.2 Arial,sans-serif;max-width:45%;overflow-wrap:anywhere; }
 .sponsors-intro[hidden] { display:none; }
 .sponsors-display[hidden] { display:none !important; }
-.sponsors-display img { display:block;height:min(7vh,88px);width:auto;max-width:100%;object-fit:contain;background:#fff;border-radius:5px;padding:.25vh .4vw; }
+.sponsors-display img { display:block;height:min(7vh,88px);width:auto;max-width:100%;object-fit:contain;background:transparent;border-radius:5px;padding:.25vh .4vw; }
 .sponsor-strip > .sponsor-tagline { max-width:42%;flex-shrink:1;overflow:hidden;text-overflow:ellipsis; }
 .settings-page .sponsor-upload-button { margin-top:12px; }
 .sponsor-logo-row { display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #293442; }
-.sponsor-logo-row img { width:72px;height:48px;object-fit:contain;background:#fff;border-radius:4px;padding:4px; }
+.sponsor-logo-row img { width:72px;height:48px;object-fit:contain;background:transparent;border-radius:4px;padding:4px; }
 .sponsor-logo-row span { flex:1;min-width:0;font-size:12px;overflow-wrap:anywhere; }
 .settings-page .sponsor-logo-row button { padding:8px 10px;font-size:11px; }
 .arena { background:var(--v2-background) !important; }
