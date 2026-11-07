@@ -1,3 +1,11 @@
+# Version 2.2.10 – konfigurierbare Fußleiste
+
+- Unter Ansicht & Wechsel lässt sich die Höhe der Fußleiste von 5 bis 15 % der Bildschirmhöhe einstellen. Standard: 8,5 %.
+- Sponsorenlogos, Einleitung, Homepage und Uhr skalieren mit. Der Statushinweis bleibt oberhalb der Fußleiste.
+- Vorhandene Konfigurationen übernehmen automatisch die bisherige Standardhöhe.
+
+Über Version & Updates installierbar.
+
 # Version 2.2.9 – alle Einstellungsbereiche gemeinsam schalten
 
 - Neben Einstellungen speichern können alle Bereiche gemeinsam auf- oder zugeklappt werden.

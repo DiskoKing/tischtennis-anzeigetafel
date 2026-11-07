@@ -119,3 +119,13 @@
 .settings-page .section-actions button { background:#1c2936;border:1px solid #465970;color:#e5edf6;padding:10px 12px;font-size:13px; }
 .settings-page .save-bar { flex-wrap:wrap; }
 @media(max-width:600px) { .settings-page { padding-bottom:190px; }.settings-page .section-actions { width:100%; } }
+
+/* Scale footer contents with its configured height. */
+.arena .sponsors-display img { height:calc(var(--footer-h) * .82);max-height:100%; }
+.arena .sponsors-intro { font-size:calc(var(--footer-h) * .22); }
+.arena .sponsor-tagline { font-size:calc(var(--footer-h) * .27); }
+.arena .score-clock-time { font-size:calc(var(--footer-h) * .5); }
+.arena .score-clock-date { font-size:calc(var(--footer-h) * .15);margin-top:calc(var(--footer-h) * .06); }
+.arena .sponsor-sep { height:calc(var(--footer-h) * .45); }
+
+.arena .games { height:calc(70vh - var(--footer-h)); }

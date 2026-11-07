@@ -39,6 +39,7 @@
     document.title = 'Anzeigetafel ' + config.version + (settings ? ' · Einstellungen' : '');
     current = config;
     if (settings) return;
+    document.querySelector('.arena').style.setProperty('--footer-h', (config.display.footerHeightPercent ?? 8.5) + 'vh');
     applySponsors(config.sponsors);
     const signature = JSON.stringify(config.display);
     if (signature !== displaySignature) {
@@ -187,6 +188,8 @@
     updateDataSourceFields();
     $('display-mode').value = config.display.mode;
     $('display-seconds').value = config.display.intervalSeconds;
+    $('footer-height').value = config.display.footerHeightPercent ?? 8.5;
+    $('footer-height-label').textContent = 'Höhe der Fußleiste: ' + Number($('footer-height').value).toLocaleString('de-DE') + ' %';
     $('sponsors-enabled').checked = config.sponsors.enabled;
     $('sponsors-seconds').value = config.sponsors.intervalSeconds;
     $('sponsors-intro-text').value = config.sponsors.introText ?? 'unterstützt von:';
@@ -260,6 +263,9 @@
 
   async function mount() {
     if (settings) {
+      $('footer-height').addEventListener('input', () => {
+        $('footer-height-label').textContent = 'Höhe der Fußleiste: ' + Number($('footer-height').value).toLocaleString('de-DE') + ' %';
+      });
       const categories = [...document.querySelectorAll('.settings-category')];
       $('expand-sections').addEventListener('click', () => {
         for (const category of categories) category.open = true;
@@ -374,7 +380,7 @@
           const config = await api('/api/config', {method: 'POST', body: JSON.stringify({
             dataSource: $('data-source').value,
             background: {mode: $('background-mode').value, overlayPercent: Number($('background-dim').value)},
-            display: {mode: $('display-mode').value, intervalSeconds: Number($('display-seconds').value)},
+            display: {mode: $('display-mode').value, intervalSeconds: Number($('display-seconds').value), footerHeightPercent: Number($('footer-height').value)},
             sponsors: {enabled: $('sponsors-enabled').checked, intervalSeconds: Number($('sponsors-seconds').value), introText: $('sponsors-intro-text').value},
             club: {name: $('club-name').value, website: $('club-website').value,
               primary: $('primary').value, background: $('background').value},

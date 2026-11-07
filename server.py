@@ -26,7 +26,7 @@ import web4sport_client as web
 ROOT = Path(__file__).resolve().parent
 DEFAULTS = {
     'version': '2.0', 'dataSource': 'janova',
-    'display': {'mode': 'rotate', 'intervalSeconds': 30},
+    'display': {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5},
     'background': {'mode': 'css', 'overlayPercent': 58},
     'sponsors': {'enabled': False, 'intervalSeconds': 10, 'introText': 'unterstützt von:', 'items': []},
     'club': {'name': 'Mein Tischtennisverein', 'website': '',
@@ -189,14 +189,17 @@ def validate_update(previous, patch):
         result['sponsors'].update(value)
     if 'display' in patch:
         display = patch['display']
-        if not isinstance(display, dict) or set(display) != {'mode', 'intervalSeconds'}:
+        if not isinstance(display, dict) or not {'mode', 'intervalSeconds'}.issubset(display) or set(display) - {'mode', 'intervalSeconds', 'footerHeightPercent'}:
             raise ValueError('Ansicht ungültig')
         if display['mode'] not in ('compact', 'detail', 'rotate'):
             raise ValueError('Ansicht ungültig')
         seconds = display['intervalSeconds']
         if isinstance(seconds, bool) or not isinstance(seconds, int) or not 1 <= seconds <= 3600:
             raise ValueError('Intervall muss zwischen 1 und 3600 Sekunden liegen')
-        result['display'] = copy.deepcopy(display)
+        height = display.get('footerHeightPercent', previous['display'].get('footerHeightPercent', 8.5))
+        if isinstance(height, bool) or not isinstance(height, (int, float)) or not 5 <= height <= 15:
+            raise ValueError('Fußleistenhöhe muss zwischen 5 und 15 Prozent liegen')
+        result['display'] = {**copy.deepcopy(display), 'footerHeightPercent': height}
     if 'dataSource' in patch:
         if patch['dataSource'] not in ('janova', 'web4sport'):
             raise ValueError('Datenquelle ungültig')
@@ -251,6 +254,7 @@ class App:
         migrated = 'display' not in self.config or 'background' not in self.config or 'sponsors' not in self.config or 'introText' not in self.config.get('sponsors', {})
         self.config.setdefault('background', copy.deepcopy(DEFAULTS['background']))
         self.config.setdefault('display', copy.deepcopy(DEFAULTS['display']))
+        self.config['display'].setdefault('footerHeightPercent', 8.5)
         self.config.setdefault('sponsors', copy.deepcopy(DEFAULTS['sponsors']))
         self.config['sponsors'].setdefault('introText', DEFAULTS['sponsors']['introText'])
         if not self.path.exists() or migrated:
