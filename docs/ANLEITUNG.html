@@ -17,7 +17,7 @@
 <p>- Seite 7: Updates, Sicherung und Zugriff von einem anderen Rechner.</p>
 <p>- Seite 8: Hilfe bei Problemen und Kontakt.</p>
 <p><b>Bereits fertig eingerichteter Hallenrechner?</b> Die Linux-Neueinrichtung überspringen. Ein vorhandener Dienst oder Autostart darf nicht durch einen zweiten ergänzt werden.</p>
-<p>Anleitung zur Version 2.2.14. Projekt: <a href="https://github.com/DiskoKing/tischtennis-anzeigetafel">https://github.com/DiskoKing/tischtennis-anzeigetafel</a></p></section><section><h1>1. Windows: entpacken und starten</h1>
+<p>Anleitung zur Version 2.2.15. Projekt: <a href="https://github.com/DiskoKing/tischtennis-anzeigetafel">https://github.com/DiskoKing/tischtennis-anzeigetafel</a></p></section><section><h1>1. Windows: entpacken und starten</h1>
 <h3>Einmal vorbereiten</h3>
 <p>1. Auf <a href="https://github.com/DiskoKing/tischtennis-anzeigetafel/releases/latest">https://github.com/DiskoKing/tischtennis-anzeigetafel/releases/latest</a> das Paket <b>anzeigetafel-windows-x64.zip</b> herunterladen. Nicht „Source code“ wählen: Darin fehlt die mitgelieferte Windows-Laufzeit.</p>
 <p>2. Die komplette ZIP mit „Alle extrahieren“ in einen beschreibbaren Ordner oder auf einen USB-Stick entpacken. Nicht aus der geöffneten ZIP starten. Die Ordner app und runtime bleiben neben Starten.cmd liegen.</p>
@@ -116,11 +116,6 @@ EOF</code></pre>
 <h3>Normale Updates</h3>
 <p>Unter „Version &amp; Updates“ auf „Nach Updates suchen“ klicken. Versionshinweise lesen und ein angebotenes Update installieren. Vorher ungespeicherte Änderungen speichern. Die Anwendung wird kurz beendet und neu gestartet; Logo, Bilder und Konfiguration sollen erhalten bleiben. Während eines laufenden Mannschaftskampfs möglichst nicht aktualisieren.</p>
 <p>Automatische Installation setzt eine unterstützte Umgebung voraus: Windows-Paket mit Plattformstarter oder Linux-Dienst anzeigetafel.service bzw. der bestehende NUC-Dienst ttsv-scoreboard-v2.service. Bei einem manuell gestarteten Entwicklungsserver kann die automatische Installation nicht angeboten werden. Änderungen an Laufzeit oder Starter können ein vollständiges neues Paket erfordern.</p>
-<h3>Einmaliger Sonderfall: Versionen bis 2.2.12</h3>
-<p>Das GitHub-Konto heißt jetzt DiskoKing. Ältere Updater beschränken Downloads auf den alten Kontonamen und benötigen einmalig eine Umstellung. Die Hilfe liegt im Repository unter tools/migrate_github_owner.py. Unter Linux zum Beispiel mit einer heruntergeladenen Kopie:</p>
-<pre><code>python3 migrate_github_owner.py --root ~/tischtennis-anzeigetafel
-systemctl --user restart anzeigetafel.service</code></pre>
-<p>Für Windows gibt es zusätzlich die separate Umstellungshilfe GitHub-Adresse-umstellen.zip. Beide enthaltenen Dateien neben Starten.cmd legen, die .cmd ausführen und die Anzeigetafel beenden und neu starten. Die Hilfe ändert nur die Repository-Adresse im Updater und erstellt eine Sicherung. Ab Version 2.2.13 ist die neue Adresse enthalten.</p>
 <h3>Eigene Daten sichern</h3>
 <p>Vor einem Rechnerwechsel oder dem Austausch des gesamten Pakets die Anwendung beenden und den Ordner <b>private</b> sichern. Windows: app/private; Linux: ~/tischtennis-anzeigetafel/private. Dieser Ordner kann Zugangsdaten enthalten. Bei einer neuen Installation nur den gesicherten private-Ordner an die passende Stelle zurückkopieren; Plattform und Version müssen zusammenpassen.</p>
 <h3>Zugriff vom Laptop</h3>

@@ -27,7 +27,7 @@ Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova oder Tischtenni
 
 **Bereits fertig eingerichteter Hallenrechner?** Die Linux-Neueinrichtung überspringen. Ein vorhandener Dienst oder Autostart darf nicht durch einen zweiten ergänzt werden.
 
-Anleitung zur Version 2.2.14. Projekt: https://github.com/DiskoKing/tischtennis-anzeigetafel
+Anleitung zur Version 2.2.15. Projekt: https://github.com/DiskoKing/tischtennis-anzeigetafel
 
 ---
 
@@ -207,17 +207,6 @@ Noch kein Spiel? Die neutrale Anzeige mit Vereinslogo und Fußleiste ist vorgese
 Unter „Version & Updates“ auf „Nach Updates suchen“ klicken. Versionshinweise lesen und ein angebotenes Update installieren. Vorher ungespeicherte Änderungen speichern. Die Anwendung wird kurz beendet und neu gestartet; Logo, Bilder und Konfiguration sollen erhalten bleiben. Während eines laufenden Mannschaftskampfs möglichst nicht aktualisieren.
 
 Automatische Installation setzt eine unterstützte Umgebung voraus: Windows-Paket mit Plattformstarter oder Linux-Dienst anzeigetafel.service bzw. der bestehende NUC-Dienst ttsv-scoreboard-v2.service. Bei einem manuell gestarteten Entwicklungsserver kann die automatische Installation nicht angeboten werden. Änderungen an Laufzeit oder Starter können ein vollständiges neues Paket erfordern.
-
-### Einmaliger Sonderfall: Versionen bis 2.2.12
-
-Das GitHub-Konto heißt jetzt DiskoKing. Ältere Updater beschränken Downloads auf den alten Kontonamen und benötigen einmalig eine Umstellung. Die Hilfe liegt im Repository unter tools/migrate_github_owner.py. Unter Linux zum Beispiel mit einer heruntergeladenen Kopie:
-
-```sh
-python3 migrate_github_owner.py --root ~/tischtennis-anzeigetafel
-systemctl --user restart anzeigetafel.service
-```
-
-Für Windows gibt es zusätzlich die separate Umstellungshilfe GitHub-Adresse-umstellen.zip. Beide enthaltenen Dateien neben Starten.cmd legen, die .cmd ausführen und die Anzeigetafel beenden und neu starten. Die Hilfe ändert nur die Repository-Adresse im Updater und erstellt eine Sicherung. Ab Version 2.2.13 ist die neue Adresse enthalten.
 
 ### Eigene Daten sichern
 

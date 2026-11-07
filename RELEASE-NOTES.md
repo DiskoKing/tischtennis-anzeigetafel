@@ -1,3 +1,10 @@
+# Version 2.2.15 – Anleitung gestrafft
+
+- Den nur für die bisherige Einzelinstallation relevanten Hinweis zur GitHub-Kontoumbenennung aus der Anleitung entfernt.
+- PDF-, HTML- und Markdown-Anleitung aktualisiert.
+
+Laufzeit und Anwendung bleiben unverändert.
+
 # Version 2.2.14 – Anleitung für Windows und Linux-Hallenbetrieb
 
 - Achtseitige Anleitung für Windows-USB und Raspi/NUC mit Linux: Einrichtung, Kioskstart, Vereinsdesign, Datenquellen, Spieltag, Updates und Fehlerhilfe.
