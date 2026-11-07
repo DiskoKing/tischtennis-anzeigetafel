@@ -722,9 +722,10 @@ function convertWeb4Sport(raw) {
     away:raw.teams?.away?.trim() || "GAST"
   };
   const unfinished = raw.matches.filter(m => !m.finished);
-  // Ohne Tischzuordnung zeigen wir die nächsten drei offenen Paarungen,
+  // Ohne Tischzuordnung zeigen wir die konfigurierte Anzahl offener Paarungen,
   // nicht vermeintlich tatsächlich laufende Tische.
-  const selected = unfinished.slice(0,3);
+  const count = [1, 2, 3].includes(displayPreferences.web4sportMatchCount) ? displayPreferences.web4sportMatchCount : 2;
+  const selected = unfinished.slice(0, count);
   const boards = selected.map((m, i) => ({
     active:true, hasGame:true, slot:i+1, game, teams, teamScore,
     match:{

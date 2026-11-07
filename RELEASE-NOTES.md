@@ -1,3 +1,11 @@
+# Version 2.2.12 – Anzahl der Web4Sport-Partien wählen
+
+- Unter Ansicht & Wechsel lassen sich für die Web4Sport-Detailansicht 1, 2 oder 3 Partien wählen. Standard: 2.
+- Angezeigt werden die nächsten offenen Paarungen in Spielreihenfolge. Sind weniger offen, werden entsprechend weniger angezeigt.
+- Janova bleibt dynamisch; der Web4Sport-Regler erscheint nur bei gewählter Web4Sport-Datenquelle.
+
+Über Version & Updates installierbar.
+
 # Version 2.2.11 – Vereinslogo beim Quellenwechsel erhalten
 
 - Die Kompaktansicht blendet die neutrale Logoansicht nicht mehr aus.

@@ -177,15 +177,30 @@ class ConfigAndApiTests(unittest.TestCase):
         self.assertTrue(self.app.restart_requested.is_set())
 
     def test_display_preferences_persist_without_reader_restart(self):
-        self.assertEqual(self.app.config['display'], {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5})
+        self.assertEqual(self.app.config['display'], {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2})
         epoch = self.app.epoch
         for mode in ('compact', 'detail', 'rotate'):
             self.request('/api/config', json.dumps({'display': {'mode': mode, 'intervalSeconds': 45}}).encode())
-            self.assertEqual(server.App(self.root).config['display'], {'mode': mode, 'intervalSeconds': 45, 'footerHeightPercent': 8.5})
+            self.assertEqual(server.App(self.root).config['display'], {'mode': mode, 'intervalSeconds': 45, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2})
             self.assertEqual(self.app.epoch, epoch)
         for seconds in (0, -1, 3601, 2.5, True, '30'):
             with self.assertRaises(ValueError):
                 server.validate_update(self.app.config, {'display': {'mode': 'rotate', 'intervalSeconds': seconds}})
+
+    def test_web4sport_match_count_persistence_validation_and_migration(self):
+        self.assertEqual(self.app.config['display']['web4sportMatchCount'], 2)
+        epoch = self.app.epoch
+        for count in (1, 2, 3):
+            self.request('/api/config', json.dumps({'display': {'mode': 'rotate', 'intervalSeconds': 30, 'web4sportMatchCount': count}}).encode())
+            self.assertEqual(server.App(self.root).config['display']['web4sportMatchCount'], count)
+            self.assertEqual(self.app.epoch, epoch)
+        for count in (0, 4, True, 2.0, '2', None):
+            with self.assertRaises(ValueError):
+                server.validate_update(self.app.config, {'display': {'mode': 'rotate', 'intervalSeconds': 30, 'web4sportMatchCount': count}})
+        config = copy.deepcopy(self.app.config)
+        config['display'].pop('web4sportMatchCount')
+        server.atomic_json(self.app.path, config)
+        self.assertEqual(server.App(self.root).config['display']['web4sportMatchCount'], 2)
 
     def test_footer_height_persistence_validation_and_migration(self):
         epoch = self.app.epoch
@@ -206,7 +221,7 @@ class ConfigAndApiTests(unittest.TestCase):
         config.pop('display')
         server.atomic_json(self.app.path, config)
         migrated = server.App(self.root)
-        self.assertEqual(migrated.config['display'], {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5})
+        self.assertEqual(migrated.config['display'], {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2})
         self.assertEqual(migrated.config['web4sport']['password'], config['web4sport']['password'])
 
     def test_sponsor_upload_rotation_config_and_remove(self):

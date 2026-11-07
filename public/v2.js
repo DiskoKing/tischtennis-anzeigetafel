@@ -187,6 +187,7 @@
     $('data-source').value = config.dataSource;
     updateDataSourceFields();
     $('display-mode').value = config.display.mode;
+    $('web-match-count').value = config.display.web4sportMatchCount ?? 2;
     $('display-seconds').value = config.display.intervalSeconds;
     $('footer-height').value = config.display.footerHeightPercent ?? 8.5;
     $('footer-height-label').textContent = 'Höhe der Fußleiste: ' + Number($('footer-height').value).toLocaleString('de-DE') + ' %';
@@ -223,6 +224,8 @@
 
   function updateDataSourceFields() {
     const source = $('data-source').value;
+    $('web-match-options').hidden = source !== 'web4sport';
+    $('web-match-options').disabled = source !== 'web4sport';
     for (const [name, id] of [['janova', 'janova-settings'], ['web4sport', 'web4sport-settings']]) {
       const group = $(id);
       group.hidden = name !== source;
@@ -380,7 +383,7 @@
           const config = await api('/api/config', {method: 'POST', body: JSON.stringify({
             dataSource: $('data-source').value,
             background: {mode: $('background-mode').value, overlayPercent: Number($('background-dim').value)},
-            display: {mode: $('display-mode').value, intervalSeconds: Number($('display-seconds').value), footerHeightPercent: Number($('footer-height').value)},
+            display: {mode: $('display-mode').value, intervalSeconds: Number($('display-seconds').value), footerHeightPercent: Number($('footer-height').value), web4sportMatchCount: Number($('web-match-count').value)},
             sponsors: {enabled: $('sponsors-enabled').checked, intervalSeconds: Number($('sponsors-seconds').value), introText: $('sponsors-intro-text').value},
             club: {name: $('club-name').value, website: $('club-website').value,
               primary: $('primary').value, background: $('background').value},
