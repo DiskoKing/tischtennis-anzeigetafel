@@ -28,7 +28,7 @@ Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova oder Tischtenni
 
 **Bereits fertig eingerichteter Hallenrechner?** Die Linux-Neueinrichtung überspringen. Ein vorhandener Dienst oder Autostart darf nicht durch einen zweiten ergänzt werden.
 
-Anleitung zur Version 2.3.0. Projekt: https://github.com/DiskoKing/tischtennis-anzeigetafel
+Anleitung zur Version 2.3.1. Projekt: https://github.com/DiskoKing/tischtennis-anzeigetafel
 
 ---
 
@@ -175,6 +175,7 @@ Einmal neu starten und prüfen: Desktop meldet sich an, Browser öffnet die Anze
 ### Anzeige nach Wunsch
 
 - **Nur Kompaktansicht:** Großes Mannschaftsergebnis mit Vereinen und Wettbewerb.
+- **Kompaktansicht gestalten:** Klassisch mit Vereinsnamen neben den Zahlen oder große Zahlen mit Vereinsnamen darunter. Die Auswahl gilt auch im manuellen Modus.
 - **Nur Detailansicht:** Paarungen und Satzstände; bei Janova zusätzlich Live-Ballpunkte und Spielhinweise, soweit geliefert.
 - **Automatisch wechseln:** Kompakt und Detail wechseln bei aktiven Spielen. Das Intervall ist einstellbar; Standard sind 30 Sekunden.
 - **Web4Sport-Partien:** 1, 2 oder 3 nächste offene Paarungen in Spielreihenfolge. Standard: 2. Ohne Tischzuordnung ist das keine verifizierte Belegung der realen Tische.

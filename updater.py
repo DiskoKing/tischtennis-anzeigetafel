@@ -20,7 +20,7 @@ REPOSITORY = 'DiskoKing/tischtennis-anzeigetafel'
 API = 'https://api.github.com/repos/' + REPOSITORY + '/releases/latest'
 PREFIX = 'https://github.com/' + REPOSITORY + '/releases/download/'
 MAX_DOWNLOAD = 24 * 1024 * 1024
-FILES = {'streamdock.py', 'server.py', 'updater.py', 'janova_reader.py', 'web4sport_client.py',
+FILES = {'server.py', 'updater.py', 'janova_reader.py', 'web4sport_client.py',
          'VERSION', 'UPDATE.json', 'README.md', 'RELEASE-NOTES.md', 'requirements.txt', 'requirements.lock'}
 
 

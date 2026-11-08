@@ -13,7 +13,7 @@ import urllib.request
 import uuid
 
 MAPPING = {1: ('home', 1), 2: ('home', -1), 4: ('away', 1), 5: ('away', -1)}
-ASSETS = Path(__file__).with_name('public')/'assets/streamdock-icons'
+ASSETS = Path(__file__).resolve().parents[1]/'assets/streamdock-icons'
 
 def device_path():
     for entry in Path('/sys/class/hidraw').glob('hidraw*'):

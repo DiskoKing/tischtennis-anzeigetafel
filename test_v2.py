@@ -225,11 +225,11 @@ class ConfigAndApiTests(unittest.TestCase):
         self.assertTrue(self.app.restart_requested.is_set())
 
     def test_display_preferences_persist_without_reader_restart(self):
-        self.assertEqual(self.app.config['display'], {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2})
+        self.assertEqual(self.app.config['display'], {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2, 'compactLayout': 'inline'})
         epoch = self.app.epoch
         for mode in ('compact', 'detail', 'rotate'):
             self.request('/api/config', json.dumps({'display': {'mode': mode, 'intervalSeconds': 45}}).encode())
-            self.assertEqual(server.App(self.root).config['display'], {'mode': mode, 'intervalSeconds': 45, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2})
+            self.assertEqual(server.App(self.root).config['display'], {'mode': mode, 'intervalSeconds': 45, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2, 'compactLayout': 'inline'})
             self.assertEqual(self.app.epoch, epoch)
         for seconds in (0, -1, 3601, 2.5, True, '30'):
             with self.assertRaises(ValueError):
@@ -269,7 +269,7 @@ class ConfigAndApiTests(unittest.TestCase):
         config.pop('display')
         server.atomic_json(self.app.path, config)
         migrated = server.App(self.root)
-        self.assertEqual(migrated.config['display'], {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2})
+        self.assertEqual(migrated.config['display'], {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2, 'compactLayout': 'inline'})
         self.assertEqual(migrated.config['web4sport']['password'], config['web4sport']['password'])
 
     def test_sponsor_upload_rotation_config_and_remove(self):

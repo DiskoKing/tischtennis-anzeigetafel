@@ -141,3 +141,19 @@
 .manual-remote h1 { font-size:28px; }
 .manual-total-target { cursor:pointer;touch-action:manipulation;user-select:none; }
 .manual-total-target:focus-visible { outline:3px solid #fff;outline-offset:6px; }
+
+/* Alternative compact layout: score above the corresponding club name. */
+.arena.mode-total.compact-stacked .summary-scene { inset:4vh 4vw calc(var(--footer-h) + 4vh) !important; }
+.arena.mode-total.compact-stacked .summary-content { height:100% !important;grid-template-rows:auto auto minmax(0,1fr) !important; }
+.arena.mode-total.compact-stacked .summary-logo-frame { width:min(6vw,10vh) !important;margin-bottom:.7vh !important; }
+.arena.mode-total.compact-stacked .summary-competition { margin-bottom:1.5vh !important; }
+.arena.mode-total.compact-stacked .summary-scoreboard { width:90% !important;grid-template-columns:minmax(0,1fr) 6vw minmax(0,1fr) !important;grid-template-rows: minmax(0,1fr) auto !important;gap:2vh 2vw !important;align-self:stretch; }
+.arena.mode-total.compact-stacked .summary-score { width:100% !important;min-width:0 !important;height:100% !important;max-height:48vh;font-size:min(29vw,54vh) !important; }
+.arena.mode-total.compact-stacked #summaryHomeTotal.two-digit-total,
+.arena.mode-total.compact-stacked #summaryAwayTotal.two-digit-total { font-size:min(23vw,44vh) !important; }
+.arena.mode-total.compact-stacked .home-score { grid-column:1;grid-row:1; }
+.arena.mode-total.compact-stacked .away-score { grid-column:3;grid-row:1; }
+.arena.mode-total.compact-stacked .summary-colon { grid-column:2;grid-row:1;width:auto !important;font-size:min(12vw,24vh) !important; }
+.arena.mode-total.compact-stacked .summary-team { width:100%;max-width:none !important;text-align:center !important;justify-self:stretch !important;font-size:min(3.8vw,7vh) !important;line-height:1.02 !important;align-self:start;overflow-wrap:anywhere; }
+.arena.mode-total.compact-stacked .summary-team.home { grid-column:1;grid-row:2; }
+.arena.mode-total.compact-stacked .summary-team.away { grid-column:3;grid-row:2; }

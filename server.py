@@ -26,7 +26,7 @@ import web4sport_client as web
 ROOT = Path(__file__).resolve().parent
 DEFAULTS = {
     'version': '2.0', 'dataSource': 'janova',
-    'display': {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2},
+    'display': {'mode': 'rotate', 'intervalSeconds': 30, 'footerHeightPercent': 8.5, 'web4sportMatchCount': 2, 'compactLayout': 'inline'},
     'background': {'mode': 'css', 'overlayPercent': 58},
     'sponsors': {'enabled': False, 'intervalSeconds': 10, 'introText': 'unterstützt von:', 'items': []},
     'club': {'name': 'Mein Tischtennisverein', 'website': '',
@@ -203,7 +203,7 @@ def validate_update(previous, patch):
         result['sponsors'].update(value)
     if 'display' in patch:
         display = patch['display']
-        if not isinstance(display, dict) or not {'mode', 'intervalSeconds'}.issubset(display) or set(display) - {'mode', 'intervalSeconds', 'footerHeightPercent', 'web4sportMatchCount'}:
+        if not isinstance(display, dict) or not {'mode', 'intervalSeconds'}.issubset(display) or set(display) - {'mode', 'intervalSeconds', 'footerHeightPercent', 'web4sportMatchCount', 'compactLayout'}:
             raise ValueError('Ansicht ungültig')
         if display['mode'] not in ('compact', 'detail', 'rotate'):
             raise ValueError('Ansicht ungültig')
@@ -216,7 +216,10 @@ def validate_update(previous, patch):
         count = display.get('web4sportMatchCount', previous['display'].get('web4sportMatchCount', 2))
         if isinstance(count, bool) or not isinstance(count, int) or count not in (1, 2, 3):
             raise ValueError('Anzahl der Web4Sport-Partien muss 1, 2 oder 3 sein')
-        result['display'] = {**copy.deepcopy(display), 'footerHeightPercent': height, 'web4sportMatchCount': count}
+        layout = display.get('compactLayout', previous['display'].get('compactLayout', 'inline'))
+        if layout not in ('inline', 'stacked'):
+            raise ValueError('Kompaktansicht ungültig')
+        result['display'] = {'compactLayout': layout, **copy.deepcopy(display), 'footerHeightPercent': height, 'web4sportMatchCount': count}
     if 'dataSource' in patch:
         if patch['dataSource'] not in ('janova', 'web4sport', 'manual'):
             raise ValueError('Datenquelle ungültig')
@@ -274,6 +277,7 @@ class App:
         self.config.setdefault('display', copy.deepcopy(DEFAULTS['display']))
         self.config['display'].setdefault('footerHeightPercent', 8.5)
         self.config['display'].setdefault('web4sportMatchCount', 2)
+        self.config['display'].setdefault('compactLayout', 'inline')
         self.config.setdefault('sponsors', copy.deepcopy(DEFAULTS['sponsors']))
         self.config['sponsors'].setdefault('introText', DEFAULTS['sponsors']['introText'])
         if not self.path.exists() or migrated:

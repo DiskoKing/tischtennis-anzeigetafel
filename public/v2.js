@@ -40,6 +40,7 @@
     current = config;
     if (settings) return;
     document.querySelector('.arena').style.setProperty('--footer-h', (config.display.footerHeightPercent ?? 8.5) + 'vh');
+    document.querySelector('.arena').classList.toggle('compact-stacked', config.display.compactLayout === 'stacked');
     applySponsors(config.sponsors);
     const signature = JSON.stringify([config.display, config.dataSource]);
     if (signature !== displaySignature) {
@@ -188,6 +189,7 @@
     $('manual-opponent').value = config.manual.opponent;
     updateDataSourceFields();
     $('display-mode').value = config.display.mode;
+    $('compact-layout').value = config.display.compactLayout || 'inline';
     $('web-match-count').value = config.display.web4sportMatchCount ?? 2;
     $('display-seconds').value = config.display.intervalSeconds;
     $('footer-height').value = config.display.footerHeightPercent ?? 8.5;
@@ -391,7 +393,7 @@
             dataSource: $('data-source').value,
             manual: {opponent: $('data-source').value === 'manual' ? $('manual-opponent').value : current.manual.opponent},
             background: {mode: $('background-mode').value, overlayPercent: Number($('background-dim').value)},
-            display: {mode: $('display-mode').value, intervalSeconds: Number($('display-seconds').value), footerHeightPercent: Number($('footer-height').value), web4sportMatchCount: Number($('web-match-count').value)},
+            display: {compactLayout: $('compact-layout').value, mode: $('display-mode').value, intervalSeconds: Number($('display-seconds').value), footerHeightPercent: Number($('footer-height').value), web4sportMatchCount: Number($('web-match-count').value)},
             sponsors: {enabled: $('sponsors-enabled').checked, intervalSeconds: Number($('sponsors-seconds').value), introText: $('sponsors-intro-text').value},
             club: {name: $('club-name').value, website: $('club-website').value,
               primary: $('primary').value, background: $('background').value},

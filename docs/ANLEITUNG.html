@@ -18,7 +18,7 @@
 <p>- Seite 8: Hilfe bei Problemen und Kontakt.</p>
 <p>- Seite 9: Manuelle Eingabe, Bedientastatur und Stream Dock.</p>
 <p><b>Bereits fertig eingerichteter Hallenrechner?</b> Die Linux-Neueinrichtung überspringen. Ein vorhandener Dienst oder Autostart darf nicht durch einen zweiten ergänzt werden.</p>
-<p>Anleitung zur Version 2.3.0. Projekt: <a href="https://github.com/DiskoKing/tischtennis-anzeigetafel">https://github.com/DiskoKing/tischtennis-anzeigetafel</a></p></section><section><h1>1. Windows: entpacken und starten</h1>
+<p>Anleitung zur Version 2.3.1. Projekt: <a href="https://github.com/DiskoKing/tischtennis-anzeigetafel">https://github.com/DiskoKing/tischtennis-anzeigetafel</a></p></section><section><h1>1. Windows: entpacken und starten</h1>
 <h3>Einmal vorbereiten</h3>
 <p>1. Auf <a href="https://github.com/DiskoKing/tischtennis-anzeigetafel/releases/latest">https://github.com/DiskoKing/tischtennis-anzeigetafel/releases/latest</a> das Paket <b>anzeigetafel-windows-x64.zip</b> herunterladen. Nicht „Source code“ wählen: Darin fehlt die mitgelieferte Windows-Laufzeit.</p>
 <p>2. Die komplette ZIP mit „Alle extrahieren“ in einen beschreibbaren Ordner oder auf einen USB-Stick entpacken. Nicht aus der geöffneten ZIP starten. Die Ordner app und runtime bleiben neben Starten.cmd liegen.</p>
@@ -98,6 +98,7 @@ EOF</code></pre>
 <p><b>Sauber abschalten:</b> Den Rechner über das Betriebssystem herunterfahren. Alt + F4 schließt den Kioskbrowser; der Serverdienst läuft weiter. Neustart des Servers bei Bedarf: <code>systemctl --user restart anzeigetafel.service</code>.</p></section><section><h1>5. Ansichten, Sponsoren und Spieltag</h1>
 <h3>Anzeige nach Wunsch</h3>
 <p>- <b>Nur Kompaktansicht:</b> Großes Mannschaftsergebnis mit Vereinen und Wettbewerb.</p>
+<p>- <b>Kompaktansicht gestalten:</b> Klassisch mit Vereinsnamen neben den Zahlen oder große Zahlen mit Vereinsnamen darunter. Die Auswahl gilt auch im manuellen Modus.</p>
 <p>- <b>Nur Detailansicht:</b> Paarungen und Satzstände; bei Janova zusätzlich Live-Ballpunkte und Spielhinweise, soweit geliefert.</p>
 <p>- <b>Automatisch wechseln:</b> Kompakt und Detail wechseln bei aktiven Spielen. Das Intervall ist einstellbar; Standard sind 30 Sekunden.</p>
 <p>- <b>Web4Sport-Partien:</b> 1, 2 oder 3 nächste offene Paarungen in Spielreihenfolge. Standard: 2. Ohne Tischzuordnung ist das keine verifizierte Belegung der realen Tische.</p>

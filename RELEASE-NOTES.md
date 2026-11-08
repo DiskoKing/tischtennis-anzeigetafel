@@ -1,3 +1,11 @@
+# Version 2.3.1 – Große Zahlen in der Kompaktansicht
+
+- Zweite Kompaktansicht: große Zahlen oben und die zugehörigen Vereinsnamen darunter. Unter „Ansicht & Wechsel“ wählbar; die klassische Variante bleibt Standard.
+- Gleichmäßige Zahlenfelder und angepasste Schriftgröße bei zweistelligen Ergebnissen. Logo und konfigurierbare Fußleiste bleiben sichtbar.
+- Funktioniert mit Janova, TischtennisLive/Web4Sport und manueller Eingabe.
+- Den optionalen Dock-Adapter in den bereits von älteren Updatern unterstützten Paketbereich verlegt. So lässt sich der manuelle Modus auch von 2.2.x aus über den normalen Updateknopf installieren.
+- Keine zusätzliche Python-Abhängigkeit für die Anzeigetafel. Bestehende Spielstände und Vereinsdaten bleiben erhalten.
+
 # Version 2.3.0 – manueller Modus und Stream Dock
 
 - Dritte Datenquelle Manuelle Eingabe: Heimverein aus der Konfiguration, frei wählbarer Gegner und ausschließlich Kompaktansicht. Keine Anmeldung und kein Internet für das manuelle Zählen nötig.
