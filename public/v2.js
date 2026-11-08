@@ -41,6 +41,7 @@
     if (settings) return;
     document.querySelector('.arena').style.setProperty('--footer-h', (config.display.footerHeightPercent ?? 8.5) + 'vh');
     document.querySelector('.arena').classList.toggle('compact-stacked', config.display.compactLayout === 'stacked');
+    document.querySelector('.arena').classList.toggle('source-manual', config.dataSource === 'manual');
     applySponsors(config.sponsors);
     const signature = JSON.stringify([config.display, config.dataSource]);
     if (signature !== displaySignature) {

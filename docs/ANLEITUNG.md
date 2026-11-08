@@ -28,7 +28,7 @@ Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova oder Tischtenni
 
 **Bereits fertig eingerichteter Hallenrechner?** Die Linux-Neueinrichtung überspringen. Ein vorhandener Dienst oder Autostart darf nicht durch einen zweiten ergänzt werden.
 
-Anleitung zur Version 2.3.1. Projekt: https://github.com/DiskoKing/tischtennis-anzeigetafel
+Anleitung zur Version 2.3.2. Projekt: https://github.com/DiskoKing/tischtennis-anzeigetafel
 
 ---
 

@@ -1,3 +1,7 @@
+# Version 2.3.2 – Manueller Modus ohne Wettbewerbstitel
+
+- Den nicht benötigten Hinweis „Mannschaftsspiel“ im manuellen Modus entfernt. Vereinslogo, Ergebnis und Fußleiste bleiben sichtbar; beide Kompaktvarianten werden unterstützt.
+
 # Version 2.3.1 – Große Zahlen in der Kompaktansicht
 
 - Zweite Kompaktansicht: große Zahlen oben und die zugehörigen Vereinsnamen darunter. Unter „Ansicht & Wechsel“ wählbar; die klassische Variante bleibt Standard.

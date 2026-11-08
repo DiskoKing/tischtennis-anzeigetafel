@@ -88,7 +88,7 @@ def footer(c,doc):
     c.setFillColor(HexColor('#008e87'));c.rect(0,h-5,w,5,fill=1,stroke=0)
     c.setStrokeColor(HexColor('#d5dfdf'));c.line(40,35,w-40,35)
     c.setFont('Body',8);c.setFillColor(HexColor('#53626b'))
-    c.drawString(40,22,'TT-Anzeigetafel | Anleitung 2.3.1')
+    c.drawString(40,22,'TT-Anzeigetafel | Anleitung 2.3.2')
     c.drawRightString(w-40,22,str(doc.page))
 story=[]
 for n,section in enumerate(sections):

@@ -157,3 +157,8 @@
 .arena.mode-total.compact-stacked .summary-team { width:100%;max-width:none !important;text-align:center !important;justify-self:stretch !important;font-size:min(3.8vw,7vh) !important;line-height:1.02 !important;align-self:start;overflow-wrap:anywhere; }
 .arena.mode-total.compact-stacked .summary-team.home { grid-column:1;grid-row:2; }
 .arena.mode-total.compact-stacked .summary-team.away { grid-column:3;grid-row:2; }
+
+/* Manual entry has no supplied competition: keep only the club logo and score. */
+.arena.source-manual .summary-competition { display:none !important; }
+.arena.source-manual .summary-scoreboard { grid-row:3; }
+.arena.source-manual .summary-content { grid-template-rows:auto 0 minmax(0,1fr) !important; }
