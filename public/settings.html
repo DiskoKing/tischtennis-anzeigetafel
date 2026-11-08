@@ -44,7 +44,13 @@
           <p class="help">Standard: alle 30 Sekunden wechseln. Kompakt zeigt den Mannschaftsstand, Detail die laufenden Paarungen. Der automatische Wechsel läuft bei aktiven Spielen.</p>
         </div></details>
         <details class="settings-card settings-category" id="category-source"><summary class="card-heading"><span>03</span><h2>Datenquelle</h2></summary><div class="category-content">
-          <label>Aktive Datenquelle<select id="data-source"><option value="janova">Janova-Zählgeräte</option><option value="web4sport">TischtennisLive / Web4Sport</option></select></label>
+          <label>Aktive Datenquelle<select id="data-source"><option value="manual">Manuelle Eingabe</option><option value="janova">Janova-Zählgeräte</option><option value="web4sport">TischtennisLive / Web4Sport</option></select></label>
+          <fieldset id="manual-settings" class="source-settings" hidden><legend>Manuelle Eingabe</legend>
+            <label>Gegner<input id="manual-opponent" maxlength="100" required value="Gast"></label>
+            <p class="help">Heimverein aus Verein & Design. Nur Kompaktansicht; kein Login oder Internet nötig. Gegner und Datenquelle mit Einstellungen speichern übernehmen. Ein Gegnerwechsel setzt den Spielstand nicht automatisch zurück.</p>
+            <div data-manual-controls></div>
+            <a href="bedienung.html" target="_blank" rel="noopener">Separates Bedienfenster öffnen ↗</a>
+          </fieldset>
           <fieldset id="janova-settings" class="source-settings"><legend>Janova</legend>
             <label>Janova-E-Mail<input id="janova-email" type="email" autocomplete="username" maxlength="320"></label>
             <label>Janova-Passwort<input id="janova-password" type="password" autocomplete="current-password" maxlength="4096"></label>
@@ -99,5 +105,6 @@
     <footer class="settings-footer">Anzeigetafel <span data-app-version>…</span> · Eigene Konfiguration und Daten · Zugriff lokal oder per SSH-Tunnel</footer>
   </main>
   <script src="v2.js"></script>
+<script src="manual-controls.js"></script>
 </body>
 </html>

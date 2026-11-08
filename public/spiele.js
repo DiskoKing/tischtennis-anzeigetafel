@@ -48,6 +48,7 @@ function competitionText(board) {
       publishedCompetition.gameId === gameId) {
     return publishedCompetition.competition;
   }
+  if (source === "manual") return "MANNSCHAFTSSPIEL";
   if (source === "web4sport") return "STADTOBERLIGA";
   if (source === "janova") return "FREUNDSCHAFTSSPIEL";
   if (source === "ttlive") return "LIGA WIRD ERMITTELT";
@@ -464,7 +465,7 @@ function render(data) {
 
   if (contextBoard) {
     fillMatchHeader(contextBoard);
-    if (detectTeamPoint(contextBoard)) {
+    if (contextBoard.game?.source !== "manual" && detectTeamPoint(contextBoard)) {
       startTeamPointHighlight();
     }
   } else {
@@ -489,7 +490,7 @@ async function refresh() {
 
   try {
     const requestedSource = dataSource;
-    const url = requestedSource === "web4sport" ? WEB4SPORT_URL : DATA_URL;
+    const url = requestedSource === "manual" ? "api/data/manual" : requestedSource === "web4sport" ? WEB4SPORT_URL : DATA_URL;
     const response = await fetch(`${url}?t=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const raw = await response.json();
@@ -754,7 +755,7 @@ async function setDataSource(source, persist = true) {
   if (persist && window.v2SaveSource) {
     try { await window.v2SaveSource(source); } catch (error) { document.getElementById("statusBadge").textContent = error.message; return; }
   }
-  dataSource = source === "web4sport" ? "web4sport" : "janova";
+  dataSource = ["web4sport", "manual"].includes(source) ? source : "janova";
   localStorage.setItem("ttsvV2DataSource", dataSource);
   document.body.classList.toggle("source-web4sport", dataSource === "web4sport");
   previousTeamScore = null;

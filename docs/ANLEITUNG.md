@@ -3,7 +3,7 @@
 
 Euer Spiel. Für die ganze Halle.
 
-Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova oder TischtennisLive / Web4Sport. Einmal mit der gewünschten Quelle verbinden, Vereinsdesign einstellen und die passende Begegnung wählen. Ergebnisse werden nicht zusätzlich in der Anzeigetafel eingetragen.
+Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova oder TischtennisLive / Web4Sport. Alternativ steht eine manuelle Mannschaftsanzeige ohne Login und Internet zur Verfügung. Einmal mit der gewünschten Quelle verbinden, Vereinsdesign einstellen und die passende Begegnung wählen. Ergebnisse werden nicht zusätzlich in der Anzeigetafel eingetragen.
 
 ### Zwei Wege zum Betrieb
 
@@ -24,10 +24,11 @@ Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova oder Tischtenni
 - Seite 6: Ansichten, Sponsoren und Spieltag.
 - Seite 7: Updates, Sicherung und Zugriff von einem anderen Rechner.
 - Seite 8: Hilfe bei Problemen und Kontakt.
+- Seite 9: Manuelle Eingabe, Bedientastatur und Stream Dock.
 
 **Bereits fertig eingerichteter Hallenrechner?** Die Linux-Neueinrichtung überspringen. Ein vorhandener Dienst oder Autostart darf nicht durch einen zweiten ergänzt werden.
 
-Anleitung zur Version 2.2.15. Projekt: https://github.com/DiskoKing/tischtennis-anzeigetafel
+Anleitung zur Version 2.3.0. Projekt: https://github.com/DiskoKing/tischtennis-anzeigetafel
 
 ---
 
@@ -260,3 +261,42 @@ Für eine Fehlermeldung hilfreich: Betriebssystem, angezeigte Version, Datenquel
 Projekt und Downloads: https://github.com/DiskoKing/tischtennis-anzeigetafel
 
 Die Windows-Version ist derzeit nicht mit einem öffentlich vertrauenswürdigen Herausgeberzertifikat signiert. macOS, Android und iOS sind keine zugesicherten Betriebsplattformen dieses Pakets.
+
+
+---
+
+# 8. Manuell zählen und Stream Dock
+
+### Manuelle Eingabe aktivieren
+
+Unter Datenquelle „Manuelle Eingabe“ wählen, Gegnernamen eintragen und Einstellungen speichern. Der Heimverein kommt aus Verein & Design. Die Anzeige zeigt nur den Mannschaftsstand in der Kompaktansicht; Janova und Web4Sport behalten ihre eigenen Anzeigeeinstellungen. Ohne Internet verwendbar. Ein Gegnerwechsel setzt den Stand nicht zurück.
+
+In den Einstellungen Heim/Gast +/− bedienen oder das separate Bedienfenster öffnen. Dieses Fenster kann auf dem Laptop bleiben, während der zweite Bildschirm die Anzeigetafel zeigt. Jeder Klick speichert sofort, unabhängig vom Knopf Einstellungen speichern. Der Stand bleibt bei Neustart erhalten; „Neues Spiel / Zurücksetzen“ setzt nach Bestätigung auf 0:0.
+
+Auch direkt auf der großen Zahl lässt sich zählen: ein Klick +1; zwei schnelle Klicks auf dieselbe Zahl innerhalb von 400 ms −1. Einzelklicks werden deshalb kurz verzögert ausgeführt. Das gilt ausschließlich im manuellen Modus.
+
+### Nummernblock direkt am Rechner
+
+Im Anzeigefenster oder separaten Bedienfenster: Num Lock einschalten. 7 = Heim +, 1 = Heim −, 9 = Gast +, 3 = Gast −. Gedrückthalten zählt nicht weiter. Beim Eingeben in Textfelder und im geöffneten Einstellungsdialog sind diese Tastenkürzel deaktiviert. Zählbereich: 0 bis 99.
+
+### MiraBox Stream Dock 293 V3 unter Linux
+
+Optional unterstützt wird das Modell mit USB-Kennung 6603:1006, 15 Tasten im 5×3-Format. Die obere Reihe wird mit Heim +, Heim −, frei, Gast +, Gast − belegt. Die übrigen Tasten zählen nicht. Nur im manuellen Modus ändern Tastendrücke den Stand. Der Dienst zählt unabhängig vom Browserfokus.
+
+Für die dunklen Tastenbilder mit eurem Vereinslogo verwendet der optionale Adapter Pillow (Paket python3-pil). Ohne Pillow bleiben die vier Standardbeschriftungen verfügbar. Logo und Akzentfarbe werden aus der Vereinskonfiguration übernommen. Das ist nicht das separate gespeicherte Start-/Vorschaubild des Docks: Dieses 800×480-Bild über die Herstellersoftware setzen; der Adapter überschreibt keinen Boot-Bildspeicher.
+
+Die Gerätefreigabe benötigt einmalig Administratorrechte. Für andere Dock-Modelle gilt diese Regel nicht. Der Desktop-Benutzer muss zur Gruppe input gehören; auf dem getesteten Raspberry Pi war das bereits der Fall. Bei anderen Systemen die passende gezielte Geräteberechtigung durch die Einrichtungsperson vergeben lassen.
+
+```sh
+sudo install -m 644 \
+  ~/tischtennis-anzeigetafel/platform/linux/70-tt-streamdock.rules \
+  /etc/udev/rules.d/70-tt-streamdock.rules
+sudo udevadm control --reload-rules
+sudo udevadm trigger --subsystem-match=hidraw --action=change
+cp ~/tischtennis-anzeigetafel/platform/linux/streamdock.service \
+  ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now streamdock.service
+```
+
+Danach neu einstecken oder neu starten und vier Tasten testen. Der Adapter wartet auf das Dock und verbindet sich nach erneutem Einstecken wieder. Keine Firmwareänderung; die Steuerung geschieht über die USB-Schnittstelle. Bei einer anderen Installation als ~/tischtennis-anzeigetafel den Pfad im Dienst anpassen.

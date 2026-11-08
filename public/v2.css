@@ -129,3 +129,15 @@
 .arena .sponsor-sep { height:calc(var(--footer-h) * .45); }
 
 .arena .games { height:calc(70vh - var(--footer-h)); }
+
+[hidden] { display:none!important; }
+.manual-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:18px 0; }
+.manual-side { text-align:center;border:1px solid #415162;border-radius:12px;padding:16px;min-width:0; }
+.manual-side strong { display:block;overflow-wrap:anywhere; }
+.manual-value { display:block;font-size:52px;font-weight:800;margin:10px; }
+.settings-page .manual-buttons { display:flex;gap:12px;justify-content:center; }
+.settings-page .manual-buttons button { min-width:64px;min-height:60px;font-size:32px; }
+.manual-remote { max-width:860px;margin:auto;padding:24px; }
+.manual-remote h1 { font-size:28px; }
+.manual-total-target { cursor:pointer;touch-action:manipulation;user-select:none; }
+.manual-total-target:focus-visible { outline:3px solid #fff;outline-offset:6px; }

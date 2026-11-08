@@ -1,7 +1,7 @@
 <!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>TT-Anzeigetafel - Anleitung</title><style>body{font:16px/1.6 system-ui,Arial,sans-serif;background:#eeeae4;color:#202d33;margin:0}main{max-width:900px;margin:auto}section{background:#fff;padding:36px 44px;margin:24px 0;border-top:5px solid #008e87;border-radius:8px}h1{line-height:1.2;font-size:30px}h2,h3{color:#006f69}pre{background:#f0f3f4;padding:14px;overflow:auto;font:13px/1.5 Consolas,monospace}a{color:#006f69;overflow-wrap:anywhere}code{font-family:Consolas,monospace}nav{padding:20px;text-align:center}button{padding:10px 18px;cursor:pointer}@media(max-width:600px){section{padding:22px 18px;margin:12px 0}}@media print{body{background:white;font-size:10pt}section{break-after:page;margin:0;padding:0;border:0}nav{display:none}pre{white-space:pre-wrap;font-size:8pt}}</style><nav><button onclick="window.print()">Drucken / als PDF speichern</button></nav><main><section><h1>TT-Anzeigetafel</h1>
 <h2>Einrichtung und Bedienung</h2>
 <p>Euer Spiel. Für die ganze Halle.</p>
-<p>Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova oder TischtennisLive / Web4Sport. Einmal mit der gewünschten Quelle verbinden, Vereinsdesign einstellen und die passende Begegnung wählen. Ergebnisse werden nicht zusätzlich in der Anzeigetafel eingetragen.</p>
+<p>Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova oder TischtennisLive / Web4Sport. Alternativ steht eine manuelle Mannschaftsanzeige ohne Login und Internet zur Verfügung. Einmal mit der gewünschten Quelle verbinden, Vereinsdesign einstellen und die passende Begegnung wählen. Ergebnisse werden nicht zusätzlich in der Anzeigetafel eingetragen.</p>
 <h3>Zwei Wege zum Betrieb</h3>
 <p>- <b>Windows zum Mitnehmen:</b> Fertiges Windows-Paket entpacken, Bildschirm anschließen, Starten.cmd doppelklicken. Python ist bereits enthalten.</p>
 <p>- <b>Raspi oder NUC für die Halle:</b> Linux mit grafischer Oberfläche einmal einrichten. Nach der Anmeldung starten Dienst und Browser automatisch. Empfohlen für einen festen Standort.</p>
@@ -16,8 +16,9 @@
 <p>- Seite 6: Ansichten, Sponsoren und Spieltag.</p>
 <p>- Seite 7: Updates, Sicherung und Zugriff von einem anderen Rechner.</p>
 <p>- Seite 8: Hilfe bei Problemen und Kontakt.</p>
+<p>- Seite 9: Manuelle Eingabe, Bedientastatur und Stream Dock.</p>
 <p><b>Bereits fertig eingerichteter Hallenrechner?</b> Die Linux-Neueinrichtung überspringen. Ein vorhandener Dienst oder Autostart darf nicht durch einen zweiten ergänzt werden.</p>
-<p>Anleitung zur Version 2.2.15. Projekt: <a href="https://github.com/DiskoKing/tischtennis-anzeigetafel">https://github.com/DiskoKing/tischtennis-anzeigetafel</a></p></section><section><h1>1. Windows: entpacken und starten</h1>
+<p>Anleitung zur Version 2.3.0. Projekt: <a href="https://github.com/DiskoKing/tischtennis-anzeigetafel">https://github.com/DiskoKing/tischtennis-anzeigetafel</a></p></section><section><h1>1. Windows: entpacken und starten</h1>
 <h3>Einmal vorbereiten</h3>
 <p>1. Auf <a href="https://github.com/DiskoKing/tischtennis-anzeigetafel/releases/latest">https://github.com/DiskoKing/tischtennis-anzeigetafel/releases/latest</a> das Paket <b>anzeigetafel-windows-x64.zip</b> herunterladen. Nicht „Source code“ wählen: Darin fehlt die mitgelieferte Windows-Laufzeit.</p>
 <p>2. Die komplette ZIP mit „Alle extrahieren“ in einen beschreibbaren Ordner oder auf einen USB-Stick entpacken. Nicht aus der geöffneten ZIP starten. Die Ordner app und runtime bleiben neben Starten.cmd liegen.</p>
@@ -138,4 +139,24 @@ journalctl --user -u anzeigetafel.service -n 40 --no-pager</code></pre>
 <p>Frank Fehrmann - frank.fehrmann@gmail.com - +49 174 6390530</p>
 <p>Für eine Fehlermeldung hilfreich: Betriebssystem, angezeigte Version, Datenquelle und Screenshot ohne Zugangsdaten. Keine Passwörter oder privaten Konfigurationsdateien öffentlich auf GitHub einstellen.</p>
 <p>Projekt und Downloads: <a href="https://github.com/DiskoKing/tischtennis-anzeigetafel">https://github.com/DiskoKing/tischtennis-anzeigetafel</a></p>
-<p>Die Windows-Version ist derzeit nicht mit einem öffentlich vertrauenswürdigen Herausgeberzertifikat signiert. macOS, Android und iOS sind keine zugesicherten Betriebsplattformen dieses Pakets.</p></section></main></html>
+<p>Die Windows-Version ist derzeit nicht mit einem öffentlich vertrauenswürdigen Herausgeberzertifikat signiert. macOS, Android und iOS sind keine zugesicherten Betriebsplattformen dieses Pakets.</p></section><section><h1>8. Manuell zählen und Stream Dock</h1>
+<h3>Manuelle Eingabe aktivieren</h3>
+<p>Unter Datenquelle „Manuelle Eingabe“ wählen, Gegnernamen eintragen und Einstellungen speichern. Der Heimverein kommt aus Verein &amp; Design. Die Anzeige zeigt nur den Mannschaftsstand in der Kompaktansicht; Janova und Web4Sport behalten ihre eigenen Anzeigeeinstellungen. Ohne Internet verwendbar. Ein Gegnerwechsel setzt den Stand nicht zurück.</p>
+<p>In den Einstellungen Heim/Gast +/− bedienen oder das separate Bedienfenster öffnen. Dieses Fenster kann auf dem Laptop bleiben, während der zweite Bildschirm die Anzeigetafel zeigt. Jeder Klick speichert sofort, unabhängig vom Knopf Einstellungen speichern. Der Stand bleibt bei Neustart erhalten; „Neues Spiel / Zurücksetzen“ setzt nach Bestätigung auf 0:0.</p>
+<p>Auch direkt auf der großen Zahl lässt sich zählen: ein Klick +1; zwei schnelle Klicks auf dieselbe Zahl innerhalb von 400 ms −1. Einzelklicks werden deshalb kurz verzögert ausgeführt. Das gilt ausschließlich im manuellen Modus.</p>
+<h3>Nummernblock direkt am Rechner</h3>
+<p>Im Anzeigefenster oder separaten Bedienfenster: Num Lock einschalten. 7 = Heim +, 1 = Heim −, 9 = Gast +, 3 = Gast −. Gedrückthalten zählt nicht weiter. Beim Eingeben in Textfelder und im geöffneten Einstellungsdialog sind diese Tastenkürzel deaktiviert. Zählbereich: 0 bis 99.</p>
+<h3>MiraBox Stream Dock 293 V3 unter Linux</h3>
+<p>Optional unterstützt wird das Modell mit USB-Kennung 6603:1006, 15 Tasten im 5×3-Format. Die obere Reihe wird mit Heim +, Heim −, frei, Gast +, Gast − belegt. Die übrigen Tasten zählen nicht. Nur im manuellen Modus ändern Tastendrücke den Stand. Der Dienst zählt unabhängig vom Browserfokus.</p>
+<p>Für die dunklen Tastenbilder mit eurem Vereinslogo verwendet der optionale Adapter Pillow (Paket python3-pil). Ohne Pillow bleiben die vier Standardbeschriftungen verfügbar. Logo und Akzentfarbe werden aus der Vereinskonfiguration übernommen. Das ist nicht das separate gespeicherte Start-/Vorschaubild des Docks: Dieses 800×480-Bild über die Herstellersoftware setzen; der Adapter überschreibt keinen Boot-Bildspeicher.</p>
+<p>Die Gerätefreigabe benötigt einmalig Administratorrechte. Für andere Dock-Modelle gilt diese Regel nicht. Der Desktop-Benutzer muss zur Gruppe input gehören; auf dem getesteten Raspberry Pi war das bereits der Fall. Bei anderen Systemen die passende gezielte Geräteberechtigung durch die Einrichtungsperson vergeben lassen.</p>
+<pre><code>sudo install -m 644 \
+  ~/tischtennis-anzeigetafel/platform/linux/70-tt-streamdock.rules \
+  /etc/udev/rules.d/70-tt-streamdock.rules
+sudo udevadm control --reload-rules
+sudo udevadm trigger --subsystem-match=hidraw --action=change
+cp ~/tischtennis-anzeigetafel/platform/linux/streamdock.service \
+  ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user enable --now streamdock.service</code></pre>
+<p>Danach neu einstecken oder neu starten und vier Tasten testen. Der Adapter wartet auf das Dock und verbindet sich nach erneutem Einstecken wieder. Keine Firmwareänderung; die Steuerung geschieht über die USB-Schnittstelle. Bei einer anderen Installation als ~/tischtennis-anzeigetafel den Pfad im Dienst anpassen.</p></section></main></html>

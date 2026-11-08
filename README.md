@@ -10,6 +10,7 @@ Die Anleitung beschreibt Windows-USB sowie die Neueinrichtung auf Raspi/NUC mit 
 
 ## Funktionen
 
+- Manueller Modus: Gegner und Mannschaftsstand, PC-Bedienfenster, Nummernblock und optional Stream Dock 293 V3 unter Linux.
 - Vereinsname, Website, Farben und eigenes Vereinslogo.
 - Kompaktansicht, Detailansicht oder zeitgesteuerter Wechsel.
 - Janova-ID bzw. Live-Link; optionale Anmeldung zur Ermittlung der ID.

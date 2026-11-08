@@ -41,9 +41,9 @@
     if (settings) return;
     document.querySelector('.arena').style.setProperty('--footer-h', (config.display.footerHeightPercent ?? 8.5) + 'vh');
     applySponsors(config.sponsors);
-    const signature = JSON.stringify(config.display);
+    const signature = JSON.stringify([config.display, config.dataSource]);
     if (signature !== displaySignature) {
-      setDisplayPreferences(config.display);
+      setDisplayPreferences(config.dataSource === 'manual' ? {...config.display, mode: 'compact'} : config.display);
       displaySignature = signature;
     }
     const p = config.club.primary;
@@ -185,6 +185,7 @@
     $('background-dim').value = config.background.overlayPercent;
     $('background-file-state').textContent = config.background.customSet ? 'Ein eigenes Hintergrundbild ist gespeichert.' : 'Noch kein eigenes Hintergrundbild gespeichert.';
     $('data-source').value = config.dataSource;
+    $('manual-opponent').value = config.manual.opponent;
     updateDataSourceFields();
     $('display-mode').value = config.display.mode;
     $('web-match-count').value = config.display.web4sportMatchCount ?? 2;
@@ -224,6 +225,12 @@
 
   function updateDataSourceFields() {
     const source = $('data-source').value;
+    $('manual-settings').hidden = source !== 'manual';
+    $('manual-opponent').disabled = source !== 'manual';
+    $('display-mode').disabled = source === 'manual';
+    $('display-mode').closest('label').hidden = source === 'manual';
+    $('display-seconds').closest('label').hidden = source === 'manual';
+    $('category-games').hidden = source === 'manual';
     $('web-match-options').hidden = source !== 'web4sport';
     $('web-match-options').disabled = source !== 'web4sport';
     for (const [name, id] of [['janova', 'janova-settings'], ['web4sport', 'web4sport-settings']]) {
@@ -382,6 +389,7 @@
           }
           const config = await api('/api/config', {method: 'POST', body: JSON.stringify({
             dataSource: $('data-source').value,
+            manual: {opponent: $('data-source').value === 'manual' ? $('manual-opponent').value : current.manual.opponent},
             background: {mode: $('background-mode').value, overlayPercent: Number($('background-dim').value)},
             display: {mode: $('display-mode').value, intervalSeconds: Number($('display-seconds').value), footerHeightPercent: Number($('footer-height').value), web4sportMatchCount: Number($('web-match-count').value)},
             sponsors: {enabled: $('sponsors-enabled').checked, intervalSeconds: Number($('sponsors-seconds').value), introText: $('sponsors-intro-text').value},

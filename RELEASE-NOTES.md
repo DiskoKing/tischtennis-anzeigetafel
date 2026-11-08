@@ -1,3 +1,14 @@
+# Version 2.3.0 – manueller Modus und Stream Dock
+
+- Dritte Datenquelle Manuelle Eingabe: Heimverein aus der Konfiguration, frei wählbarer Gegner und ausschließlich Kompaktansicht. Keine Anmeldung und kein Internet für das manuelle Zählen nötig.
+- Klick auf die große Zahl zählt +1, zwei schnelle Klicks innerhalb von 400 ms zählen −1 (nur manuell).
+- Heim/Gast +/− in den Einstellungen und im separaten Bedienfenster; optional Nummernblock (7/1 Heim, 9/3 Gast).
+- Spielstand lokal gespeichert; Schutz vor negativen Werten, wiederholten Aktionen und veralteten Eingaben nach einem bestätigten Zurücksetzen.
+- Optionaler Linux-Dienst für MiraBox Stream Dock 293 V3 (6603:1006): obere Reihe Heim +, Heim −, frei, Gast +, Gast − mit beschrifteten Tasten. Nur im manuellen Modus aktiv.
+- Dock-Anbindung und Tastenbilder sind über denselben Updatekanal aktualisierbar; Gerätefreigabe und Dienst einmalig einrichten.
+
+Laufzeit und Windows-Starter bleiben unverändert.
+
 # Version 2.2.15 – Anleitung gestrafft
 
 - Den nur für die bisherige Einzelinstallation relevanten Hinweis zur GitHub-Kontoumbenennung aus der Anleitung entfernt.

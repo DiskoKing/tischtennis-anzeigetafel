@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independent scoreboard 2.0: local configuration API and read-only readers."""
+"""Independent scoreboard 2.0: local configuration, manual scoring and live readers."""
 import argparse
 from functools import lru_cache
 import copy
@@ -31,6 +31,7 @@ DEFAULTS = {
     'sponsors': {'enabled': False, 'intervalSeconds': 10, 'introText': 'unterstützt von:', 'items': []},
     'club': {'name': 'Mein Tischtennisverein', 'website': '',
              'primary': '#f10d1d', 'background': '#080b10'},
+    'manual': {'opponent': 'Gast'},
     'janova': {'refereeId': ''},
     'web4sport': {'username': '', 'password': '', 'selection': None},
 }
@@ -82,7 +83,15 @@ def atomic_json(path, value):
         json.dump(value, output, ensure_ascii=False, indent=2)
         output.flush()
         os.fsync(output.fileno())
-    os.replace(temporary, path)
+    # Windows scanners may briefly hold a freshly written state file open.
+    for attempt in range(6):
+        try:
+            os.replace(temporary, path)
+            break
+        except PermissionError:
+            if os.name != 'nt' or attempt == 5:
+                raise
+            time.sleep(.02 * (2 ** attempt))
 
 
 def parse_games(html):
@@ -165,9 +174,14 @@ def janova_identity(value):
 
 
 def validate_update(previous, patch):
-    if not isinstance(patch, dict) or set(patch) - {'club', 'dataSource', 'janova', 'web4sport', 'display', 'sponsors', 'background'}:
+    if not isinstance(patch, dict) or set(patch) - {'club', 'dataSource', 'janova', 'web4sport', 'display', 'sponsors', 'background', 'manual'}:
         raise ValueError('Ungültige Konfiguration')
     result = copy.deepcopy(previous)
+    if 'manual' in patch:
+        value = patch['manual']
+        if not isinstance(value, dict) or set(value) != {'opponent'} or not isinstance(value['opponent'], str) or not 1 <= len(value['opponent'].strip()) <= 100:
+            raise ValueError('Gegnername ungültig')
+        result['manual'] = {'opponent': value['opponent'].strip()}
     if 'background' in patch:
         value = patch['background']
         if not isinstance(value, dict) or set(value) != {'mode', 'overlayPercent'}:
@@ -204,7 +218,7 @@ def validate_update(previous, patch):
             raise ValueError('Anzahl der Web4Sport-Partien muss 1, 2 oder 3 sein')
         result['display'] = {**copy.deepcopy(display), 'footerHeightPercent': height, 'web4sportMatchCount': count}
     if 'dataSource' in patch:
-        if patch['dataSource'] not in ('janova', 'web4sport'):
+        if patch['dataSource'] not in ('janova', 'web4sport', 'manual'):
             raise ValueError('Datenquelle ungültig')
         result['dataSource'] = patch['dataSource']
     if 'club' in patch:
@@ -255,6 +269,7 @@ class App:
         self.path = self.private/'config.json'
         self.config = json.loads(self.path.read_text(encoding='utf-8')) if self.path.exists() else copy.deepcopy(DEFAULTS)
         migrated = 'display' not in self.config or 'background' not in self.config or 'sponsors' not in self.config or 'introText' not in self.config.get('sponsors', {})
+        self.config.setdefault('manual', copy.deepcopy(DEFAULTS['manual']))
         self.config.setdefault('background', copy.deepcopy(DEFAULTS['background']))
         self.config.setdefault('display', copy.deepcopy(DEFAULTS['display']))
         self.config['display'].setdefault('footerHeightPercent', 8.5)
@@ -264,6 +279,8 @@ class App:
         if not self.path.exists() or migrated:
             atomic_json(self.path, self.config)
         self.path.chmod(0o600)
+        self.manual_path = self.private/'manual-state.json'
+        self.manual = json.loads(self.manual_path.read_text(encoding='utf-8')) if self.manual_path.exists() else {'home': 0, 'away': 0, 'gameId': secrets.token_hex(16), 'events': []}
         self.lock = threading.RLock()
         self.csrf = secrets.token_urlsafe(32)
         self.update_lock = threading.Lock()
@@ -309,6 +326,37 @@ class App:
             self.candidates = []
             self.status, self.message = 'starting', 'Neue Datenquelle wird gestartet'
         self.config = updated
+
+    def manual_state(self):
+        with self.lock:
+            return {key: value for key, value in self.manual.items() if key != 'events'} | {
+                'enabled': self.config['dataSource'] == 'manual',
+                'homeName': self.config['club']['name'] or 'Heim',
+                'awayName': self.config['manual']['opponent']}
+
+    def manual_action(self, action):
+        with self.lock:
+            if self.config['dataSource'] != 'manual':
+                raise ValueError('Manueller Modus ist nicht aktiv')
+            if action.get('gameId') != self.manual['gameId']:
+                raise ValueError('Spiel wurde zurückgesetzt. Bitte neu laden.')
+            event = action.get('eventId')
+            if not isinstance(event, str) or not re.fullmatch(r'[A-Za-z0-9_-]{8,80}', event):
+                raise ValueError('Ungültige Aktion')
+            if event in self.manual['events']:
+                return self.manual_state()
+            updated = copy.deepcopy(self.manual)
+            if action.get('action') == 'reset':
+                updated = {'home': 0, 'away': 0, 'gameId': secrets.token_hex(16), 'events': []}
+            else:
+                side, delta = action.get('side'), action.get('delta')
+                if side not in ('home', 'away') or type(delta) is not int or delta not in (-1, 1):
+                    raise ValueError('Ungültige Zählrichtung')
+                updated[side] = max(0, min(99, updated[side] + delta))
+                updated['events'] = (updated['events'] + [event])[-256:]
+            atomic_json(self.manual_path, updated)
+            self.manual = updated
+            return self.manual_state()
 
     def select(self, said, sid):
         with self.lock:
@@ -374,6 +422,14 @@ class App:
 
     def get_data(self, source):
         with self.lock:
+            if source == 'manual' and self.config['dataSource'] == 'manual':
+                state = self.manual_state()
+                board = {'active': False, 'hasGame': True, 'slot': 1,
+                         'game': {'source': 'manual', 'id': state['gameId']},
+                         'teams': {'home': state['homeName'], 'away': state['awayName']},
+                         'teamScore': {'home': state['home'], 'away': state['away']},
+                         'match': {'id': 'manual-summary', 'state': 'Finished', 'type': 'Single'}}
+                return {'status': 'ready', 'message': 'Manuelle Eingabe', 'scoreboards': [board], 'candidates': []}
             status, message = self.status, self.message
             if source != self.config['dataSource']:
                 return {'status': 'inactive', 'message': 'Datenquelle wird umgeschaltet', 'matches': [], 'scoreboards': []}
@@ -437,6 +493,9 @@ class App:
                             self.publish(key, 'starting', 'Janova-Daten werden geladen')
                         else:
                             self.publish(key, 'configuration_required', 'Bitte eine Janova-Referee-ID in den Einstellungen hinterlegen.')
+                if config['dataSource'] == 'manual':
+                    self.stop.wait(1)
+                    continue
                 if config['dataSource'] == 'janova':
                     if self.process and self.process.poll() is not None:
                         self.publish(key, 'error', 'Janova-Reader beendet. Konfiguration prüfen oder Reader neu verbinden.')
@@ -537,9 +596,11 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(200, {'csrf': self.app.csrf})
         if path == '/api/config':
             return self.send(200, self.app.public_config())
+        if path == '/api/manual':
+            return self.send(200, self.app.manual_state())
         if path == '/api/state':
             return self.send(200, self.app.get_data(self.app.config['dataSource']))
-        if path in ('/api/data/janova', '/api/data/web4sport'):
+        if path in ('/api/data/janova', '/api/data/web4sport', '/api/data/manual'):
             return self.send(200, self.app.get_data(path.rsplit('/', 1)[1]))
         if path == '/api/logo':
             logo = self.app.private/'club-logo'
@@ -625,6 +686,8 @@ class Handler(BaseHTTPRequestHandler):
                     return self.send(200, updater.begin(self.app, self.server.server_port, patch.get('version')))
                 except (ValueError, OSError, requests.RequestException, subprocess.SubprocessError) as error:
                     return self.send(400, {'error': str(error)[:300]})
+            if path == '/api/manual':
+                return self.send(200, self.app.manual_action(patch))
             if path == '/api/config':
                 return self.send(200, self.app.update(patch))
             if path == '/api/game':
@@ -643,6 +706,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(404, {'error': 'Nicht gefunden'})
         except (ValueError, TypeError, KeyError, AttributeError):
             return self.send(400, {'error': 'Eingaben ungültig oder Spiel nicht mehr verfügbar. Bitte prüfen und neu laden.'})
+        except OSError:
+            return self.send(503, {'error': 'Änderung konnte nicht gespeichert werden. Bitte Speicherplatz und Schreibzugriff prüfen.'})
 
 
 def image_type(data):

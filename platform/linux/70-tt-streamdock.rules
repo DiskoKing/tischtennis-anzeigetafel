@@ -1,0 +1,2 @@
+# Only the MiraBox 293 V3; never grant access to all hidraw devices.
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="6603", ATTRS{idProduct}=="1006", GROUP="input", MODE="0660"

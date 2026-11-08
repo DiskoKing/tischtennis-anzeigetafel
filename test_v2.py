@@ -75,6 +75,54 @@ class ConfigAndApiTests(unittest.TestCase):
         with urllib.request.urlopen(request, timeout=3) as response:
             return response.status, response.read()
 
+    def test_manual_persistence_dedup_reset_and_mode_guard(self):
+        self.app.update({'dataSource': 'manual', 'manual': {'opponent': 'Testgast'}})
+        state=self.app.manual_state()
+        action={'gameId':state['gameId'], 'eventId':'manual-event-0001', 'side':'home', 'delta':1}
+        self.request('/api/manual', json.dumps(action).encode())
+        self.request('/api/manual', json.dumps(action).encode())
+        self.assertEqual(self.app.manual_state()['home'],1)
+        self.assertEqual(server.App(self.root).manual_state()['home'],1)
+        self.assertNotIn('events',self.app.manual_state())
+        data=self.app.get_data('manual')
+        self.assertEqual(data['scoreboards'][0]['teams']['away'],'Testgast')
+        self.assertEqual(data['scoreboards'][0]['teamScore'],{'home':1,'away':0})
+        self.assertFalse(data['scoreboards'][0]['active'])
+        self.app.manual_action({'gameId':state['gameId'],'eventId':'manual-event-0002','side':'away','delta':-1})
+        self.assertEqual(self.app.manual_state()['away'],0)
+        reset=self.app.manual_action({'gameId':state['gameId'],'eventId':'manual-event-reset','action':'reset'})
+        self.assertEqual(reset['home'],0)
+        self.assertNotEqual(reset['gameId'],state['gameId'])
+        with self.assertRaises(ValueError):self.app.manual_action(action)
+        self.app.update({'dataSource':'janova'})
+        with self.assertRaises(ValueError):self.app.manual_action({'gameId':reset['gameId'],'eventId':'manual-event-0003','side':'home','delta':1})
+
+    def test_manual_validation_csrf_and_concurrent_counting(self):
+        self.app.update({'dataSource':'manual'})
+        state=self.app.manual_state()
+        def press(i):
+            self.app.manual_action({'gameId':state['gameId'],'eventId':'concurrent-event-'+str(i),'side':'home','delta':1})
+        threads=[threading.Thread(target=press,args=(i,)) for i in range(20)]
+        for t in threads:t.start()
+        for t in threads:t.join()
+        self.assertEqual(self.app.manual_state()['home'],20)
+        for delta in (True,2,-2,'1'):
+            with self.assertRaises(ValueError):self.app.manual_action({'gameId':state['gameId'],'eventId':'invalid-action','side':'home','delta':delta})
+        with self.assertRaises(urllib.error.HTTPError) as error:
+            self.request('/api/manual',json.dumps({'gameId':state['gameId'],'eventId':'csrf-event','side':'home','delta':1}).encode(),token=False)
+        self.assertEqual(error.exception.code,403)
+        with self.assertRaises(ValueError):self.app.update({'manual':{'opponent':' '}})
+
+    def test_manual_storage_failure_does_not_change_score(self):
+        from unittest.mock import patch
+        self.app.update({'dataSource':'manual'})
+        state=self.app.manual_state()
+        with patch('server.atomic_json',side_effect=OSError('disk full')):
+            with self.assertRaises(urllib.error.HTTPError) as error:
+                self.request('/api/manual',json.dumps({'gameId':state['gameId'],'eventId':'write-failure-event','side':'home','delta':1}).encode())
+        self.assertEqual(error.exception.code,503)
+        self.assertEqual(self.app.manual_state()['home'],0)
+
     def test_installed_version_is_read_from_version_file(self):
         (self.root/'VERSION').write_text('2.2.0', encoding='utf-8')
         _,body=self.request('/api/config')

@@ -20,7 +20,7 @@ REPOSITORY = 'DiskoKing/tischtennis-anzeigetafel'
 API = 'https://api.github.com/repos/' + REPOSITORY + '/releases/latest'
 PREFIX = 'https://github.com/' + REPOSITORY + '/releases/download/'
 MAX_DOWNLOAD = 24 * 1024 * 1024
-FILES = {'server.py', 'updater.py', 'janova_reader.py', 'web4sport_client.py',
+FILES = {'streamdock.py', 'server.py', 'updater.py', 'janova_reader.py', 'web4sport_client.py',
          'VERSION', 'UPDATE.json', 'README.md', 'RELEASE-NOTES.md', 'requirements.txt', 'requirements.lock'}
 
 
@@ -242,6 +242,12 @@ def start_instance(plan):
                          stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     else:
         subprocess.run(['systemctl', '--user', 'start', plan['unit']], check=True, timeout=30)
+        # Optional adapter must pick up its updated Python code as well.
+        try:
+            subprocess.run(['systemctl', '--user', 'try-restart', 'streamdock.service'],
+                           check=False, timeout=15, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except (OSError, subprocess.TimeoutExpired):
+            pass  # An optional controller must not prevent the display from starting.
 
 
 def healthy(plan, expected):
