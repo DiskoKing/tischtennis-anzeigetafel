@@ -1,3 +1,19 @@
+# Version 2.4.0 – click-TT, Smartphone-Fernbedienung und bessere Kompaktansicht
+
+- Neue Datenquelle myTischtennis / click-TT: öffentlichen Spielbericht-Link konfigurieren; Namen, Gesamtstand, Wettbewerb, Sätze und verfügbare Zwischenpunkte übernehmen. Kein Login; Abruf etwa alle 30 Sekunden.
+- Endstände bleiben sichtbar. Die click-TT-Detailansicht zeigt nach Spielende die letzten 1, 2 oder 3 abgeschlossenen Paarungen in Spielreihenfolge mit Satzständen und Kennzeichnung „Beendet“.
+- Lange Vereinsnamen in der gestapelten Kompaktansicht passen sich in Breite und Höhe an; die Fußleiste bleibt frei.
+- Aktueller QR-Code direkt am Kiosk und in den LAN-Einstellungen; optionaler `.local`-Gerätename ohne Routerkonfiguration.
+- Lokales Manifest, App-Symbole und Startbildschirm-Anleitung; keine Offline-Zählung und keine garantierte PWA-Installation über LAN-HTTP.
+- Optionale mobile Fernbedienung unter `/remote`, ohne zusätzlichen Serverdienst.
+- PIN-geschützte, standardmäßig deaktivierte LAN-Freigabe; getrennte Sitzungen, Origin-/CSRF-Prüfung und PIN-Limits.
+- Vorhandene Zählung und Einstellungen wiederverwendet; robuste Reset-Retries und automatische Synchronisierung.
+- Plattformadapter für lokalen Netzwerkstatus, getrennt vom Datenquellenstatus; dezente Kiosk-Anzeige.
+- Anleitung und automatisierte Remote-Tests ergänzt. Keine automatische WLAN-Einrichtung/Hotspot-Funktion.
+- Stream Dock: altes Startbild im laufenden Betrieb ausblenden, bevor die Zähltasten gezeichnet werden.
+
+**Windows-Upgrade:** Für den Wechsel von 2.3.x auf 2.4.0 einmal das vollständige Windows-Paket verwenden: Beenden.cmd ausführen, das neue Paket separat entpacken und den bisherigen Ordner app/private bei geschlossener Anwendung nach app/private im neuen Paket kopieren. Danach mit dem neuen Starten.cmd starten. Der neue Starter unterstützt die optionale LAN-Freigabe; der bisherige Updateknopf weist bei abweichendem Starter auf das vollständige Paket hin. Linux/NUC/Raspi können den normalen Updateknopf verwenden. Einstellungen, Uploads und Spielstand bleiben erhalten.
+
 # Version 2.3.2 – Manueller Modus ohne Wettbewerbstitel
 
 - Den nicht benötigten Hinweis „Mannschaftsspiel“ im manuellen Modus entfernt. Vereinslogo, Ergebnis und Fußleiste bleiben sichtbar; beide Kompaktvarianten werden unterstützt.

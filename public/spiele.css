@@ -2184,3 +2184,6 @@ html, body {
 .source-web4sport .game-card .numbers {grid-template-columns:1fr; width:min(10vw,170px); min-width:110px}
 .source-web4sport .game-card .numbers::before {display:none}
 .source-web4sport .game-card .ball-call {display:none}
+.finished-match .metric:last-child, .finished-match .ball-call {display:none}
+.finished-match .numbers {grid-template-columns:1fr; width:min(10vw,170px); min-width:110px}
+.finished-match .numbers::before {display:none}

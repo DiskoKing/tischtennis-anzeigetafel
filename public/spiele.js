@@ -42,6 +42,7 @@ refreshCompetition();
 setInterval(refreshCompetition, 2000);
 
 function competitionText(board) {
+  if(board?.game?.competition)return board.game.competition;
   const source = String(board?.game?.source || "");
   const gameId = String(board?.game?.id || "");
   if (publishedCompetition && publishedCompetition.source === source &&
@@ -57,7 +58,8 @@ function competitionText(board) {
 
 function chooseGameGroup(boards) {
   const active = boards.filter(
-    b => b?.active && b?.game?.id && b?.match?.state === "InProgress"
+    b => b?.game?.id && ((b?.active && b?.match?.state === "InProgress") ||
+      (b?.game?.source === "clicktt" && b?.match?.state === "Finished" && b?.sideOne && b?.sideTwo))
   );
 
   if (!active.length) return [];
@@ -123,8 +125,17 @@ function fitSingleLine(el, minPx = 18) {
 function fitHeaderNames() {
   fitSingleLine(document.getElementById("homeTeam"), 22);
   fitSingleLine(document.getElementById("awayTeam"), 22);
-  fitSingleLine(document.getElementById("summaryHomeTeam"), 24);
-  fitSingleLine(document.getElementById("summaryAwayTeam"), 24);
+  for (const id of ["summaryHomeTeam", "summaryAwayTeam"]) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    if (!document.querySelector('.arena.mode-total.compact-stacked')) { fitSingleLine(el,24); continue; }
+    el.style.removeProperty('font-size');
+    if (!el.clientHeight || !el.clientWidth) continue;
+    let size=parseFloat(getComputedStyle(el).fontSize);
+    while ((el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1) && size > 10) {
+      el.style.setProperty('font-size',`${--size}px`,'important');
+    }
+  }
 }
 
 function fitPlayerNames(card) {
@@ -221,6 +232,7 @@ function playerNames(side) {
 }
 
 function ballSituation(board) {
+  if (board?.match?.state === "Finished") return null;
   const homePoints = Number(board?.sideOne?.points ?? 0);
   const awayPoints = Number(board?.sideTwo?.points ?? 0);
   const homeSets = Number(board?.sideOne?.sets ?? 0);
@@ -341,8 +353,9 @@ function updateMetric(el, value, key) {
 function updateCard(card, board) {
   const id = board.match?.id || `slot-${board.slot}`;
   card.dataset.matchId = id;
-  card.querySelector(".table-label").textContent = board.game?.source === "web4sport" ? `SPIEL ${board.slot}` : `TISCH ${board.slot}`;
-  card.querySelector(".type-label").textContent = board.match?.type === "Double" ? "DOPPEL" : "EINZEL";
+  card.classList.toggle("finished-match", board.match?.state === "Finished");
+  card.querySelector(".table-label").textContent = board.game?.source === "clicktt" ? `SPIEL ${board.match?.label || board.slot}` : board.game?.source === "web4sport" ? `SPIEL ${board.slot}` : `TISCH ${board.slot}`;
+  card.querySelector(".type-label").textContent = (board.match?.type === "Double" ? "DOPPEL" : "EINZEL") + (board.match?.state === "Finished" ? " · BEENDET" : "");
 
   updatePlayers(card.querySelector(".home-players"), board.sideOne || {});
   updatePlayers(card.querySelector(".away-players"), board.sideTwo || {});
@@ -480,7 +493,7 @@ function render(data) {
     badge.textContent = `Noch kein gestartetes Spiel über die gewählte Datenquelle (${dataSource === "janova" ? "Janova" : "TischtennisLive/Web4Sport"}) gefunden.`;
     badge.classList.remove("ok");
   } else {
-    badge.textContent = `LIVE · ${new Date().toLocaleTimeString("de-DE")} · ${active.length} SPIEL${active.length === 1 ? "" : "E"}`;
+    badge.textContent = `${contextBoard.match?.state === "Finished" ? "ERGEBNIS" : "LIVE"} · ${new Date().toLocaleTimeString("de-DE")} · ${active.length} SPIEL${active.length === 1 ? "" : "E"}`;
     badge.classList.add("ok");
   }
 }
@@ -490,7 +503,7 @@ async function refresh() {
 
   try {
     const requestedSource = dataSource;
-    const url = requestedSource === "manual" ? "api/data/manual" : requestedSource === "web4sport" ? WEB4SPORT_URL : DATA_URL;
+    const url = requestedSource === "manual" ? "api/data/manual" : requestedSource === "web4sport" ? WEB4SPORT_URL : requestedSource === "clicktt" ? "api/data/clicktt" : DATA_URL;
     const response = await fetch(`${url}?t=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const raw = await response.json();
@@ -503,6 +516,10 @@ async function refresh() {
       }
       render(convertWeb4Sport(raw));
     } else {
+      if(dataSource==='clicktt'){
+        const age=Date.now()-Date.parse(raw.updated||'');
+        if(!Number.isFinite(age)||age>90000||age < -30000)throw new Error('click-TT-Daten veraltet');
+      }
       render(raw);
     }
   } catch (error) {
@@ -755,7 +772,7 @@ async function setDataSource(source, persist = true) {
   if (persist && window.v2SaveSource) {
     try { await window.v2SaveSource(source); } catch (error) { document.getElementById("statusBadge").textContent = error.message; return; }
   }
-  dataSource = ["web4sport", "manual"].includes(source) ? source : "janova";
+  dataSource = ["web4sport", "manual", "clicktt"].includes(source) ? source : "janova";
   localStorage.setItem("ttsvV2DataSource", dataSource);
   document.body.classList.toggle("source-web4sport", dataSource === "web4sport");
   previousTeamScore = null;

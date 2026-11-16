@@ -14,6 +14,16 @@
     </header>
     <div class="settings-layout">
       <form id="config-form" class="settings-form">
+        <details class="settings-card settings-category" id="category-remote"><summary class="card-heading"><span>↔</span><h2>Fernbedienung / LAN</h2></summary><div class="category-content">
+          <p>Einrichtung nur direkt am Gerät oder über einen SSH-Tunnel. Die Freigabe ist standardmäßig aus.</p>
+          <label>Admin-PIN<input id="remote-admin-pin" type="password" inputmode="numeric" maxlength="12" autocomplete="new-password"></label>
+          <label><input id="remote-enabled" type="checkbox"> Zugriff im lokalen Netzwerk freigeben</label>
+          <label>Bind-Adresse<input id="remote-bind" value="0.0.0.0" spellcheck="false"></label>
+          <p class="help">0.0.0.0: alle IPv4-Schnittstellen, inklusive lokalem Kiosk. Änderungen an der Bindung benötigen einen Dienstneustart. Eine bestimmte IP erfordert auch die Anpassung der Kiosk-Adresse.</p>
+          <p class="help">HTTP ist unverschlüsselt. Nur in vertrauenswürdigem WLAN/LAN nutzen, keine Portfreigabe ins Internet. PIN: 6–12 Ziffern; keine wichtige Konto-PIN wiederverwenden.</p>
+          <button id="remote-access-save" type="button">LAN-Einstellungen separat speichern</button>
+          <p id="remote-access-state" role="status"></p><div id="remote-addresses" data-remote-pairing></div>
+        </div></details>
         <details class="settings-card settings-category" id="category-design" open><summary class="card-heading"><span>01</span><h2>Verein & Design</h2></summary><div class="category-content">
           <label>Vereinsname<input id="club-name" maxlength="80" placeholder="Mein Tischtennisverein"></label>
           <label>Vereinswebsite<input id="club-website" maxlength="160" placeholder="www.mein-verein.de"></label>
@@ -45,7 +55,11 @@
           <p class="help">Standard: alle 30 Sekunden wechseln. Kompakt zeigt den Mannschaftsstand, Detail die laufenden Paarungen. Der automatische Wechsel läuft bei aktiven Spielen.</p>
         </div></details>
         <details class="settings-card settings-category" id="category-source"><summary class="card-heading"><span>03</span><h2>Datenquelle</h2></summary><div class="category-content">
-          <label>Aktive Datenquelle<select id="data-source"><option value="manual">Manuelle Eingabe</option><option value="janova">Janova-Zählgeräte</option><option value="web4sport">TischtennisLive / Web4Sport</option></select></label>
+          <label>Aktive Datenquelle<select id="data-source"><option value="manual">Manuelle Eingabe</option><option value="janova">Janova-Zählgeräte</option><option value="web4sport">TischtennisLive / Web4Sport</option><option value="clicktt">myTischtennis / click-TT (Live-Ticker)</option></select></label>
+          <fieldset id="clicktt-settings" class="source-settings" hidden disabled><legend>myTischtennis / click-TT</legend>
+            <label>Öffentlicher Spielbericht-Link<input id="clicktt-url" type="url" maxlength="2048" placeholder="https://www.mytischtennis.de/click-tt/…/spielbericht/…" spellcheck="false"></label>
+            <p class="help">Kein Login nötig. Vollständigen öffentlichen Spielbericht-Link einfügen und speichern. Gesamtstand, Sätze und verfügbare Zwischenpunkte werden ungefähr alle 30 Sekunden übernommen. Ohne verifizierte Tisch-/Aufschlagangabe werden Spielnummern statt Tischnummern und keine Aufschlagmarkierung angezeigt.</p>
+          </fieldset>
           <fieldset id="manual-settings" class="source-settings" hidden><legend>Manuelle Eingabe</legend>
             <label>Gegner<input id="manual-opponent" maxlength="100" required value="Gast"></label>
             <p class="help">Heimverein aus Verein & Design. Nur Kompaktansicht; kein Login oder Internet nötig. Gegner und Datenquelle mit Einstellungen speichern übernehmen. Ein Gegnerwechsel setzt den Spielstand nicht automatisch zurück.</p>
@@ -107,5 +121,8 @@
   </main>
   <script src="v2.js"></script>
 <script src="manual-controls.js"></script>
+<script src="remote-access-ui.js"></script>
+<script src="remote-pairing.js"></script>
+<script src="live-sync.js"></script>
 </body>
 </html>

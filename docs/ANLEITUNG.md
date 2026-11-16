@@ -3,7 +3,7 @@
 
 Euer Spiel. Für die ganze Halle.
 
-Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova oder TischtennisLive / Web4Sport. Alternativ steht eine manuelle Mannschaftsanzeige ohne Login und Internet zur Verfügung. Einmal mit der gewünschten Quelle verbinden, Vereinsdesign einstellen und die passende Begegnung wählen. Ergebnisse werden nicht zusätzlich in der Anzeigetafel eingetragen.
+Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova, TischtennisLive / Web4Sport oder öffentlichen myTischtennis / click-TT-Spielberichten. Alternativ steht eine manuelle Mannschaftsanzeige ohne Login und Internet zur Verfügung. Einmal mit der gewünschten Quelle verbinden, Vereinsdesign einstellen und die passende Begegnung wählen. Bei automatischen Quellen werden Ergebnisse nicht zusätzlich in der Anzeigetafel eingetragen.
 
 ### Zwei Wege zum Betrieb
 
@@ -28,7 +28,7 @@ Die TT-Anzeigetafel übernimmt Spieldaten automatisch aus Janova oder Tischtenni
 
 **Bereits fertig eingerichteter Hallenrechner?** Die Linux-Neueinrichtung überspringen. Ein vorhandener Dienst oder Autostart darf nicht durch einen zweiten ergänzt werden.
 
-Anleitung zur Version 2.3.2. Projekt: https://github.com/DiskoKing/tischtennis-anzeigetafel
+Anleitung zur Version 2.4.0. Projekt: https://github.com/DiskoKing/tischtennis-anzeigetafel
 
 ---
 
@@ -73,6 +73,10 @@ Beim Hintergrund stehen CSS-Design, neutraler Hintergrund, das Originalbild aus 
 3. **Einstellungen speichern.** Die optionale Anmeldung dient zum Ermitteln der ID; Janova-Passwort und Sitzung werden nicht dauerhaft gespeichert.
 
 Die Anzahl dargestellter Janova-Partien richtet sich dynamisch nach den aktiven Zählgeräten. Janova liefert Live-Punkte und Sätze. Falls die automatische ID-Erkennung nicht funktioniert, bleibt die direkte ID-/Link-Eingabe verfügbar.
+
+### myTischtennis / click-TT verbinden
+
+Unter Datenquelle **myTischtennis / click-TT (Live-Ticker)** wählen, den vollständigen öffentlichen Spielbericht-Link einfügen und speichern. Kein Login nötig. Gesamtstand, Wettbewerb, Namen, Sätze und verfügbare Zwischenpunkte werden ungefähr alle 30 Sekunden übernommen. Die Detailansicht zeigt bis zu 1, 2 oder 3 anhand von Zwischenständen erkennbare laufende Paarungen. Eine Tischzuordnung oder ein Aufschlag wird nicht erfunden. Vor dem ersten Punkt bleibt der Gesamtstand sichtbar. Nach dem Ende zeigt die Kompaktansicht den Endstand; die Detailansicht zeigt die letzten 1, 2 oder 3 abgeschlossenen Paarungen in Spielreihenfolge mit Satzständen und der Kennzeichnung „Beendet“. Ein anderer Spielbericht wird durch Einfügen seines Links gewählt.
 
 ### TischtennisLive / Web4Sport verbinden
 
@@ -210,6 +214,8 @@ Unter „Version & Updates“ auf „Nach Updates suchen“ klicken. Versionshin
 
 Automatische Installation setzt eine unterstützte Umgebung voraus: Windows-Paket mit Plattformstarter oder Linux-Dienst anzeigetafel.service bzw. der bestehende NUC-Dienst ttsv-scoreboard-v2.service. Bei einem manuell gestarteten Entwicklungsserver kann die automatische Installation nicht angeboten werden. Änderungen an Laufzeit oder Starter können ein vollständiges neues Paket erfordern.
 
+**Windows von 2.3.x auf 2.4.0:** Beenden.cmd ausführen. Das vollständige neue Windows-Paket separat entpacken. Den bisherigen Ordner app/private bei geschlossener Anwendung nach app/private im neuen Paket kopieren; danach mit dem neuen Starten.cmd starten. So bleiben Vereinsdaten, Uploads und Spielstand erhalten. Der neue Starter ermöglicht die LAN-Freigabe. Linux benötigt diesen Paketwechsel nicht.
+
 ### Eigene Daten sichern
 
 Vor einem Rechnerwechsel oder dem Austausch des gesamten Pakets die Anwendung beenden und den Ordner **private** sichern. Windows: app/private; Linux: ~/tischtennis-anzeigetafel/private. Dieser Ordner kann Zugangsdaten enthalten. Bei einer neuen Installation nur den gesicherten private-Ordner an die passende Stelle zurückkopieren; Plattform und Version müssen zusammenpassen.
@@ -301,3 +307,58 @@ systemctl --user enable --now streamdock.service
 ```
 
 Danach neu einstecken oder neu starten und vier Tasten testen. Der Adapter wartet auf das Dock und verbindet sich nach erneutem Einstecken wieder. Keine Firmwareänderung; die Steuerung geschieht über die USB-Schnittstelle. Bei einer anderen Installation als ~/tischtennis-anzeigetafel den Pfad im Dienst anpassen.
+
+---
+
+# 9. Smartphone-Fernbedienung (Remote Control v1.0)
+
+Die optionale Fernbedienung ist ab Version 2.4.0 enthalten. Die Anzeigetafel bleibt der einzige Server; das Smartphone braucht nur einen aktuellen Browser und dasselbe vertrauenswürdige LAN/WLAN.
+
+### Einmalig am NUC, Raspi oder Windows-Rechner aktivieren
+
+1. Einstellungen direkt an der Anzeigetafel öffnen, alternativ wie bisher über einen SSH-Tunnel.
+2. Den Bereich **Fernbedienung / LAN** öffnen. Eine neue Admin-PIN mit 6 bis 12 Ziffern eingeben. Keine PIN anderer Konten verwenden.
+3. **Zugriff im lokalen Netzwerk freigeben** aktivieren. Die empfohlene Bind-Adresse **0.0.0.0** umfasst alle IPv4-Schnittstellen und die lokale Kiosk-Adresse.
+4. **LAN-Einstellungen separat speichern** drücken. Das normale Speichern der Vereinskonfiguration ändert diese Freigabe nicht.
+5. Den Anzeigetafel-Dienst neu starten oder den Rechner neu starten. Unter Windows die Anwendung über Beenden.cmd schließen und mit Starten.cmd wieder starten.
+6. Die Einstellungen noch einmal öffnen. Im Bereich Fernbedienung stehen jetzt die erreichbaren Adressen. Die Netzwerkerkennung kann nach dem Start einige Sekunden benötigen.
+
+Linux-Dienstneustart bei Standardinstallation: `systemctl --user restart anzeigetafel.service`. Bei älterer NUC-Installation heißt der Dienst `ttsv-scoreboard-v2.service`. Keine zweite Serverinstallation und keine Administratorrechte für den Anwendungsdienst nötig.
+
+Fortgeschritten: Eine bestimmte lokale IPv4-Adresse ist als Bind-Adresse möglich. Dann müssen auch die lokale Browser-/Kiosk-Adresse und gegebenenfalls der Dock-Adapter diese Adresse verwenden; localhost ist auf diesem Listener nicht mehr erreichbar. Für normalen Kioskbetrieb deshalb **0.0.0.0** verwenden. `--bind` auf der Kommandozeile ist möglich, umgeht aber niemals die erforderliche gespeicherte Freigabe und PIN.
+
+### Smartphone verbinden und zählen
+
+Der **Handy-Knopf neben dem Zahnrad** am Kiosk und **Fernbedienung / LAN** in den Einstellungen zeigen den aktuellen QR-Code. Mit der Smartphone-Kamera scannen und anschließend mit der Admin-PIN anmelden. Der lokal erzeugte Code enthält nur die Adresse, keine PIN. Bei mehreren Codes die Adresse im Smartphone-Netz wählen. Nach einem Netzwechsel aktualisieren sich die Codes innerhalb etwa 15 Sekunden; die Smartphone-Verbindung durch erneutes Scannen öffnen.
+
+Als Komfortoption erscheint der vorhandene Gerätename, etwa `http://ttsv-nuc8i3bels.local:8081/remote`. Er benötigt lokale Namensauflösung, unter Linux beispielsweise Avahi. Die Anwendung ändert Hostname und Namensdienste nicht. Falls der Name scheitert, den IP-QR-Code verwenden. Routerzugriff ist unnötig; Gast-WLAN-Isolation kann beide Wege sperren.
+
+Die angezeigte Adresse im Smartphone-Browser öffnen, zum Beispiel `http://192.168.4.233:8081/remote`. **Nicht 127.0.0.1 am Smartphone verwenden:** Das wäre das Smartphone selbst. Unter Windows wird der vom Starter gewählte Port angezeigt; er kann sich beim Neustart ändern.
+
+Mit der Admin-PIN anmelden. Im Bereich **Spielstand** stehen Heim- und Gastname sowie der aktuelle Stand. Heim + / − und Gast + / − zählen jeweils einen Mannschaftspunkt; unter 0 geht es nicht. **Neues Spiel / Zurücksetzen** fragt vor dem Rücksetzen nach. Der Gegnername wird in den Einstellungen beim manuellen Modus geändert. Das Zurücksetzen ändert den Gegner nicht, ein Gegnerwechsel setzt den Stand nicht automatisch zurück.
+
+Nur die manuelle Datenquelle lässt sich hier zählen. Janova und TischtennisLive/Web4Sport zählen weiterhin an ihrer Quelle. PC-Bedienfenster, Nummernblock und unterstütztes Stream Dock funktionieren parallel unverändert. Änderungen erreichen andere verbundene Anzeigen normalerweise innerhalb etwa einer Sekunde. Bei Verbindungsfehlern den angezeigten Serverstand prüfen; es gibt keine Offline-Warteschlange. Der manuelle Stand bleibt nach einem Server-Neustart gespeichert.
+
+### Einstellungen und Systemstatus
+
+Nach der Anmeldung lässt sich **Auf dem Startbildschirm ablegen** öffnen. Auf iPhone/iPad im Teilen-Menü **Zum Home-Bildschirm** wählen; falls nötig die Seite zuerst in Safari öffnen. Auf Android im Browsermenü **Zum Startbildschirm hinzufügen** oder **App installieren** verwenden, soweit angeboten. Manifest und App-Symbole werden lokal mitgeliefert. Ob ein eigenes App-Fenster oder eine Browser-Verknüpfung entsteht, hängt vom Browser ab. Eine reguläre PWA-Installationsfreigabe ist im unverschlüsselten HTTP-LAN nicht garantiert. Es gibt keinen Service Worker und keine Offline-Zählung. Nach einem Orts-/Netzwechsel die Verknüpfung bei Bedarf durch erneutes Scannen ersetzen. Niemals die PIN im Lesezeichen ergänzen.
+
+**Einstellungen** öffnet dieselbe Konfigurationsoberfläche wie am Kiosk: Datenquelle, Vereins-/Gegnername, Ansichten und Wechselintervall, Farben, Logos, Hintergründe sowie Sponsoren. Änderungen mit **Einstellungen speichern** übernehmen. Bereits gespeicherte Zugangsdaten bleiben verborgen; leere maskierte Felder behalten die Werte bei. Neue Zugangsdaten nur im vertrauenswürdigen Netz eingeben.
+
+**Netzwerk / System** trennt Ethernet/WLAN/offline und IP-Adresse vom Status der gewählten Datenquelle. WLAN-Name und Signal erscheinen nur, soweit Betriebssystem und Berechtigungen sie bereitstellen. Nicht verfügbare Werte werden ausdrücklich so bezeichnet. Der Zeitpunkt der letzten erfolgreichen Aktualisierung bezieht sich auf die Datenquelle bzw. die letzte manuelle Zählaktion, nicht auf eine Internetprüfung. Die kleine Statusanzeige am Kiosk zeigt nur die Netzwerkverbindung.
+
+Die PIN-Sitzung gilt höchstens acht Stunden und endet außerdem nach Abmeldung, Server-Neustart, Änderung der PIN oder LAN-Freigabe. Mehrere falsche PIN-Versuche führen zu einer Wartezeit von einer Minute. Mit **Abmelden** das Smartphone wieder sperren. PIN vergessen: direkt am Gerät eine neue PIN setzen. Das widerruft alle Remote-Sitzungen.
+
+### Wenn keine Verbindung zustande kommt
+
+- Gleiche Netzwerkverbindung prüfen. Gast-WLANs können Geräte voneinander isolieren. Eine funktionierende Datenquelle beweist noch nicht, dass das Smartphone den Rechner erreichen kann.
+- LAN-Freigabe, PIN und durchgeführten Dienstneustart kontrollieren. IP-Adresse und Port nach einem Neustart erneut ablesen.
+- Unter Windows gegebenenfalls den Zugriff für diese Anwendung im **privaten** Netzwerk in der Firewall gezielt durch die Einrichtungsperson erlauben. Die Anwendung ändert Firewallregeln nicht selbst. Keine pauschale Freigabe für öffentliche Netze.
+- Bei unbekanntem Netzwerkstatus einige Sekunden warten. Linux benötigt das vorhandene Werkzeug `ip`, für zusätzliche WLAN-Details optional NetworkManager (`nmcli`). Windows kann WLAN-Daten wegen seiner Datenschutzrechte verweigern; die Bedienung über bekannte IP funktioniert davon unabhängig.
+- Zum Abschalten lokal den Haken bei LAN-Freigabe entfernen und separat speichern. Remote-Zugriffe werden sofort abgewiesen; nach dem Dienstneustart lauscht der Server wieder nur auf localhost.
+
+### Sicherheit im lokalen Netz
+
+HTTP ist **unverschlüsselt**: PIN und übertragene Daten können im Netz mitgelesen werden. Die Funktion ausschließlich in einem vertrauenswürdigen lokalen Netz verwenden. Keine Router-Portfreigabe ins Internet, kein öffentliches Hosting und keine Wiederverwendung wichtiger PINs. Der Rechner selbst und lokale Prozesse bleiben wie bisher vertrauenswürdig; die lokale Bedienung braucht keine Remote-PIN. Wer diese Sicherheitsgrenzen nicht akzeptiert, belässt die LAN-Freigabe aus und nutzt einen SSH-Tunnel.
+
+Die PIN wird nur als gesalzener PBKDF2-Hash gespeichert. Passwörter, PIN-Hash und Sitzungstoken erscheinen nicht in Statusmeldungen oder Zugriffslogs. WLAN-Suche, Verbindungswechsel, Setup-Hotspot und QR-Einrichtung sind **noch nicht implementiert**; es wird kein Hotspot automatisch aktiviert.

@@ -5,6 +5,8 @@ from functools import lru_cache
 import copy
 from datetime import date, datetime
 import hashlib
+import ipaddress
+from http.cookies import SimpleCookie
 import json
 import mimetypes
 import os
@@ -22,6 +24,10 @@ import requests
 import updater
 from bs4 import BeautifulSoup
 import web4sport_client as web
+from public.support.remote_access import RemoteAccess, AccessError, valid_bind
+from public.support.network_status import NetworkStatus, local_hostname
+from public.support.pairing import qr_svg
+from public.support import clicktt
 
 ROOT = Path(__file__).resolve().parent
 DEFAULTS = {
@@ -34,6 +40,7 @@ DEFAULTS = {
     'manual': {'opponent': 'Gast'},
     'janova': {'refereeId': ''},
     'web4sport': {'username': '', 'password': '', 'selection': None},
+    'clicktt': {'url': ''},
 }
 
 
@@ -152,7 +159,7 @@ def choose_game(games, selection, today=None):
 def reader_key(config):
     return (config['dataSource'], config['janova']['refereeId'],
             config['web4sport']['username'], config['web4sport']['password'],
-            json.dumps(config['web4sport']['selection'], sort_keys=True))
+            json.dumps(config['web4sport']['selection'], sort_keys=True), config.get('clicktt',{}).get('url',''))
 
 
 def janova_identity(value):
@@ -174,7 +181,7 @@ def janova_identity(value):
 
 
 def validate_update(previous, patch):
-    if not isinstance(patch, dict) or set(patch) - {'club', 'dataSource', 'janova', 'web4sport', 'display', 'sponsors', 'background', 'manual'}:
+    if not isinstance(patch, dict) or set(patch) - {'club', 'dataSource', 'janova', 'web4sport', 'clicktt', 'display', 'sponsors', 'background', 'manual'}:
         raise ValueError('Ungültige Konfiguration')
     result = copy.deepcopy(previous)
     if 'manual' in patch:
@@ -221,9 +228,14 @@ def validate_update(previous, patch):
             raise ValueError('Kompaktansicht ungültig')
         result['display'] = {'compactLayout': layout, **copy.deepcopy(display), 'footerHeightPercent': height, 'web4sportMatchCount': count}
     if 'dataSource' in patch:
-        if patch['dataSource'] not in ('janova', 'web4sport', 'manual'):
+        if patch['dataSource'] not in ('janova', 'web4sport', 'manual', 'clicktt'):
             raise ValueError('Datenquelle ungültig')
         result['dataSource'] = patch['dataSource']
+    if 'clicktt' in patch:
+        value=patch['clicktt']
+        if not isinstance(value,dict) or set(value)!={'url'} or not isinstance(value['url'],str):
+            raise ValueError('click-TT-Link ungültig')
+        result['clicktt']={'url':clicktt.report_link(value['url'])[0] if value['url'].strip() else ''}
     if 'club' in patch:
         club = patch['club']
         if not isinstance(club, dict) or set(club) - {'name', 'website', 'primary', 'background'}:
@@ -273,6 +285,7 @@ class App:
         self.config = json.loads(self.path.read_text(encoding='utf-8')) if self.path.exists() else copy.deepcopy(DEFAULTS)
         migrated = 'display' not in self.config or 'background' not in self.config or 'sponsors' not in self.config or 'introText' not in self.config.get('sponsors', {})
         self.config.setdefault('manual', copy.deepcopy(DEFAULTS['manual']))
+        self.config.setdefault('clicktt', copy.deepcopy(DEFAULTS['clicktt']))
         self.config.setdefault('background', copy.deepcopy(DEFAULTS['background']))
         self.config.setdefault('display', copy.deepcopy(DEFAULTS['display']))
         self.config['display'].setdefault('footerHeightPercent', 8.5)
@@ -286,6 +299,12 @@ class App:
         self.manual_path = self.private/'manual-state.json'
         self.manual = json.loads(self.manual_path.read_text(encoding='utf-8')) if self.manual_path.exists() else {'home': 0, 'away': 0, 'gameId': secrets.token_hex(16), 'events': []}
         self.lock = threading.RLock()
+        self.remote = RemoteAccess(self.private/'remote-access.json', atomic_json)
+        self.network = NetworkStatus()
+        self.revision = 0
+        self.instance_id = secrets.token_hex(16)
+        self.last_success = (datetime.fromtimestamp(self.manual_path.stat().st_mtime).astimezone().isoformat()
+                             if self.config['dataSource'] == 'manual' and self.manual_path.exists() else None)
         self.csrf = secrets.token_urlsafe(32)
         self.update_lock = threading.Lock()
         self.stop = threading.Event()
@@ -329,11 +348,13 @@ class App:
             self.payload = None
             self.candidates = []
             self.status, self.message = 'starting', 'Neue Datenquelle wird gestartet'
+            self.last_success = None
         self.config = updated
+        self.revision += 1
 
     def manual_state(self):
         with self.lock:
-            return {key: value for key, value in self.manual.items() if key != 'events'} | {
+            return {key: value for key, value in self.manual.items() if key not in ('events', 'lastReset')} | {
                 'enabled': self.config['dataSource'] == 'manual',
                 'homeName': self.config['club']['name'] or 'Heim',
                 'awayName': self.config['manual']['opponent']}
@@ -343,6 +364,9 @@ class App:
             if self.config['dataSource'] != 'manual':
                 raise ValueError('Manueller Modus ist nicht aktiv')
             if action.get('gameId') != self.manual['gameId']:
+                # A lost reset response may be retried with the previous game ID.
+                if self.manual.get('lastReset') == [action.get('gameId'), action.get('eventId')] and action.get('action') == 'reset':
+                    return self.manual_state()
                 raise ValueError('Spiel wurde zurückgesetzt. Bitte neu laden.')
             event = action.get('eventId')
             if not isinstance(event, str) or not re.fullmatch(r'[A-Za-z0-9_-]{8,80}', event):
@@ -351,7 +375,8 @@ class App:
                 return self.manual_state()
             updated = copy.deepcopy(self.manual)
             if action.get('action') == 'reset':
-                updated = {'home': 0, 'away': 0, 'gameId': secrets.token_hex(16), 'events': []}
+                updated = {'home': 0, 'away': 0, 'gameId': secrets.token_hex(16), 'events': [],
+                           'lastReset': [self.manual['gameId'], event]}
             else:
                 side, delta = action.get('side'), action.get('delta')
                 if side not in ('home', 'away') or type(delta) is not int or delta not in (-1, 1):
@@ -360,6 +385,8 @@ class App:
                 updated['events'] = (updated['events'] + [event])[-256:]
             atomic_json(self.manual_path, updated)
             self.manual = updated
+            self.last_success = datetime.now().astimezone().isoformat()
+            self.revision += 1
             return self.manual_state()
 
     def select(self, said, sid):
@@ -423,6 +450,8 @@ class App:
             if candidates is not None:
                 self.candidates = candidates
             self.payload = payload
+            if status == 'ready':
+                self.last_success = datetime.now().astimezone().isoformat()
 
     def get_data(self, source):
         with self.lock:
@@ -444,12 +473,18 @@ class App:
                         payload = json.loads(path.read_text(encoding='utf-8'))
                         age = time.time() - path.stat().st_mtime
                         if age <= 90:
+                            self.last_success = datetime.fromtimestamp(path.stat().st_mtime).astimezone().isoformat()
                             return {**payload, 'status': 'ready', 'message': 'Janova verbunden'}
                         status, message = 'error', 'Keine aktuellen Janova-Daten. Referee-ID und Verbindung prüfen.'
                     except (OSError, ValueError):
                         pass
-            if self.payload is not None and source == 'web4sport':
-                return copy.deepcopy({**self.payload, 'status': status, 'message': message, 'candidates': self.candidates})
+            if self.payload is not None and source in ('web4sport','clicktt'):
+                result=copy.deepcopy({**self.payload, 'status': status, 'message': message, 'candidates': self.candidates})
+                if source=='clicktt':
+                    count=self.config['display'].get('web4sportMatchCount',2)
+                    boards=result['scoreboards']
+                    result['scoreboards']=boards[-count:] if boards and all(b.get('match',{}).get('state')=='Finished' for b in boards) else boards[:count]
+                return result
             return {'status': status, 'message': message, 'candidates': copy.deepcopy(self.candidates),
                     'matches': [], 'scoreboards': []}
 
@@ -504,6 +539,25 @@ class App:
                     if self.process and self.process.poll() is not None:
                         self.publish(key, 'error', 'Janova-Reader beendet. Konfiguration prüfen oder Reader neu verbinden.')
                     self.stop.wait(1)
+                    continue
+                if config['dataSource'] == 'clicktt':
+                    if time.monotonic()<next_poll:
+                        self.stop.wait(1)
+                        continue
+                    next_poll=time.monotonic()+30
+                    if not config['clicktt']['url']:
+                        self.publish(key,'configuration_required','Bitte den myTischtennis/click-TT-Spielbericht-Link in den Einstellungen eintragen.')
+                        continue
+                    try:
+                        if session is None:
+                            session=requests.Session()
+                            session.headers['User-Agent']='TT-Anzeigetafel/2.3.2 (public click-TT report)'
+                        payload=clicktt.read(session,config['clicktt']['url'],3)
+                        self.publish(key,'ready','myTischtennis / click-TT verbunden (Aktualisierung ca. alle 30 s)',[],payload)
+                    except (requests.RequestException,ValueError,OSError):
+                        if session:session.close()
+                        session=None
+                        self.publish(key,'error','myTischtennis/click-TT nicht erreichbar oder Spielbericht nicht lesbar. Öffentlichen Link prüfen.')
                     continue
                 if time.monotonic() < next_poll:
                     self.stop.wait(1)
@@ -562,6 +616,10 @@ class App:
 class Handler(BaseHTTPRequestHandler):
     server_version = 'Scoreboard/2.0'
 
+    def setup(self):
+        super().setup()
+        self.connection.settimeout(15)
+
     def log_message(self, *_):
         pass  # Request paths, usernames and payloads never enter logs.
 
@@ -570,6 +628,25 @@ class Handler(BaseHTTPRequestHandler):
         return self.server.app
 
     def send(self, status, body, content_type='application/json; charset=utf-8'):
+        # A closed socket with unread POST bytes may reset the response on Windows.
+        # Drain only small rejected commands, without allocating upload-sized buffers
+        # or waiting indefinitely for an unauthenticated sender.
+        if status >= 400 and self.command == 'POST' and not getattr(self, 'body_read', False):
+            try:
+                pending = int(self.headers.get('Content-Length', '0'))
+                if 0 < pending <= 65536:
+                    self.connection.settimeout(.2)
+                    self.rfile.read(pending)
+            except (OSError, ValueError):
+                pass
+            finally:
+                self.connection.settimeout(15)
+        if isinstance(body, dict) and 'web4sport' in body and 'janova' in body and not self.local_client():
+            body = copy.deepcopy(body)
+            body['web4sport']['usernameSet'] = bool(body['web4sport'].get('username'))
+            body['web4sport']['username'] = ''
+            body['janova']['refereeIdSet'] = bool(body['janova'].get('refereeId'))
+            body['janova']['refereeId'] = ''
         if not isinstance(body, bytes):
             body = json.dumps(body, ensure_ascii=False).encode('utf-8')
         self.send_response(status)
@@ -578,6 +655,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Referrer-Policy', 'no-referrer')
+        if getattr(self, 'new_cookie', None):
+            self.send_header('Set-Cookie', f'{RemoteAccess.COOKIE}={self.new_cookie}; HttpOnly; SameSite=Strict; Path=/; Max-Age={RemoteAccess.TTL}')
         # Only our own settings document may be embedded by this application's overlay.
         embedded_settings = urlsplit(self.path).path == '/settings.html'
         self.send_header('X-Frame-Options', 'SAMEORIGIN' if embedded_settings else 'DENY')
@@ -588,23 +667,109 @@ class Handler(BaseHTTPRequestHandler):
 
     def valid_host(self):
         try:
-            return urlsplit('http://' + self.headers.get('Host', '')).hostname in ('localhost', '127.0.0.1', '::1')
+            parsed = urlsplit('http://' + self.headers.get('Host', ''))
+            if parsed.username or parsed.password or parsed.path or parsed.query or parsed.fragment:
+                return False
+            host = parsed.hostname
+            if host in ('localhost', '127.0.0.1', '::1'):
+                return True
+            return (self.app.remote.config['enabled'] and self.app.remote.public()['pinSet'] and
+                    (host in self.app.network.get()['ips'] or
+                     (local_hostname() is not None and host == local_hostname())))
         except ValueError:
             return False
+
+    def local_client(self):
+        # Host alone is not trust: remote clients can forge Host: localhost.
+        address = ipaddress.ip_address(self.client_address[0])
+        return address.is_loopback or (self.server.server_address[0] not in ('0.0.0.0', '127.0.0.1') and
+                                       self.client_address[0] == self.server.server_address[0])
+
+    def remote_session(self, create=False):
+        cookie = SimpleCookie()
+        try:
+            cookie.load(self.headers.get('Cookie', ''))
+            token = cookie[RemoteAccess.COOKIE].value if RemoteAccess.COOKIE in cookie else ''
+        except Exception:
+            token = ''
+        session = self.app.remote.session(token)
+        if not session and create:
+            token, session = self.app.remote.new_session()
+            self.new_cookie = token
+        return token, session
+
+    def authorized(self):
+        if self.local_client():
+            return True
+        _, session = self.remote_session()
+        return bool(self.app.remote.config['enabled'] and session and session['authenticated'])
+
+    def session_info(self):
+        if self.local_client():
+            return {'csrf': self.app.csrf, 'authenticated': True, 'local': True}
+        _, session = self.remote_session(create=True)
+        return {'csrf': session['csrf'], 'authenticated': session['authenticated'], 'local': False}
+
+    def system_status(self):
+        network = self.app.network.get()
+        with self.app.lock:
+            source = self.app.config['dataSource']
+            data = self.app.get_data(source)
+            return {'network': network, 'dataSource': source, 'sourceStatus': data['status'],
+                    'sourceMessage': data.get('message', ''), 'lastSuccessfulUpdate': self.app.last_success,
+                    'version': updater.version(self.app.root),
+                    'revision': f'{self.app.instance_id}:{self.app.revision}',
+                    'wifiSetup': {'supported': False, 'hotspotActive': False}}
+
+    def access_info(self):
+        config = self.app.remote.public()
+        bound = self.server.server_address[0]
+        wanted = self.app.remote.bind_address()
+        return {**config, 'listeningAddress': bound, 'restartRequired': bound != wanted,
+                'port': self.server.server_port,
+                'urls': [f'http://{ip}:{self.server.server_port}/remote' for ip in self.app.network.get()['ips']
+                         if bound == '0.0.0.0' or ip == bound] if config['enabled'] else []}
+
+    def pairing_info(self):
+        access = self.access_info()
+        urls = access['urls'] if access['pinSet'] and access['listeningAddress'] != '127.0.0.1' else []
+        return {'enabled': access['enabled'], 'restartRequired': access['restartRequired'],
+                'urls': urls, 'hostnameUrl': f'http://{local_hostname()}:{self.server.server_port}/remote'
+                if urls and local_hostname() else None,
+                'qrImages': ['/api/remote/qr.svg?ip=' + urlsplit(url).hostname for url in urls]}
 
     def do_GET(self):
         if not self.valid_host():
             return self.send(403, {'error': 'Nur über lokale Adresse oder SSH-Tunnel erreichbar.'})
         path = unquote(urlsplit(self.path).path)
+        if not self.local_client() and not self.app.remote.config['enabled']:
+            return self.send(403, {'error': 'LAN-Zugriff deaktiviert.'})
         if path == '/api/session':
-            return self.send(200, {'csrf': self.app.csrf})
+            return self.send(200, self.session_info())
+        if path.startswith('/api/') and not self.authorized():
+            return self.send(401, {'error': 'Bitte mit Admin-PIN anmelden.'})
+        if path == '/api/remote/access':
+            if not self.local_client():
+                return self.send(403, {'error': 'LAN-Freigabe nur direkt am Gerät ändern.'})
+            return self.send(200, self.access_info())
+        if path == '/api/system':
+            return self.send(200, self.system_status())
+        if path == '/api/remote/pairing':
+            return self.send(200, self.pairing_info())
+        if path == '/api/remote/qr.svg':
+            current = self.pairing_info()
+            ip = parse_qs(urlsplit(self.path).query).get('ip', [''])[0]
+            url = next((url for url in current['urls'] if urlsplit(url).hostname == ip), None)
+            if not url:
+                return self.send(409, {'error': 'Adresse geändert oder LAN-Freigabe nicht aktiv. Bitte QR-Code neu laden.'})
+            return self.send(200, qr_svg(url), 'image/svg+xml')
         if path == '/api/config':
             return self.send(200, self.app.public_config())
         if path == '/api/manual':
             return self.send(200, self.app.manual_state())
         if path == '/api/state':
             return self.send(200, self.app.get_data(self.app.config['dataSource']))
-        if path in ('/api/data/janova', '/api/data/web4sport', '/api/data/manual'):
+        if path in ('/api/data/janova', '/api/data/web4sport', '/api/data/manual', '/api/data/clicktt'):
             return self.send(200, self.app.get_data(path.rsplit('/', 1)[1]))
         if path == '/api/logo':
             logo = self.app.private/'club-logo'
@@ -629,7 +794,10 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(200, data, image_type(data) or 'application/octet-stream')
         if path == '/competition.json':
             return self.send(200, {'competition': ''})
-        relative = path.lstrip('/') or 'spiele.html'
+        relative = 'remote.html' if path in ('/remote', '/remote/') else path.lstrip('/') or 'spiele.html'
+        if relative == 'remote.webmanifest':
+            manifest = self.app.root/'public/remote.webmanifest'
+            return self.send(200, manifest.read_bytes(), 'application/manifest+json') if manifest.is_file() else self.send(404, {'error': 'Nicht gefunden'})
         public = (self.app.root/'public').resolve()
         target = (public/relative).resolve()
         if not target.is_relative_to(public) or not target.is_file() or (target.suffix.lower() not in ('.html', '.js', '.css', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg') and relative != 'assets/club-logos/catalog.json'):
@@ -639,14 +807,41 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if not self.valid_host() or self.headers.get('Origin') not in (None, 'http://' + self.headers.get('Host', '')):
             return self.send(403, {'error': 'Fremde Herkunft abgelehnt'})
-        if not secrets.compare_digest(self.headers.get('X-Scoreboard-CSRF', ''), self.app.csrf):
+        if not self.local_client() and (not self.app.remote.config['enabled'] or not self.headers.get('Origin')):
+            return self.send(403, {'error': 'LAN-Zugriff deaktiviert oder Herkunft fehlt.'})
+        path = urlsplit(self.path).path
+        _, session = self.remote_session()
+        expected = self.app.csrf if self.local_client() else session['csrf'] if session else ''
+        if not expected or not secrets.compare_digest(self.headers.get('X-Scoreboard-CSRF', ''), expected):
             return self.send(403, {'error': 'Bitte Seite neu laden'})
+        if path != '/api/remote/login' and not self.authorized():
+            return self.send(401, {'error': 'Bitte mit Admin-PIN anmelden.'})
         try:
             size = int(self.headers.get('Content-Length', '0'))
             if size < 1 or size > 10 * 1024 * 1024:
                 return self.send(413, {'error': 'Datei zu groß (maximal 10 MB)'})
             raw = self.rfile.read(size)
+            self.body_read = True
             path = urlsplit(self.path).path
+            if path == '/api/remote/login':
+                if self.local_client():
+                    return self.send(200, self.session_info())
+                try:
+                    self.new_cookie = self.app.remote.login(self.remote_session()[0], json.loads(raw).get('pin'), self.client_address[0])
+                except AccessError as error:
+                    return self.send(429 if 'PIN-Versuche' in str(error) else 401, {'error': str(error)})
+                return self.send(200, {'ok': True})
+            if path == '/api/remote/logout':
+                self.app.remote.logout(self.remote_session()[0])
+                return self.send(200, {'ok': True})
+            if path == '/api/remote/access':
+                if not self.local_client():
+                    return self.send(403, {'error': 'PIN und LAN-Freigabe nur direkt am Gerät ändern.'})
+                try:
+                    self.app.remote.configure(json.loads(raw))
+                except AccessError as error:
+                    return self.send(400, {'error': str(error)})
+                return self.send(200, self.access_info())
             if path == '/api/background':
                 if image_type(raw) is None:
                     raise ValueError('Bitte PNG, JPEG, GIF oder WebP hochladen')
@@ -655,6 +850,7 @@ class Handler(BaseHTTPRequestHandler):
                     temporary.write_bytes(raw)
                     temporary.chmod(0o600)
                     os.replace(temporary, self.app.private/'custom-background')
+                    self.app.revision += 1
                 return self.send(200, self.app.public_config())
             if path == '/api/sponsors/upload':
                 name = unquote(self.headers.get('X-Logo-Name', 'Sponsor'))
@@ -667,6 +863,7 @@ class Handler(BaseHTTPRequestHandler):
                     temporary.write_bytes(raw)
                     temporary.chmod(0o600)
                     os.replace(temporary, self.app.private/'club-logo')
+                    self.app.revision += 1
                 return self.send(200, self.app.public_config())
             patch = json.loads(raw)
             if path == '/api/sponsors/remove':
@@ -693,6 +890,13 @@ class Handler(BaseHTTPRequestHandler):
             if path == '/api/manual':
                 return self.send(200, self.app.manual_action(patch))
             if path == '/api/config':
+                if not self.local_client() and isinstance(patch, dict):
+                    # Redacted empty credential inputs mean keep, never erase secrets.
+                    with self.app.lock:
+                        if isinstance(patch.get('janova'), dict) and not patch['janova'].get('refereeId'):
+                            patch.pop('janova')
+                        if isinstance(patch.get('web4sport'), dict) and not patch['web4sport'].get('username'):
+                            patch['web4sport']['username'] = self.app.config['web4sport']['username']
                 return self.send(200, self.app.update(patch))
             if path == '/api/game':
                 if patch.get('automatic') is True:
@@ -726,13 +930,24 @@ def image_type(data):
     return None
 
 
+def create_server(app, port, bind=None):
+    """Shared Windows/Linux entry; refuses LAN without explicit saved opt-in + PIN."""
+    address = app.remote.bind_address() if bind is None else valid_bind(bind)
+    if address != '127.0.0.1' and not (app.remote.config['enabled'] and app.remote.public()['pinSet']):
+        raise ValueError('LAN-Bindung benötigt aktivierte Freigabe und Admin-PIN.')
+    http = ThreadingHTTPServer((address, port), Handler)
+    http.app = app
+    app.network.get()  # Warm up cached local interface metadata without blocking startup.
+    return http
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=8081)
+    parser.add_argument('--bind', help='IPv4-Bind-Adresse; LAN benötigt gespeicherte Freigabe und PIN')
     args = parser.parse_args()
     app = App()
-    server = ThreadingHTTPServer(('127.0.0.1', args.port), Handler)
-    server.app = app
+    server = create_server(app, args.port, args.bind)
     worker = threading.Thread(target=app.supervise, daemon=True)
     worker.start()
     print(f'Scoreboard 2.0: http://127.0.0.1:{args.port}/spiele.html', flush=True)

@@ -84,6 +84,10 @@ def apply_theme(fd, client, config):
 def initialize(fd, client):
     for command in (b'MOD\0\x003', b'DIS', b'LIG\0\0\x46', b'CONNECT'):
         send(fd,command)
+    # Clear the runtime canvas (including the boot image) before drawing keys.
+    # This does not overwrite the boot logo stored in ROM.
+    send(fd,b'CLE\0\0\0\xff')
+    send(fd,b'STP')
     config=client.request('/api/config')
     apply_theme(fd,client,config)
     return theme_signature(config)

@@ -1,6 +1,6 @@
 # TT-Anzeigetafel
 
-Konfigurierbare Anzeigetafel für Janova-Zählgeräte und TischtennisLive/Web4Sport. Eine gemeinsame Python-/Browser-Codebasis für Linux/NUC und Windows-USB; ein Veröffentlichungskanal.
+Konfigurierbare Anzeigetafel für Janova-Zählgeräte, TischtennisLive/Web4Sport, öffentliche myTischtennis/click-TT-Spielberichte und manuelle Eingabe. Eine gemeinsame Python-/Browser-Codebasis für Linux/NUC und Windows-USB; ein Veröffentlichungskanal.
 
 ## Anleitung für den praktischen Betrieb
 
@@ -11,9 +11,11 @@ Die Anleitung beschreibt Windows-USB sowie die Neueinrichtung auf Raspi/NUC mit 
 ## Funktionen
 
 - Manueller Modus: Gegner und Mannschaftsstand, PC-Bedienfenster, Nummernblock und optional Stream Dock 293 V3 unter Linux.
+- Optionale Smartphone-Fernbedienung unter `/remote`: PIN-geschützte LAN-Freigabe, QR-Code, Spielstand, vorhandene Einstellungen und getrennter Netzwerk-/Quellenstatus. Standard bleibt localhost; siehe [Remote-Architektur](docs/REMOTE-ARCHITEKTUR.md) und Kapitel 9 der Anleitung.
 - Vereinsname, Website, Farben und eigenes Vereinslogo.
 - Kompaktansicht, Detailansicht oder zeitgesteuerter Wechsel.
 - Janova-ID bzw. Live-Link; optionale Anmeldung zur Ermittlung der ID.
+- myTischtennis / click-TT: öffentlicher Spielbericht-Link, Gesamtstand, Sätze und verfügbare Zwischenpunkte ohne Login; Abruf etwa alle 30 Sekunden. Siehe [Anbindung und Grenzen](docs/CLICK-TT.md).
 - Web4Sport-Anmeldung und Begegnungsauswahl bei mehreren gestarteten Spielen.
 - Eigene Hintergründe mit einstellbarer Abdunklung.
 - Sponsorenlogos mit Einleitung und Rotation.
@@ -35,7 +37,7 @@ python server.py --port 8081
 Anzeige: http://127.0.0.1:8081/spiele.html
 Einstellungen: http://127.0.0.1:8081/settings.html
 
-Der Server lauscht nur lokal. Zugriff vom anderen Rechner ist über einen SSH-Tunnel möglich. Für Kioskstart und den Dienst siehe platform/linux.
+Der Server lauscht standardmäßig nur lokal. Zugriff vom anderen Rechner ist über einen SSH-Tunnel oder die ausdrücklich aktivierte PIN-geschützte LAN-Freigabe möglich. Für Kioskstart und den Dienst siehe platform/linux.
 
 ## Windows-USB
 

@@ -187,6 +187,7 @@
     $('background-dim').value = config.background.overlayPercent;
     $('background-file-state').textContent = config.background.customSet ? 'Ein eigenes Hintergrundbild ist gespeichert.' : 'Noch kein eigenes Hintergrundbild gespeichert.';
     $('data-source').value = config.dataSource;
+    $('clicktt-url').value = config.clicktt?.url || '';
     $('manual-opponent').value = config.manual.opponent;
     updateDataSourceFields();
     $('display-mode').value = config.display.mode;
@@ -201,7 +202,9 @@
     renderSponsorList(config.sponsors);
     updateDisplayFields();
     $('janova-id').value = config.janova.refereeId;
+    if(config.janova.refereeIdSet)$('janova-id').placeholder='ID gespeichert – leer lassen zum Beibehalten';
     $('web-username').value = config.web4sport.username;
+    if(config.web4sport.usernameSet)$('web-username').placeholder='Benutzername gespeichert – leer lassen zum Beibehalten';
     $('web-password').placeholder = config.web4sport.passwordSet ? 'Gespeichert – leer lassen zum Beibehalten' : 'Passwort eingeben';
     $('logo-preview').src = config.club.logo;
     $('club-logo-state').textContent = 'Aktuelles Vereinslogo ist gespeichert. Die Datei-Auswahl ist nur für einen Austausch.';
@@ -233,10 +236,12 @@
     $('display-mode').disabled = source === 'manual';
     $('display-mode').closest('label').hidden = source === 'manual';
     $('display-seconds').closest('label').hidden = source === 'manual';
-    $('category-games').hidden = source === 'manual';
-    $('web-match-options').hidden = source !== 'web4sport';
-    $('web-match-options').disabled = source !== 'web4sport';
-    for (const [name, id] of [['janova', 'janova-settings'], ['web4sport', 'web4sport-settings']]) {
+    $('category-games').hidden = source === 'manual' || source === 'clicktt';
+    $('web-match-options').hidden = !['web4sport','clicktt'].includes(source);
+    $('web-match-options').disabled = !['web4sport','clicktt'].includes(source);
+    $('web-match-options').querySelector('legend').textContent=source==='clicktt'?'Detailansicht · myTischtennis / click-TT':'Detailansicht · TischtennisLive / Web4Sport';
+    $('web-match-options').querySelector('.help').textContent=source==='clicktt'?'Zeigt bis zu 1, 2 oder 3 Paarungen mit bereits gemeldeten Zwischenständen. Eine Tischzuordnung liefert diese Quelle nicht.':'Zeigt die nächsten offenen Paarungen in Spielreihenfolge, höchstens die gewählte Anzahl. Bei Janova richtet sich die Anzahl automatisch nach den aktiven Zählgeräten.';
+    for (const [name, id] of [['janova', 'janova-settings'], ['web4sport', 'web4sport-settings'], ['clicktt','clicktt-settings']]) {
       const group = $(id);
       group.hidden = name !== source;
       group.disabled = name !== source;
@@ -392,6 +397,7 @@
           }
           const config = await api('/api/config', {method: 'POST', body: JSON.stringify({
             dataSource: $('data-source').value,
+            clicktt: {url:$('clicktt-url').value},
             manual: {opponent: $('data-source').value === 'manual' ? $('manual-opponent').value : current.manual.opponent},
             background: {mode: $('background-mode').value, overlayPercent: Number($('background-dim').value)},
             display: {compactLayout: $('compact-layout').value, mode: $('display-mode').value, intervalSeconds: Number($('display-seconds').value), footerHeightPercent: Number($('footer-height').value), web4sportMatchCount: Number($('web-match-count').value)},
@@ -452,10 +458,19 @@
         if (event.data?.type === 'v2-close-settings') dialog.close();
         if (event.data?.type === 'v2-config-saved') poll();
       });
-      controls.appendChild(button); document.body.appendChild(controls);
+      const phone=document.createElement('button');phone.type='button';phone.title='Smartphone verbinden';phone.setAttribute('aria-label','Smartphone verbinden');
+      phone.innerHTML='<svg width="22" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="1" width="12" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 19h4" stroke="currentColor" stroke-width="2"/></svg>';
+      const pairing=document.createElement('dialog');pairing.className='remote-pairing-dialog';pairing.setAttribute('aria-label','Smartphone verbinden');
+      const pairingTitle=document.createElement('h2');pairingTitle.textContent='Smartphone verbinden';
+      const pairingClose=document.createElement('button');pairingClose.type='button';pairingClose.textContent='Schließen';pairingClose.addEventListener('click',()=>pairing.close());
+      const pairingBox=document.createElement('div');pairing.append(pairingTitle,pairingBox,pairingClose);document.body.append(pairing);
+      const refreshPairing=window.TTRemotePairing.mount(pairingBox);
+      phone.addEventListener('click',()=>{pairing.showModal();refreshPairing();});
+      controls.append(phone,button); document.body.appendChild(controls);
     }
     await poll();
     setInterval(poll, 5000);
+    window.addEventListener('tt-state-change',()=>{poll();if(typeof refresh==='function')refresh();});
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
   else mount();

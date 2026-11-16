@@ -1,0 +1,344 @@
+{
+  "team_home": "TTC SR Hohenstein-Ernstthal",
+  "team_guest": "1. FC Köln",
+  "group_name": "2. Bundesliga Erwachsene",
+  "matches_home": 0,
+  "matches_guest": 4,
+  "start_date": "2026-11-15T14:00:00.000+00:00",
+  "end_date": null,
+  "has_nu_live_push_data": true,
+  "match": [
+    {
+      "game_type": "double",
+      "sets_home": 2,
+      "sets_guest": 3,
+      "match_name": "D1-D1",
+      "match_uuid": "1d037136-6252-4d18-86e1-c7adcd7adbb0",
+      "matches_home": 0,
+      "matches_guest": 1,
+      "winner_is_home": false,
+      "home_wo": false,
+      "guest_wo": false,
+      "set1_home": 11,
+      "set1_guest": 2,
+      "set2_home": 11,
+      "set2_guest": 8,
+      "set3_home": 8,
+      "set3_guest": 11,
+      "set4_home": 9,
+      "set4_guest": 11,
+      "set5_home": 6,
+      "set5_guest": 11,
+      "mm_player11": {
+        "firstname": "Patrick",
+        "lastname": "Baum"
+      },
+      "mm_player12": {
+        "firstname": "Dragos Alexandru",
+        "lastname": "Bujor"
+      },
+      "mm_player21": {
+        "firstname": "Alberto",
+        "lastname": "Mino"
+      },
+      "mm_player22": {
+        "firstname": "Balazs",
+        "lastname": "Lei"
+      }
+    },
+    {
+      "game_type": "double",
+      "sets_home": 1,
+      "sets_guest": 3,
+      "match_name": "D2-D2",
+      "match_uuid": "7dac7d62-b904-4b8a-a6f2-16fa99af9ee3",
+      "matches_home": 0,
+      "matches_guest": 1,
+      "winner_is_home": false,
+      "home_wo": false,
+      "guest_wo": false,
+      "set1_home": 11,
+      "set1_guest": 13,
+      "set2_home": 11,
+      "set2_guest": 9,
+      "set3_home": 4,
+      "set3_guest": 11,
+      "set4_home": 8,
+      "set4_guest": 11,
+      "set5_home": 0,
+      "set5_guest": 0,
+      "mm_player11": {
+        "firstname": "Andrew",
+        "lastname": "Baggaley"
+      },
+      "mm_player12": {
+        "firstname": "Miguel",
+        "lastname": "Nunez Tapia"
+      },
+      "mm_player21": {
+        "firstname": "Tamito",
+        "lastname": "Watanabe"
+      },
+      "mm_player22": {
+        "firstname": "Lleyton",
+        "lastname": "Ullmann"
+      }
+    },
+    {
+      "game_type": "single",
+      "sets_home": 0,
+      "sets_guest": 3,
+      "match_name": "1-2",
+      "match_uuid": "5712b0ce-80b0-47d2-b112-bcf07a4778a2",
+      "matches_home": 0,
+      "matches_guest": 1,
+      "winner_is_home": false,
+      "home_wo": false,
+      "guest_wo": false,
+      "set1_home": 12,
+      "set1_guest": 14,
+      "set2_home": 10,
+      "set2_guest": 12,
+      "set3_home": 3,
+      "set3_guest": 11,
+      "set4_home": 0,
+      "set4_guest": 0,
+      "set5_home": 0,
+      "set5_guest": 0,
+      "mm_player11": {
+        "firstname": "Patrick",
+        "lastname": "Baum"
+      },
+      "mm_player12": null,
+      "mm_player21": {
+        "firstname": "Tamito",
+        "lastname": "Watanabe"
+      },
+      "mm_player22": null
+    },
+    {
+      "game_type": "single",
+      "sets_home": 2,
+      "sets_guest": 3,
+      "match_name": "2-1",
+      "match_uuid": "a096bb2b-36b9-4a8d-be80-2874609d2a5e",
+      "matches_home": 0,
+      "matches_guest": 1,
+      "winner_is_home": false,
+      "home_wo": false,
+      "guest_wo": false,
+      "set1_home": 9,
+      "set1_guest": 11,
+      "set2_home": 10,
+      "set2_guest": 12,
+      "set3_home": 11,
+      "set3_guest": 8,
+      "set4_home": 12,
+      "set4_guest": 10,
+      "set5_home": 8,
+      "set5_guest": 11,
+      "mm_player11": {
+        "firstname": "Andrew",
+        "lastname": "Baggaley"
+      },
+      "mm_player12": null,
+      "mm_player21": {
+        "firstname": "Alberto",
+        "lastname": "Mino"
+      },
+      "mm_player22": null
+    },
+    {
+      "game_type": "single",
+      "sets_home": 0,
+      "sets_guest": 1,
+      "match_name": "3-4",
+      "match_uuid": "b26d64b9-fc5a-4757-b53a-e5f126b28800",
+      "matches_home": 0,
+      "matches_guest": 0,
+      "winner_is_home": null,
+      "home_wo": false,
+      "guest_wo": false,
+      "set1_home": 5,
+      "set1_guest": 11,
+      "set2_home": 10,
+      "set2_guest": 10,
+      "set3_home": 0,
+      "set3_guest": 0,
+      "set4_home": 0,
+      "set4_guest": 0,
+      "set5_home": 0,
+      "set5_guest": 0,
+      "mm_player11": {
+        "firstname": "Miguel",
+        "lastname": "Nunez Tapia"
+      },
+      "mm_player12": null,
+      "mm_player21": {
+        "firstname": "Lleyton",
+        "lastname": "Ullmann"
+      },
+      "mm_player22": null
+    },
+    {
+      "game_type": "single",
+      "sets_home": 0,
+      "sets_guest": 2,
+      "match_name": "4-3",
+      "match_uuid": "81552cd8-87ae-4ffa-8716-fe1889f5c34e",
+      "matches_home": 0,
+      "matches_guest": 0,
+      "winner_is_home": null,
+      "home_wo": false,
+      "guest_wo": false,
+      "set1_home": 10,
+      "set1_guest": 12,
+      "set2_home": 7,
+      "set2_guest": 11,
+      "set3_home": 0,
+      "set3_guest": 0,
+      "set4_home": 0,
+      "set4_guest": 0,
+      "set5_home": 0,
+      "set5_guest": 0,
+      "mm_player11": {
+        "firstname": "Dragos Alexandru",
+        "lastname": "Bujor"
+      },
+      "mm_player12": null,
+      "mm_player21": {
+        "firstname": "Balazs",
+        "lastname": "Lei"
+      },
+      "mm_player22": null
+    },
+    {
+      "game_type": "single",
+      "sets_home": 0,
+      "sets_guest": 0,
+      "match_name": "1-1",
+      "match_uuid": "4adc0945-bb5b-4ef9-b12f-945c3d89c007",
+      "matches_home": 0,
+      "matches_guest": 0,
+      "winner_is_home": null,
+      "home_wo": false,
+      "guest_wo": false,
+      "set1_home": 0,
+      "set1_guest": 0,
+      "set2_home": 0,
+      "set2_guest": 0,
+      "set3_home": 0,
+      "set3_guest": 0,
+      "set4_home": 0,
+      "set4_guest": 0,
+      "set5_home": 0,
+      "set5_guest": 0,
+      "mm_player11": {
+        "firstname": "Patrick",
+        "lastname": "Baum"
+      },
+      "mm_player12": null,
+      "mm_player21": {
+        "firstname": "Alberto",
+        "lastname": "Mino"
+      },
+      "mm_player22": null
+    },
+    {
+      "game_type": "single",
+      "sets_home": 0,
+      "sets_guest": 0,
+      "match_name": "2-2",
+      "match_uuid": "70357880-1011-4bfe-a483-3fd0cb19e41b",
+      "matches_home": 0,
+      "matches_guest": 0,
+      "winner_is_home": null,
+      "home_wo": false,
+      "guest_wo": false,
+      "set1_home": 0,
+      "set1_guest": 0,
+      "set2_home": 0,
+      "set2_guest": 0,
+      "set3_home": 0,
+      "set3_guest": 0,
+      "set4_home": 0,
+      "set4_guest": 0,
+      "set5_home": 0,
+      "set5_guest": 0,
+      "mm_player11": {
+        "firstname": "Andrew",
+        "lastname": "Baggaley"
+      },
+      "mm_player12": null,
+      "mm_player21": {
+        "firstname": "Tamito",
+        "lastname": "Watanabe"
+      },
+      "mm_player22": null
+    },
+    {
+      "game_type": "single",
+      "sets_home": 0,
+      "sets_guest": 0,
+      "match_name": "3-3",
+      "match_uuid": "c445de6e-eed7-4da2-a436-ea81da64d76a",
+      "matches_home": 0,
+      "matches_guest": 0,
+      "winner_is_home": null,
+      "home_wo": false,
+      "guest_wo": false,
+      "set1_home": 0,
+      "set1_guest": 0,
+      "set2_home": 0,
+      "set2_guest": 0,
+      "set3_home": 0,
+      "set3_guest": 0,
+      "set4_home": 0,
+      "set4_guest": 0,
+      "set5_home": 0,
+      "set5_guest": 0,
+      "mm_player11": {
+        "firstname": "Miguel",
+        "lastname": "Nunez Tapia"
+      },
+      "mm_player12": null,
+      "mm_player21": {
+        "firstname": "Balazs",
+        "lastname": "Lei"
+      },
+      "mm_player22": null
+    },
+    {
+      "game_type": "single",
+      "sets_home": 0,
+      "sets_guest": 0,
+      "match_name": "4-4",
+      "match_uuid": "402012a3-e89a-4227-8d20-81f558e2a5f8",
+      "matches_home": 0,
+      "matches_guest": 0,
+      "winner_is_home": null,
+      "home_wo": false,
+      "guest_wo": false,
+      "set1_home": 0,
+      "set1_guest": 0,
+      "set2_home": 0,
+      "set2_guest": 0,
+      "set3_home": 0,
+      "set3_guest": 0,
+      "set4_home": 0,
+      "set4_guest": 0,
+      "set5_home": 0,
+      "set5_guest": 0,
+      "mm_player11": {
+        "firstname": "Dragos Alexandru",
+        "lastname": "Bujor"
+      },
+      "mm_player12": null,
+      "mm_player21": {
+        "firstname": "Lleyton",
+        "lastname": "Ullmann"
+      },
+      "mm_player22": null
+    }
+  ]
+}

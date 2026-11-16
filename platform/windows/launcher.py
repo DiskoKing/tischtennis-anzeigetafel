@@ -205,9 +205,9 @@ def run(no_browser=False, test_seconds=0):
         import server
         from http.server import ThreadingHTTPServer
         app = server.App(BASE/'app')
-        http = ThreadingHTTPServer(('127.0.0.1', 0), server.Handler)
-        http.app = app
-        url = 'http://127.0.0.1:' + str(http.server_address[1])
+        http = server.create_server(app, 0)
+        host = '127.0.0.1' if http.server_address[0] == '0.0.0.0' else http.server_address[0]
+        url = 'http://' + host + ':' + str(http.server_address[1])
         (PRIVATE/'portable-session.json').write_text(json.dumps({'url': url, 'csrf': app.csrf}))
         threading.Thread(target=http.serve_forever, daemon=True).start()
         worker = threading.Thread(target=app.supervise, daemon=True)
