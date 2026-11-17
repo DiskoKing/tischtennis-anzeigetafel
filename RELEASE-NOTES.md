@@ -1,4 +1,4 @@
-# Unveröffentlicht – VIP-Ansicht
+# Version 2.4.1 – VIP-Ansicht mit zwei Kamerabildern
 
 - Kameraorientiertes Layout: zwei große Videobilder nebeneinander, Tischdetails außen, Gesamtstand und Spielfolge mittig. Satzergebnisse bleiben sichtbar; bis zu fünf Sponsorenlogos gleichzeitig, weitere rotieren gruppenweise.
 
