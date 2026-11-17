@@ -57,9 +57,11 @@ def normalize(report, meeting_id, limit=2):
     completed=report.get('is_completed') is True or bool(report.get('end_date'))
     score = ({'home':number(report.get('matches_home')), 'away':number(report.get('matches_guest'))} if completed or not rows else
              {side:sum(number(r.get('matches_'+key)) for r in rows if isinstance(r,dict)) for side,key in (('home','home'),('away','guest'))})
-    game={'source':'clicktt','id':str(meeting_id),'competition':text(report.get('group_name')) or 'CLICK-TT'}
+    game={'source':'clicktt','id':str(meeting_id),'competition':text(report.get('group_name')) or 'CLICK-TT',
+          'startedAt':text(report.get('start_date')),'season':text(report.get('season_nickname')),'completed':completed}
     boards=[]
     finished_boards=[]
+    history=[]
     for index,row in enumerate(rows):
         if not isinstance(row,dict): raise ValueError('Paarung im click-TT-Spielbericht ungültig.')
         home_sets,away_sets=number(row.get('sets_home'),7),number(row.get('sets_guest'),7)
@@ -76,11 +78,14 @@ def normalize(report, meeting_id, limit=2):
         if max(a,b)>=11 and abs(a-b)>=2:a,b=0,0
         one,two=players(row,1),players(row,2)
         if not one or not two: continue
+        history.append({'slot':index+1,'label':text(row.get('match_name')),'type':'Double' if row.get('game_type')=='double' else 'Single',
+                        'homePlayers':one,'awayPlayers':two,'homeSets':home_sets,'awaySets':away_sets,'finished':finished})
         target=finished_boards if finished else boards
         target.append({'active':not finished,'hasGame':True,'slot':index+1,'game':game,'teams':teams,'teamScore':score,
                        'match':{'id':'clicktt-'+str(meeting_id)+'-'+str(row.get('match_uuid') or index+1),
                                 'state':'Finished' if finished else 'InProgress','type':'Double' if row.get('game_type')=='double' else 'Single',
-                                'label':text(row.get('match_name'))},
+                                'label':text(row.get('match_name')),
+                                'setScores':[{'home':a,'away':b} for a,b in scores if a+b>0]},
                        'sideOne':{'players':one,'sets':home_sets,'points':a,'serving':False},
                        'sideTwo':{'players':two,'sets':away_sets,'points':b,'serving':False}})
     boards=boards[:limit] if not completed else []
@@ -89,7 +94,7 @@ def normalize(report, meeting_id, limit=2):
     if not boards:
         boards=[{'active':False,'hasGame':True,'slot':1,'game':game,'teams':teams,'teamScore':score,
                  'match':{'id':'clicktt-'+str(meeting_id)+'-summary','state':'Finished' if completed else 'Scheduled','type':'Single'}}]
-    return {'source':'clicktt','updated':datetime.now().astimezone().isoformat(),'scoreboards':boards}
+    return {'source':'clicktt','updated':datetime.now().astimezone().isoformat(),'scoreboards':boards,'history':history}
 
 
 def body(session, url):

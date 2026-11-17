@@ -27,7 +27,7 @@ import web4sport_client as web
 from public.support.remote_access import RemoteAccess, AccessError, valid_bind
 from public.support.network_status import NetworkStatus, local_hostname
 from public.support.pairing import qr_svg
-from public.support import clicktt
+from public.support import clicktt, camera_bridge, vip
 
 ROOT = Path(__file__).resolve().parent
 DEFAULTS = {
@@ -181,9 +181,11 @@ def janova_identity(value):
 
 
 def validate_update(previous, patch):
-    if not isinstance(patch, dict) or set(patch) - {'club', 'dataSource', 'janova', 'web4sport', 'clicktt', 'display', 'sponsors', 'background', 'manual'}:
+    if not isinstance(patch, dict) or set(patch) - {'club', 'dataSource', 'janova', 'web4sport', 'clicktt', 'display', 'sponsors', 'background', 'manual', 'vip'}:
         raise ValueError('Ungültige Konfiguration')
     result = copy.deepcopy(previous)
+    if 'vip' in patch:
+        result['vip']=vip.validate(result.get('vip',vip.defaults(result.get('club'))),patch['vip'])
     if 'manual' in patch:
         value = patch['manual']
         if not isinstance(value, dict) or set(value) != {'opponent'} or not isinstance(value['opponent'], str) or not 1 <= len(value['opponent'].strip()) <= 100:
@@ -283,7 +285,8 @@ class App:
         self.private.chmod(0o700)
         self.path = self.private/'config.json'
         self.config = json.loads(self.path.read_text(encoding='utf-8')) if self.path.exists() else copy.deepcopy(DEFAULTS)
-        migrated = 'display' not in self.config or 'background' not in self.config or 'sponsors' not in self.config or 'introText' not in self.config.get('sponsors', {})
+        migrated = 'vip' not in self.config or 'display' not in self.config or 'background' not in self.config or 'sponsors' not in self.config or 'introText' not in self.config.get('sponsors', {})
+        if 'vip' not in self.config:self.config['vip']=vip.migrate(self.config,self.private)
         self.config.setdefault('manual', copy.deepcopy(DEFAULTS['manual']))
         self.config.setdefault('clicktt', copy.deepcopy(DEFAULTS['clicktt']))
         self.config.setdefault('background', copy.deepcopy(DEFAULTS['background']))
@@ -299,6 +302,7 @@ class App:
         self.manual_path = self.private/'manual-state.json'
         self.manual = json.loads(self.manual_path.read_text(encoding='utf-8')) if self.manual_path.exists() else {'home': 0, 'away': 0, 'gameId': secrets.token_hex(16), 'events': []}
         self.lock = threading.RLock()
+        self.vip_gateway=vip.Gateway(self.private)
         self.remote = RemoteAccess(self.private/'remote-access.json', atomic_json)
         self.network = NetworkStatus()
         self.revision = 0
@@ -323,6 +327,7 @@ class App:
             config['version'] = updater.version(self.root)
             config['lastUpdate'] = updater.last_result(self.root)
             configured = bool(config['web4sport'].pop('password'))
+            config['vip']=vip.public(config['vip'])
             config['web4sport']['passwordSet'] = configured
             logo = self.private/'club-logo'
             config['club']['logo'] = '/api/logo?v=' + str(logo.stat().st_mtime_ns) if logo.exists() else 'assets/default-logo.svg'
@@ -510,6 +515,7 @@ class App:
                 with self.lock:
                     config = copy.deepcopy(self.config)
                 key = reader_key(config)
+                self.vip_gateway.sync(config['vip'])
                 if self.restart_requested.is_set():
                     self.restart_requested.clear()
                     last_key = None
@@ -748,6 +754,9 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(200, self.session_info())
         if path.startswith('/api/') and not self.authorized():
             return self.send(401, {'error': 'Bitte mit Admin-PIN anmelden.'})
+        camera = re.fullmatch(r'/api/cameras/([12])/ws', path)
+        if camera:
+            return camera_bridge.serve(self, int(camera[1]))
         if path == '/api/remote/access':
             if not self.local_client():
                 return self.send(403, {'error': 'LAN-Freigabe nur direkt am Gerät ändern.'})
@@ -765,6 +774,14 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(200, qr_svg(url), 'image/svg+xml')
         if path == '/api/config':
             return self.send(200, self.app.public_config())
+        if path == '/api/vip':
+            return self.send(200, {'config':vip.public(self.app.config['vip']),'gateway':self.app.vip_gateway.info()})
+        if path == '/api/vip/state':
+            with self.app.lock:
+                data=self.app.get_data(self.app.config['dataSource'])
+                if self.app.config['dataSource']=='clicktt' and self.app.payload is not None:
+                    data['scoreboards']=copy.deepcopy(self.app.payload.get('scoreboards',[]))
+            return self.send(200,vip.state(data,self.app.config['dataSource']))
         if path == '/api/manual':
             return self.send(200, self.app.manual_state())
         if path == '/api/state':
@@ -794,7 +811,7 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(200, data, image_type(data) or 'application/octet-stream')
         if path == '/competition.json':
             return self.send(200, {'competition': ''})
-        relative = 'remote.html' if path in ('/remote', '/remote/') else path.lstrip('/') or 'spiele.html'
+        relative = 'vip.html' if path == '/kamera-layout.html' else 'remote.html' if path in ('/remote', '/remote/') else path.lstrip('/') or 'spiele.html'
         if relative == 'remote.webmanifest':
             manifest = self.app.root/'public/remote.webmanifest'
             return self.send(200, manifest.read_bytes(), 'application/manifest+json') if manifest.is_file() else self.send(404, {'error': 'Nicht gefunden'})
@@ -898,6 +915,12 @@ class Handler(BaseHTTPRequestHandler):
                         if isinstance(patch.get('web4sport'), dict) and not patch['web4sport'].get('username'):
                             patch['web4sport']['username'] = self.app.config['web4sport']['username']
                 return self.send(200, self.app.update(patch))
+            if path == '/api/vip':
+                result=self.app.update({'vip':patch})
+                return self.send(200,{'config':result['vip'],'gateway':self.app.vip_gateway.info()})
+            if path == '/api/vip/reconnect':
+                self.app.vip_gateway.signature=None
+                return self.send(200,{'ok':True})
             if path == '/api/game':
                 if patch.get('automatic') is True:
                     self.app.clear_selection()

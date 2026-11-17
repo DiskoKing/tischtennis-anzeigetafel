@@ -72,6 +72,20 @@ class RemoteTests(unittest.TestCase):
         self.assertNotEqual(old, self.cookie)
         self.csrf = json.loads(self.call('/api/session')[2])['csrf']
 
+    def test_camera_tunnel_requires_login_origin_and_optional_setup(self):
+        self.assertEqual(self.call('/api/cameras/1/ws')[0],401)
+        self.login()
+        def upgrade(origin,key='AAAAAAAAAAAAAAAAAAAAAA=='):
+            connection=HTTPConnection('127.0.0.1',self.http.server_port,timeout=5)
+            connection.request('GET','/api/cameras/1/ws',headers={'Host':self.host,'Cookie':self.cookie,
+                'Origin':origin,'Upgrade':'websocket','Connection':'Upgrade','Sec-WebSocket-Version':'13','Sec-WebSocket-Key':key})
+            response=connection.getresponse();status=response.status;response.read();connection.close();return status
+        self.assertEqual(upgrade('http://evil.example'),403)
+        self.assertEqual(upgrade('http://'+self.host,'invalid'),400)
+        self.assertEqual(upgrade('http://'+self.host),409)
+        self.app.update({'vip':{'cameras':[{'enabled':True,'url':'rtsp://192.168.1.10/stream'},{}]}})
+        self.assertEqual(upgrade('http://'+self.host),503)
+
     def command(self, side='home', delta=1, event='test-event-001', state=None):
         return {'gameId': (state or self.app.manual_state())['gameId'], 'eventId': event, 'side': side, 'delta': delta}
 

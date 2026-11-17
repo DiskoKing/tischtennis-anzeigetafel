@@ -1,3 +1,12 @@
+# Unveröffentlicht – VIP-Ansicht
+
+- Kameraorientiertes Layout: zwei große Videobilder nebeneinander, Tischdetails außen, Gesamtstand und Spielfolge mittig. Satzergebnisse bleiben sichtbar; bis zu fünf Sponsorenlogos gleichzeitig, weitere rotieren gruppenweise.
+
+- Eigene VIP-Ansicht unter `/vip.html` mit Mannschaftsstand, Spielfolge, zwei Partien und zwei optionalen Kamerabildern. Logo und Datenquelle werden gemeinsam mit der normalen Hallenanzeige verwendet.
+- Separater VIP-Einstellungsbereich: 21 Farben, zwei RTSP-/RTSPS-Adressen mit Zugangsdaten und Ein/Aus, Beschriftungen, Tischzuordnungsregel und eigene Fußleiste mit Sponsorenrotation.
+- Automatischer Mannschaftstitel aus der Endnummer des Heimteams. Normale Hallenfarben und Anzahl der dort dargestellten Partien bleiben unabhängig.
+- Optionaler, separat installierter Kameravermittler zunächst für Linux/NUC x86_64. Authentifizierte Videotunnel, verborgene Passwörter, automatische Wiederverbindung und stumme Wiedergabe. Kein Kamerazugriff ohne ausdrückliche Konfiguration.
+
 # Version 2.4.0 – click-TT, Smartphone-Fernbedienung und bessere Kompaktansicht
 
 - Neue Datenquelle myTischtennis / click-TT: öffentlichen Spielbericht-Link konfigurieren; Namen, Gesamtstand, Wettbewerb, Sätze und verfügbare Zwischenpunkte übernehmen. Kein Login; Abruf etwa alle 30 Sekunden.

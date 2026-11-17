@@ -53,8 +53,15 @@ class ClickTTTests(unittest.TestCase):
         self.assertEqual(boards[1]['sideTwo']['points'],0)
         self.assertFalse(boards[0]['sideOne']['serving'])
         self.assertEqual(boards[0]['match']['label'],'3-4')
+        self.assertTrue(boards[0]['match']['setScores'])
+        self.assertEqual(boards[0]['match']['setScores'][-1],{'home':10,'away':10})
         self.assertNotIn('person_id',json.dumps(result))
         self.assertEqual(len(clicktt.normalize(fixture(),'15876082',1)['scoreboards']),1)
+        self.assertEqual(len(result['history']),6)
+        self.assertEqual(result['history'][0]['homeSets'],2)
+        self.assertTrue(result['history'][0]['finished'])
+        self.assertFalse(result['history'][-1]['finished'])
+        self.assertNotIn('person_id',json.dumps(result['history']))
 
     def test_scheduled_finished_doubles_and_no_false_setball(self):
         data=fixture();data['is_completed']=True;data['matches_guest']=6

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>VIP-Ansicht · TT-Anzeigetafel</title>
+  <link rel="stylesheet" href="kamera-layout.css">
+</head>
+<body>
+<main class="board" aria-label="VIP-Ansicht mit Spieldaten">
+  <header class="heading">
+    <div class="club-mark"><img id="club-logo" src="assets/default-logo.svg" alt="Vereinslogo"></div>
+    <strong id="header-club" class="header-club">TT-Anzeigetafel</strong><div class="headline"><div class="eyebrow"><span id="competition">TISCHTENNIS</span><span id="season"></span></div><h1>Heimteam wird geladen …</h1><p>Verbindung zur hinterlegten Quelle</p></div>
+    <div class="head-actions"><button id="layout-settings" type="button" aria-label="Ansicht anpassen">⚙</button><span id="source-state" role="status">Warte auf Daten</span><a id="login-link" href="remote" hidden>Mit LAN-PIN anmelden ↗</a></div>
+  </header>
+  <div class="content">
+    <section class="scores" aria-label="Spielstände">
+      <section class="total" aria-label="Gesamtstand">
+        <div class="team home"><small>HEIM</small><strong>HEIM</strong></div>
+        <div class="result"><b>–</b><span>:</span><b>–</b></div>
+        <div class="team guest"><small>GAST</small><strong>GAST</strong></div>
+      </section>
+      <section class="sequence" aria-label="Spielverlauf"><h2>Spielfolge (Doppel / Einzel)</h2><div class="results"></div></section>
+      <div class="matches"><p class="no-matches">Warte auf Paarungen …</p></div>
+    </section>
+    <aside class="cameras" aria-label="Kamerabilder">
+      <section class="camera"><header><h2>Kamera 1 · Tisch 1</h2><span>////</span></header><div class="empty"><span class="camera-icon" aria-hidden="true">▱</span><strong>Kamera 1</strong><p>Kamerabild folgt</p></div></section>
+      <section class="camera"><header><h2>Kamera 2 · Tisch 2</h2><span>////</span></header><div class="empty"><span class="camera-icon" aria-hidden="true">▱</span><strong>Kamera 2</strong><p>Kamerabild folgt</p></div></section>
+    </aside>
+  </div>
+  <footer><div class="club-footer"><strong id="club-name">TT-ANZEIGETAFEL</strong><span id="club-website"></span></div><div id="camera-sponsors" class="sponsor-space" hidden><span id="sponsor-intro"></span><div id="sponsor-logos"></div></div><div class="clock"><time id="clock-time">--:--</time><span id="clock-date"></span></div></footer>
+</main>
+<dialog id="view-dialog"><form method="dialog"><h2>VIP-Ansicht</h2><p>Der Titel wird aus dem Namen des Heimteams ermittelt. Ohne Mannschaftsnummer erscheint „1. Mannschaft“. Endungen wie II oder 2 ergeben „2. Mannschaft“.</p><div class="dialog-actions"><button>Schließen</button></div><nav><a href="settings.html#category-vip">VIP-Einstellungen</a><a href="spiele.html">Zur bisherigen Anzeigetafel</a></nav></form></dialog>
+<script src="kamera-layout.js"></script>
+<script type="module" src="kamera-streams.js"></script>
+</body></html>

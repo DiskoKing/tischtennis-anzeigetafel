@@ -10,6 +10,7 @@ Die Anleitung beschreibt Windows-USB sowie die Neueinrichtung auf Raspi/NUC mit 
 
 ## Funktionen
 
+- VIP-Ansicht unter `/vip.html`: eigenes Farbdesign, zwei optionale RTSP-Kamerabilder und eigene Fußleiste bei gemeinsamem Vereinslogo und gemeinsamer Datenquelle. Einstellungen im separaten VIP-Bereich; Kameravermittler zunächst für Linux/NUC x86_64. Siehe [VIP-Ansicht](docs/VIP-ANSICHT.md). Noch unveröffentlicht.
 - Manueller Modus: Gegner und Mannschaftsstand, PC-Bedienfenster, Nummernblock und optional Stream Dock 293 V3 unter Linux.
 - Optionale Smartphone-Fernbedienung unter `/remote`: PIN-geschützte LAN-Freigabe, QR-Code, Spielstand, vorhandene Einstellungen und getrennter Netzwerk-/Quellenstatus. Standard bleibt localhost; siehe [Remote-Architektur](docs/REMOTE-ARCHITEKTUR.md) und Kapitel 9 der Anleitung.
 - Vereinsname, Website, Farben und eigenes Vereinslogo.
